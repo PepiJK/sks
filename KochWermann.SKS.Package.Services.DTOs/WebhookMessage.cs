@@ -18,14 +18,18 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace KochWermann.SKS.Package.Services.Models
+namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class WebhookResponses : List<WebhookResponse>
+    public partial class WebhookMessage : TrackingInformation
     { 
-        
+        /// <summary>
+        /// Gets or Sets TrackingId
+        /// </summary>
+        [DataMember(Name="trackingId")]
+        public string TrackingId { get; set; }
     }
 }

@@ -18,20 +18,26 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace KochWermann.SKS.Package.Services.Models
+namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class Error
+    public partial class WarehouseNextHops
     { 
         /// <summary>
-        /// The error message.
+        /// Gets or Sets TraveltimeMins
         /// </summary>
-        /// <value>The error message.</value>
         [Required]
-        [DataMember(Name="errorMessage")]
-        public string ErrorMessage { get; set; }
+        [DataMember(Name="traveltimeMins")]
+        public int? TraveltimeMins { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Hop
+        /// </summary>
+        [Required]
+        [DataMember(Name="hop")]
+        public Hop Hop { get; set; }
     }
 }

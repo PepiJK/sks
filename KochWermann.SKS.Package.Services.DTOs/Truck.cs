@@ -18,26 +18,28 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace KochWermann.SKS.Package.Services.Models
+namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class WarehouseNextHops
+    public partial class Truck : Hop
     { 
         /// <summary>
-        /// Gets or Sets TraveltimeMins
+        /// GeoJSON of the are covered by the truck.
         /// </summary>
+        /// <value>GeoJSON of the are covered by the truck.</value>
         [Required]
-        [DataMember(Name="traveltimeMins")]
-        public int? TraveltimeMins { get; set; }
+        [DataMember(Name="regionGeoJson")]
+        public string RegionGeoJson { get; set; }
 
         /// <summary>
-        /// Gets or Sets Hop
+        /// The truck&#x27;s number plate.
         /// </summary>
+        /// <value>The truck&#x27;s number plate.</value>
         [Required]
-        [DataMember(Name="hop")]
-        public Hop Hop { get; set; }
+        [DataMember(Name="numberPlate")]
+        public string NumberPlate { get; set; }
     }
 }

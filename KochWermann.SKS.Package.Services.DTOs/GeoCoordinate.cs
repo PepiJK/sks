@@ -18,19 +18,28 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace KochWermann.SKS.Package.Services.Models
+namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class NewParcelInfo
+    public partial class GeoCoordinate
     { 
         /// <summary>
-        /// The tracking ID of the parcel. 
+        /// Latitude of the coordinate.
         /// </summary>
-        /// <value>The tracking ID of the parcel. </value>
-        [DataMember(Name="trackingId")]
-        public string TrackingId { get; set; }
+        /// <value>Latitude of the coordinate.</value>
+        [Required]
+        [DataMember(Name="lat")]
+        public double? Lat { get; set; }
+
+        /// <summary>
+        /// Longitude of the coordinate.
+        /// </summary>
+        /// <value>Longitude of the coordinate.</value>
+        [Required]
+        [DataMember(Name="lon")]
+        public double? Lon { get; set; }
     }
 }

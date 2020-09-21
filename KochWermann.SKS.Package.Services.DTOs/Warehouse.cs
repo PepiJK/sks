@@ -18,33 +18,27 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace KochWermann.SKS.Package.Services.Models
+namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class Parcel
+    public partial class Warehouse : Hop
     { 
         /// <summary>
-        /// Gets or Sets Weight
+        /// Gets or Sets GeoCoordinate
         /// </summary>
         [Required]
-        [DataMember(Name="weight")]
-        public float? Weight { get; set; }
+        [DataMember(Name="geoCoordinate")]
+        public GeoCoordinate GeoCoordinate { get; set; }
 
         /// <summary>
-        /// Gets or Sets Receipient
+        /// Next hops after this warehouse (warehouses or trucks).
         /// </summary>
+        /// <value>Next hops after this warehouse (warehouses or trucks).</value>
         [Required]
-        [DataMember(Name="receipient")]
-        public Receipient Receipient { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Sender
-        /// </summary>
-        [Required]
-        [DataMember(Name="sender")]
-        public Receipient Sender { get; set; }
+        [DataMember(Name="nextHops")]
+        public List<WarehouseNextHops> NextHops { get; set; }
     }
 }

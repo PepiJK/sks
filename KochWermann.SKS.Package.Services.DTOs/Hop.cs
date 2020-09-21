@@ -18,14 +18,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace KochWermann.SKS.Package.Services.Models
+namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class HopArrival
+    public partial class Hop
     { 
+        /// <summary>
+        /// Gets or Sets HopType
+        /// </summary>
+        [Required]
+        [DataMember(Name="hopType")]
+        public string HopType { get; set; }
+
         /// <summary>
         /// Unique CODE of the hop.
         /// </summary>
@@ -43,11 +50,11 @@ namespace KochWermann.SKS.Package.Services.Models
         public string Description { get; set; }
 
         /// <summary>
-        /// The date/time the parcel arrived at the hop.
+        /// Delay processing takes on the hop.
         /// </summary>
-        /// <value>The date/time the parcel arrived at the hop.</value>
+        /// <value>Delay processing takes on the hop.</value>
         [Required]
-        [DataMember(Name="dateTime")]
-        public DateTime? DateTime { get; set; }
+        [DataMember(Name="processingDelayMins")]
+        public int? ProcessingDelayMins { get; set; }    
     }
 }

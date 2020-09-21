@@ -18,36 +18,33 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace KochWermann.SKS.Package.Services.Models
+namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public partial class Transferwarehouse : Hop
+    public partial class Parcel
     { 
         /// <summary>
-        /// GeoJSON of the are covered by the logistics partner.
+        /// Gets or Sets Weight
         /// </summary>
-        /// <value>GeoJSON of the are covered by the logistics partner.</value>
         [Required]
-        [DataMember(Name="regionGeoJson")]
-        public string RegionGeoJson { get; set; }
+        [DataMember(Name="weight")]
+        public float? Weight { get; set; }
 
         /// <summary>
-        /// Name of the logistics partner.
+        /// Gets or Sets Receipient
         /// </summary>
-        /// <value>Name of the logistics partner.</value>
         [Required]
-        [DataMember(Name="logisticsPartner")]
-        public string LogisticsPartner { get; set; }
+        [DataMember(Name="receipient")]
+        public Receipient Receipient { get; set; }
 
         /// <summary>
-        /// BaseURL of the logistics partner&#x27;s REST service.
+        /// Gets or Sets Sender
         /// </summary>
-        /// <value>BaseURL of the logistics partner&#x27;s REST service.</value>
         [Required]
-        [DataMember(Name="logisticsPartnerUrl")]
-        public string LogisticsPartnerUrl { get; set; }
+        [DataMember(Name="sender")]
+        public Receipient Sender { get; set; }
     }
 }

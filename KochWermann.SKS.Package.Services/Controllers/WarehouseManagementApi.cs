@@ -17,7 +17,7 @@ using System.ComponentModel.DataAnnotations;
 using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
-using KochWermann.SKS.Package.Services.Models;
+using KochWermann.SKS.Package.Services.DTOs;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 { 
