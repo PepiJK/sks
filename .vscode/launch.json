@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/KochWerman.SKS.Package.Services/bin/Debug/netcoreapp3.0/KochWermann.SKS.Package.dll",
+            "program": "${workspaceFolder}/KochWermann.SKS.Package.Services/bin/Debug/netcoreapp3.1/KochWermann.SKS.Package.Services.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/KochWerman.SKS.Package.Services",
+            "cwd": "${workspaceFolder}/KochWermann.SKS.Package.Services",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
