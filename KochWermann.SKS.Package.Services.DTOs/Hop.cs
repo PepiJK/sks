@@ -17,13 +17,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using KochWermann.SKS.Package.Services.DTOs.Helpers;
 
 namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
-    [DataContract]
+    [DataContract, JsonConverter(typeof(HopInheritanceConverter))]
     public partial class Hop
     { 
         /// <summary>
