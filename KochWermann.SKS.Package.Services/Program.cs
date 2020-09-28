@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 
-namespace KochWermann.SKS.Package.Services
+namespace IO.Swagger
 {
     /// <summary>
     /// Program

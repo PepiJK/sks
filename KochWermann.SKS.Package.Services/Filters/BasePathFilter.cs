@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.OpenApi.Models;
 
-namespace KochWermann.SKS.Package.Services.Filters
+namespace IO.Swagger.Filters
 {
     /// <summary>
     /// BasePath Document Filter sets BasePath property of Swagger and removes it from the individual URL paths
