@@ -6,16 +6,16 @@
       "name" : "SKS",
       "url" : "http://www.technikum-wien.at/"
     },
-    "version" : "1.20.0"
+    "version" : "1.20.1"
   },
   "servers" : [ {
-    "url" : "/api"
+    "url" : "/"
   } ],
   "tags" : [ {
     "name" : "sender",
     "description" : "Operations for the sender of a parcel."
   }, {
-    "name" : "receipient",
+    "name" : "recipient",
     "description" : "Operations for the receiver of a parcel."
   }, {
     "name" : "warehouse-management",
@@ -69,7 +69,7 @@
     },
     "/parcel/{trackingId}" : {
       "get" : {
-        "tags" : [ "receipient" ],
+        "tags" : [ "recipient" ],
         "summary" : "Find the latest state of a parcel by its tracking ID.\n",
         "operationId" : "trackParcel",
         "parameters" : [ {
@@ -161,6 +161,54 @@
         }
       }
     },
+    "/parcel/{trackingId}/reportHop/{code}" : {
+      "post" : {
+        "tags" : [ "staff" ],
+        "summary" : "Report that a Parcel has arrived at a certain hop either Warehouse or Truck.\n",
+        "operationId" : "reportParcelHop",
+        "parameters" : [ {
+          "name" : "trackingId",
+          "in" : "path",
+          "description" : "The tracking ID of the parcel.\nE.g. PYJRB4HZ6\n",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "^[A-Z0-9]{9}$",
+            "type" : "string"
+          }
+        }, {
+          "name" : "code",
+          "in" : "path",
+          "description" : "The Code of the hop (Warehouse or Truck).",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "^[A-Z]{4}\\d{1,4}$",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successfully reported hop."
+          },
+          "400" : {
+            "description" : "The operation failed due to an error.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Parcel does not exist with this tracking ID or hop with code not found.\n"
+          }
+        }
+      }
+    },
     "/parcel/{trackingId}/reportDelivery/" : {
       "post" : {
         "tags" : [ "staff" ],
@@ -195,46 +243,6 @@
           },
           "404" : {
             "description" : "Parcel does not exist with this tracking ID.\n",
-            "content" : { }
-          }
-        }
-      }
-    },
-    "/parcel/{trackingId}/reportHop/{code}" : {
-      "post" : {
-        "tags" : [ "staff" ],
-        "summary" : "Report that a Parcel has arrived at a certain hop either Warehouse or Truck.\n",
-        "operationId" : "reportParcelHop",
-        "parameters" : [ {
-          "name" : "trackingId",
-          "in" : "path",
-          "description" : "The tracking ID of the parcel.\nE.g. PYJRB4HZ6\n",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "^[A-Z0-9]{9}$",
-            "type" : "string"
-          }
-        }, {
-          "name" : "code",
-          "in" : "path",
-          "description" : "The Code of the hop (Warehouse or Truck).",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "^[A-Z]{4}\\d{1,4}$",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Successfully reported hop.",
-            "content" : { }
-          },
-          "500" : {
-            "description" : "An error occurred.\n",
             "content" : { }
           }
         }
@@ -304,11 +312,53 @@
         }
       }
     },
+    "/warehouse/{code}" : {
+      "get" : {
+        "tags" : [ "warehouse-management" ],
+        "summary" : "Get a certain warehouse or truck by code",
+        "operationId" : "getWarehouse",
+        "parameters" : [ {
+          "name" : "code",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/warehouse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "An error occurred loading.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Warehouse id not found"
+          }
+        }
+      }
+    },
     "/parcel/{trackingId}/webhooks" : {
       "get" : {
         "tags" : [ "parcelWebhook" ],
-        "description" : "Gets all registered subscriptions for the parcel webhook.",
-        "operationId" : "ApiParcelByTrackingIdWebhooksGet",
+        "summary" : "Get all registered subscriptions for the parcel webhook.",
+        "operationId" : "listParcelWebhooks",
         "parameters" : [ {
           "name" : "trackingId",
           "in" : "path",
@@ -339,8 +389,8 @@
       },
       "post" : {
         "tags" : [ "parcelWebhook" ],
-        "description" : "Subscribes to a webhook notification for the specific parcel.",
-        "operationId" : "ApiParcelByTrackingIdWebhooksPost",
+        "summary" : "Subscribe to a webhook notification for the specific parcel.",
+        "operationId" : "subscribeParcelWebhook",
         "parameters" : [ {
           "name" : "trackingId",
           "in" : "path",
@@ -415,8 +465,8 @@
     "/parcel/webhooks/{id}" : {
       "delete" : {
         "tags" : [ "parcelWebhook" ],
-        "description" : "Removes an existing webhook subscription.",
-        "operationId" : "ApiParcelWebhooksByIdDelete",
+        "summary" : "Remove an existing webhook subscription.",
+        "operationId" : "unsubscribeParcelWebhook",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -444,23 +494,23 @@
   "components" : {
     "schemas" : {
       "parcel" : {
-        "required" : [ "receipient", "sender", "weight" ],
+        "required" : [ "recipient", "sender", "weight" ],
         "type" : "object",
         "properties" : {
           "weight" : {
             "type" : "number",
             "format" : "float"
           },
-          "receipient" : {
-            "$ref" : "#/components/schemas/receipient"
+          "recipient" : {
+            "$ref" : "#/components/schemas/recipient"
           },
           "sender" : {
-            "$ref" : "#/components/schemas/receipient"
+            "$ref" : "#/components/schemas/recipient"
           }
         },
         "example" : {
           "weight" : 5.2,
-          "receipient" : {
+          "recipient" : {
             "name" : "Microsoft",
             "street" : "Am Europlatz 3",
             "postalCode" : "A-1120",
@@ -476,7 +526,7 @@
           }
         }
       },
-      "receipient" : {
+      "recipient" : {
         "required" : [ "city", "country", "name", "postalCode", "street" ],
         "type" : "object",
         "properties" : {
@@ -510,7 +560,7 @@
         }
       },
       "hop" : {
-        "required" : [ "code", "description", "hopType", "processingDelayMins" ],
+        "required" : [ "code", "description", "hopType", "locationCoordinates", "locationName", "processingDelayMins" ],
         "type" : "object",
         "properties" : {
           "hopType" : {
@@ -528,6 +578,13 @@
           "processingDelayMins" : {
             "type" : "integer",
             "description" : "Delay processing takes on the hop."
+          },
+          "locationName" : {
+            "type" : "string",
+            "description" : "Name of the location (village, city, ..) of the hop."
+          },
+          "locationCoordinates" : {
+            "$ref" : "#/components/schemas/geoCoordinate"
           }
         },
         "discriminator" : {
@@ -535,14 +592,15 @@
         }
       },
       "warehouse" : {
-        "required" : [ "code", "description", "geoCoordinate", "nextHops", "processingDelayMins" ],
+        "required" : [ "code", "description", "hopType", "level", "locationCoordinates", "locationName", "nextHops", "processingDelayMins" ],
         "type" : "object",
         "allOf" : [ {
           "$ref" : "#/components/schemas/hop"
         }, {
           "properties" : {
-            "geoCoordinate" : {
-              "$ref" : "#/components/schemas/geoCoordinate"
+            "level" : {
+              "type" : "integer",
+              "format" : "int32"
             },
             "nextHops" : {
               "type" : "array",
@@ -555,7 +613,7 @@
         } ]
       },
       "transferwarehouse" : {
-        "required" : [ "code", "description", "logisticsPartner", "logisticsPartnerUrl", "processingDelayMins", "regionGeoJson" ],
+        "required" : [ "code", "description", "hopType", "locationCoordinates", "locationName", "logisticsPartner", "logisticsPartnerUrl", "processingDelayMins", "regionGeoJson" ],
         "allOf" : [ {
           "$ref" : "#/components/schemas/hop"
         }, {
@@ -576,7 +634,7 @@
         } ]
       },
       "truck" : {
-        "required" : [ "code", "description", "numberPlate", "processingDelayMins", "regionGeoJson" ],
+        "required" : [ "code", "description", "hopType", "locationCoordinates", "locationName", "numberPlate", "processingDelayMins", "regionGeoJson" ],
         "type" : "object",
         "allOf" : [ {
           "$ref" : "#/components/schemas/hop"
@@ -649,7 +707,7 @@
           "state" : {
             "type" : "string",
             "description" : "State of the parcel.",
-            "enum" : [ "InTransport", "InTruckDelivery", "Delivered" ]
+            "enum" : [ "Pickup", "InTransport", "InTruckDelivery", "Transferred", "Delivered" ]
           },
           "visitedHops" : {
             "type" : "array",
@@ -677,7 +735,7 @@
             "description" : "description"
           } ],
           "futureHops" : [ null, null ],
-          "state" : "InTransport"
+          "state" : "Pickup"
         }
       },
       "geoCoordinate" : {

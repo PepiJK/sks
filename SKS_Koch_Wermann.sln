@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Services.Interfaces", "KochWermann.SKS.Package.Services.Interfaces\KochWermann.SKS.Package.Services.Interfaces.csproj", "{82F9B244-E851-4134-AC75-060ED3C9C59B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Services.Tests", "KochWermann.SKS.Package.Services.Tests\KochWermann.SKS.Package.Services.Tests.csproj", "{D2D5F571-15EC-42C3-88E9-2B4980397838}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{82F9B244-E851-4134-AC75-060ED3C9C59B}.Release|x64.Build.0 = Release|Any CPU
 		{82F9B244-E851-4134-AC75-060ED3C9C59B}.Release|x86.ActiveCfg = Release|Any CPU
 		{82F9B244-E851-4134-AC75-060ED3C9C59B}.Release|x86.Build.0 = Release|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Release|x64.Build.0 = Release|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2D5F571-15EC-42C3-88E9-2B4980397838}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
