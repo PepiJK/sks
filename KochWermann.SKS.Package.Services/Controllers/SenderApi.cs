@@ -14,12 +14,12 @@ using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using IO.Swagger.Attributes;
+using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
 
-namespace IO.Swagger.Controllers
+namespace KochWermann.SKS.Package.Services.Controllers
 { 
     /// <summary>
     /// 
@@ -40,19 +40,11 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(NewParcelInfo), description: "Successfully submitted the new parcel")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult SubmitParcel([FromBody]Parcel body)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(NewParcelInfo));
+        {
+            if (body != null)
+                return StatusCode(200, default(NewParcelInfo));
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
-            string exampleJson = null;
-            exampleJson = "{\n  \"trackingId\" : \"PYJRB4HZ6\"\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<NewParcelInfo>(exampleJson)
-                        : default(NewParcelInfo);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            return StatusCode(400, default(Error));
         }
     }
 }

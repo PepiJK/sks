@@ -14,12 +14,12 @@ using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using IO.Swagger.Attributes;
+using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
 
-namespace IO.Swagger.Controllers
+namespace KochWermann.SKS.Package.Services.Controllers
 { 
     /// <summary>
     /// 
@@ -49,13 +49,8 @@ namespace IO.Swagger.Controllers
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
-            string exampleJson = null;
-            exampleJson = "\"\"";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<Warehouse>(exampleJson)
-                        : default(Warehouse);            //TODO: Change the data returned
-            return new ObjectResult(example);
+
+           return StatusCode(200, default(Warehouse));
         }
 
         /// <summary>
@@ -72,22 +67,16 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
         public virtual IActionResult GetWarehouse([FromRoute][Required]string code)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(Warehouse));
+        {
+            if (!string.IsNullOrWhiteSpace(code))
+            {
+                if (code == "ERROR")
+                    return StatusCode(400, default(Error));
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
+                return StatusCode(200, default(Warehouse));
+            }
 
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-            string exampleJson = null;
-            exampleJson = "\"\"";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<Warehouse>(exampleJson)
-                        : default(Warehouse);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            return StatusCode(404);
         }
 
         /// <summary>
@@ -102,14 +91,11 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("ImportWarehouses")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ImportWarehouses([FromBody]Warehouse body)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200);
+        {
+            if (body != null)
+                return StatusCode(200);
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
-
-            throw new NotImplementedException();
+            return StatusCode(400, default(Error));
         }
     }
 }

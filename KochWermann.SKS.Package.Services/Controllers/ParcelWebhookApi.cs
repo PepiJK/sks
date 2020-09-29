@@ -14,12 +14,12 @@ using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using IO.Swagger.Attributes;
+using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
 
-namespace IO.Swagger.Controllers
+namespace KochWermann.SKS.Package.Services.Controllers
 { 
     /// <summary>
     /// 
@@ -40,18 +40,10 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponses), description: "List of webooks for the &#x60;trackingId&#x60;")]
         public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(WebhookResponses));
-
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n}, {\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n} ]";
+            if (!string.IsNullOrWhiteSpace(trackingId))
+                return StatusCode(200, default(WebhookResponses));
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<WebhookResponses>(exampleJson)
-                        : default(WebhookResponses);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            return StatusCode(404);
         }
 
         /// <summary>
@@ -68,18 +60,10 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponse), description: "Successful response")]
         public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromQuery][Required()]string url)
         { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(WebhookResponse));
-
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-            string exampleJson = null;
-            exampleJson = "{\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n}";
+            if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(url))
+                return StatusCode(200, default(WebhookResponse));
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<WebhookResponse>(exampleJson)
-                        : default(WebhookResponse);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            return StatusCode(404);
         }
 
         /// <summary>
@@ -94,13 +78,10 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("UnsubscribeParcelWebhook")]
         public virtual IActionResult UnsubscribeParcelWebhook([FromRoute][Required]long? id)
         { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200);
+            if (id != null && id > 0)
+                return StatusCode(200);
 
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-
-            throw new NotImplementedException();
+            return StatusCode(404);
         }
     }
 }

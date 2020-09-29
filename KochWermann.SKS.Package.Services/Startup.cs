@@ -21,10 +21,10 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using IO.Swagger.Filters;
+using KochWermann.SKS.Package.Services.Filters;
 
 
-namespace IO.Swagger
+namespace KochWermann.SKS.Package.Services
 {
     /// <summary>
     /// Startup
@@ -74,7 +74,7 @@ namespace IO.Swagger
                     {
                         Version = "1.20.1",
                         Title = "Parcel Logistics Service",
-                        Description = "Parcel Logistics Service (ASP.NET Core 3.0)",
+                        Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
                         Contact = new OpenApiContact()
                         {
                            Name = "SKS",
