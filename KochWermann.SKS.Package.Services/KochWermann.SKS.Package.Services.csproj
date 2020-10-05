@@ -18,5 +18,8 @@
   <ItemGroup>
     <ProjectReference Include="..\KochWermann.SKS.Package.Services.Interfaces\KochWermann.SKS.Package.Services.Interfaces.csproj"/>
     <ProjectReference Include="..\KochWermann.SKS.Package.Services.DTOs\KochWermann.SKS.Package.Services.DTOs.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.BusinessLogic.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Interfaces\KochWermann.SKS.Package.BusinessLogic.Interfaces.csproj"/>
   </ItemGroup>
 </Project>
