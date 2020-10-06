@@ -18,6 +18,8 @@ using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
+using AutoMapper;
+using KochWermann.SKS.Package.BusinessLogic;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 { 
@@ -27,6 +29,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class LogisticsPartnerApiController : ControllerBase
     { 
+        private readonly IMapper Mapper;
+        /// <summary>
+        /// 
+        /// </summary>
+        public LogisticsPartnerApiController(IMapper mapper)
+        {
+            Mapper = mapper;
+        }
+
+        private TrackingLogic trackingLogic = new TrackingLogic();
+
         /// <summary>
         /// Transfer an existing parcel into the system from the service of a logistics partner. 
         /// </summary>
@@ -43,7 +56,12 @@ namespace KochWermann.SKS.Package.Services.Controllers
         public virtual IActionResult TransitionParcel([FromBody]Parcel body, [FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         { 
             if (body != null && !string.IsNullOrWhiteSpace(trackingId))
+            {
+                BusinessLogic.Entities.Parcel parcel = null;
+                parcel = this.trackingLogic.TransitionParcel(trackingId);
+                var ServiceParcel = this.Mapper.Map<DTOs.Parcel>(parcel);
                 return StatusCode(200, default(NewParcelInfo));
+            }
              
             return StatusCode(400, default(Error));
         }

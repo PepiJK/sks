@@ -3,17 +3,26 @@ using KochWermann.SKS.Package.Services.Controllers;
 using KochWermann.SKS.Package.Services.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using AutoMapper;
+using KochWermann.SKS.Package.Services.Mapper;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
     public class WarehouseManagementApiTests
     {
         private WarehouseManagementApiController warehouseManagementApiController;
-        
+
         [SetUp]
         public void Setup()
         {
-            warehouseManagementApiController = new WarehouseManagementApiController();
+            //auto mapper configuration
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new BlMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            warehouseManagementApiController = new WarehouseManagementApiController(mapper);
         }
 
         [Test]

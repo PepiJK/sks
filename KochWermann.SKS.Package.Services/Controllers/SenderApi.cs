@@ -18,6 +18,8 @@ using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
+using AutoMapper;
+using KochWermann.SKS.Package.BusinessLogic;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 { 
@@ -27,6 +29,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class SenderApiController : ControllerBase
     { 
+        private readonly IMapper Mapper;
+        /// <summary>
+        /// 
+        /// </summary>
+        public SenderApiController(IMapper mapper)
+        {
+            Mapper = mapper;
+        }
+
+        private TrackingLogic trackingLogic = new TrackingLogic();
+
         /// <summary>
         /// Submit a new parcel to the logistics service. 
         /// </summary>
@@ -42,7 +55,11 @@ namespace KochWermann.SKS.Package.Services.Controllers
         public virtual IActionResult SubmitParcel([FromBody]Parcel body)
         {
             if (body != null)
-                return StatusCode(200, default(NewParcelInfo));
+            {
+                var parcel = this.Mapper.Map<BusinessLogic.Entities.Parcel>(body);
+                this.trackingLogic.SubmitParcel(parcel);
+                return this.Ok();
+            }
 
             return StatusCode(400, default(Error));
         }

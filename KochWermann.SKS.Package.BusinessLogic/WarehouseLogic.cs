@@ -1,5 +1,8 @@
 using KochWermann.SKS.Package.BusinessLogic.Entities;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using FluentValidation;
+using KochWermann.SKS.Package.BusinessLogic.Validators;
+
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
@@ -7,17 +10,27 @@ namespace KochWermann.SKS.Package.BusinessLogic
     {
         public Warehouse ExportWarehouses()
         {
-            throw new System.NotImplementedException();
+            return new Warehouse();
         }
 
         public void ImportWarehouses(Warehouse warehouse)
         {
-            throw new System.NotImplementedException();
+            IValidator<Warehouse> validator = new WarehouseValidator();
+            var validationResult = validator.Validate(warehouse);
+
+            if(validationResult.IsValid)
+            {
+
+            }
+            else
+            {
+                throw new FluentValidation.ValidationException("new warehouse "+ validationResult.Errors.ToString()); 
+            }
         }
 
         public Warehouse GetWarehouse(string code)
         {
-            throw new System.NotImplementedException();
+            return new Warehouse();
         }
     }
 }

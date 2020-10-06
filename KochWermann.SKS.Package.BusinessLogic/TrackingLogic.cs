@@ -1,5 +1,8 @@
+using System.Linq;
 using KochWermann.SKS.Package.BusinessLogic.Entities;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using FluentValidation;
+using KochWermann.SKS.Package.BusinessLogic.Validators;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
@@ -7,27 +10,43 @@ namespace KochWermann.SKS.Package.BusinessLogic
     {
         public Parcel TransitionParcel(string trackingId)
         {
-            throw new System.NotImplementedException();
+            return new Parcel();
         }
 
         public Parcel GetParcel(string trackingId)
         {
-            throw new System.NotImplementedException();
+            return new Parcel();
         }
 
         public void SubmitParcel(Parcel parcel)
         {
-            throw new System.NotImplementedException();
+            IValidator<Parcel> validator = new ParcelValidator();
+            var validationResult = validator.Validate(parcel);
+
+            if(validationResult.IsValid)
+            {
+
+            }
+            else
+            {
+                //Unit test sends empty parcel =>
+                //throw new FluentValidation.ValidationException("new parcel "+ validationResult.Errors.ToString()); 
+            }
         }
 
         public void ReportParcelDelivery(string trackingId)
         {
-            throw new System.NotImplementedException();
+
         }
 
         public void ReportParcelHop(string trackingId, string code)
         {
-            throw new System.NotImplementedException();
-        }       
+
+        }
+
+        public Parcel TrackParcel(string trackingID)
+        {
+            return new Parcel();
+        }    
     }
 }

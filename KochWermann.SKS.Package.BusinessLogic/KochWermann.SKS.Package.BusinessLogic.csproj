@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj"/>
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Interfaces\KochWermann.SKS.Package.BusinessLogic.Interfaces.csproj"/>
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.2.0"/>
+  </ItemGroup>
 </Project>

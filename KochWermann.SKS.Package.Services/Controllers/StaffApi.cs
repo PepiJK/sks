@@ -18,6 +18,8 @@ using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
+using AutoMapper;
+using KochWermann.SKS.Package.BusinessLogic;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 { 
@@ -27,6 +29,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class StaffApiController : ControllerBase
     { 
+        private readonly IMapper Mapper;
+        /// <summary>
+        /// 
+        /// </summary>
+        public StaffApiController(IMapper mapper)
+        {
+            Mapper = mapper;
+        }
+
+        private TrackingLogic trackingLogic = new TrackingLogic();
+
         /// <summary>
         /// Report that a Parcel has been delivered at it&#x27;s final destination address. 
         /// </summary>
@@ -46,7 +59,8 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 if (trackingId == "ERROR1234")
                     return StatusCode(400, default(Error));
 
-                return StatusCode(200);
+                this.trackingLogic.ReportParcelDelivery(trackingId);
+                return this.Ok();    
             }
 
             return StatusCode(404);
@@ -71,7 +85,8 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 if (trackingId == "ERROR1234" || code == "ERRO\\d")
                     return StatusCode(400, default(Error));
-
+                
+                this.trackingLogic.ReportParcelHop(trackingId, code);
                 return StatusCode(200);
             }
 

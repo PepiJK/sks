@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 /*
  * Parcel Logistics Service
  *
@@ -22,7 +23,9 @@ using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using KochWermann.SKS.Package.Services.Filters;
-
+using AutoMapper;
+using FluentValidation.AspNetCore;
+using KochWermann.SKS.Package.BusinessLogic.Validators;
 
 namespace KochWermann.SKS.Package.Services
 {
@@ -52,6 +55,8 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Automapper
+            services.AddAutoMapper(typeof(Startup));
             // Add framework services.
             services
                 .AddMvc(options =>
@@ -59,6 +64,7 @@ namespace KochWermann.SKS.Package.Services
                     options.InputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter>();
                     options.OutputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter>();
                 })
+                .AddFluentValidation(mvcConfiguration => mvcConfiguration.RegisterValidatorsFromAssemblyContaining<BusinessLogic.Validators.ParcelValidator>()) //FluentValidation
                 .AddNewtonsoftJson(opts =>
                 {
                     opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -77,9 +83,9 @@ namespace KochWermann.SKS.Package.Services
                         Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
                         Contact = new OpenApiContact()
                         {
-                           Name = "SKS",
-                           Url = new Uri("http://www.technikum-wien.at/"),
-                           Email = ""
+                            Name = "SKS",
+                            Url = new Uri("http://www.technikum-wien.at/"),
+                            Email = ""
                         },
                     });
                     c.CustomSchemaIds(type => type.FullName);

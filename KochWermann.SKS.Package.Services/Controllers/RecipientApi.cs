@@ -18,15 +18,27 @@ using KochWermann.SKS.Package.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
+using AutoMapper;
+using KochWermann.SKS.Package.BusinessLogic;
 
 namespace KochWermann.SKS.Package.Services.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
     [ApiController]
     public class RecipientApiController : ControllerBase
-    { 
+    {
+        private readonly IMapper Mapper;
+        /// <summary>
+        /// 
+        /// </summary>
+        public RecipientApiController(IMapper mapper)
+        {
+            Mapper = mapper;
+        }
+
+        private TrackingLogic trackingLogic = new TrackingLogic();
         /// <summary>
         /// Find the latest state of a parcel by its tracking ID. 
         /// </summary>
@@ -40,17 +52,20 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerOperation("TrackParcel")]
         [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
-        { 
+        public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")] string trackingId)
+        {
             if (!string.IsNullOrWhiteSpace(trackingId))
             {
                 if (trackingId == "ERROR1234")
                     return StatusCode(400, default(Error));
 
+                BusinessLogic.Entities.Parcel parcel = null;
+                parcel = this.trackingLogic.TrackParcel(trackingId);
+                var ServiceWh = this.Mapper.Map<DTOs.Parcel>(parcel);
                 return StatusCode(200, default(TrackingInformation));
             }
-                
-            return StatusCode(404); 
+
+            return StatusCode(404);
         }
     }
 }

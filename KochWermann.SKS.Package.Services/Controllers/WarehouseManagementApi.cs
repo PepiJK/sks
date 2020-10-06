@@ -15,18 +15,32 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using KochWermann.SKS.Package.Services.Attributes;
-
 using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
+using AutoMapper;
+using KochWermann.SKS.Package.BusinessLogic;
+using KochWermann.SKS.Package.BusinessLogic.Entities;
+using KochWermann.SKS.Package.Services.Mapper;
 
 namespace KochWermann.SKS.Package.Services.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
     [ApiController]
     public class WarehouseManagementApiController : ControllerBase
-    { 
+    {
+        private readonly IMapper Mapper;
+        /// <summary>
+        /// 
+        /// </summary>
+        public WarehouseManagementApiController(IMapper mapper)
+        {
+            Mapper = mapper;
+        }
+
+        private WarehouseLogic warehouseLogic = new WarehouseLogic();
+
         /// <summary>
         /// Exports the hierarchy of Warehouse and Truck objects. 
         /// </summary>
@@ -37,20 +51,14 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/warehouse")]
         [ValidateModelState]
         [SwaggerOperation("ExportWarehouses")]
-        [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.Warehouse), description: "Successful response")]
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "An error occurred loading.")]
         public virtual IActionResult ExportWarehouses()
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(Warehouse));
-
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
-
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-
-           return StatusCode(200, default(Warehouse));
+        {
+            BusinessLogic.Entities.Warehouse BlWh = null;
+            BlWh = this.warehouseLogic.ExportWarehouses();
+            var ServiceWh = this.Mapper.Map<DTOs.Warehouse>(BlWh);
+            return StatusCode(200, default(DTOs.Warehouse));
         }
 
         /// <summary>
@@ -64,16 +72,19 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/warehouse/{code}")]
         [ValidateModelState]
         [SwaggerOperation("GetWarehouse")]
-        [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
-        public virtual IActionResult GetWarehouse([FromRoute][Required]string code)
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.Warehouse), description: "Successful response")]
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "An error occurred loading.")]
+        public virtual IActionResult GetWarehouse([FromRoute][Required] string code)
         {
             if (!string.IsNullOrWhiteSpace(code))
             {
                 if (code == "ERROR")
-                    return StatusCode(400, default(Error));
+                    return StatusCode(400, default(DTOs.Error));
 
-                return StatusCode(200, default(Warehouse));
+                BusinessLogic.Entities.Warehouse BlWh = null;
+                BlWh = this.warehouseLogic.ExportWarehouses();
+                var ServiceWh = this.Mapper.Map<DTOs.Warehouse>(BlWh);
+                return StatusCode(200, default(DTOs.Warehouse));
             }
 
             return StatusCode(404);
@@ -89,13 +100,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/warehouse")]
         [ValidateModelState]
         [SwaggerOperation("ImportWarehouses")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult ImportWarehouses([FromBody]Warehouse body)
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
+        public virtual IActionResult ImportWarehouses([FromBody] DTOs.Warehouse body)
         {
             if (body != null)
-                return StatusCode(200);
+            {
+                var BlWh = this.Mapper.Map<BusinessLogic.Entities.Warehouse>(body);
+                this.warehouseLogic.ImportWarehouses(BlWh);
+                return this.Ok();
+            }
 
-            return StatusCode(400, default(Error));
+            return StatusCode(400, default(DTOs.Error));
         }
     }
 }

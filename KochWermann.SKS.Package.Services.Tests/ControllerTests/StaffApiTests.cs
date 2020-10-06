@@ -2,6 +2,8 @@ using NUnit.Framework;
 using KochWermann.SKS.Package.Services.Controllers;
 using KochWermann.SKS.Package.Services.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using KochWermann.SKS.Package.Services.Mapper;
+using AutoMapper;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
@@ -12,7 +14,14 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [SetUp]
         public void Setup()
         {
-            staffApiController = new StaffApiController();
+            //auto mapper configuration
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new BlMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            staffApiController = new StaffApiController(mapper);
         }
 
         [Test]
