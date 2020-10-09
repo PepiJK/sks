@@ -105,6 +105,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
         {
             if (body != null)
             {
+                //test
+                // DTOs.Hop h = body.NextHops[0].Hop;
+                // if (h is DTOs.Warehouse)
+                // {
+                //     int i = 0;
+                // }
+
                 var BlWh = this.Mapper.Map<BusinessLogic.Entities.Warehouse>(body);
                 this.warehouseLogic.ImportWarehouses(BlWh);
                 return this.Ok();

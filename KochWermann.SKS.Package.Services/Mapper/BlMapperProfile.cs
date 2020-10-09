@@ -13,7 +13,17 @@ namespace KochWermann.SKS.Package.Services.Mapper
         /// </summary>
         public BlMapperProfile()
         {
-            this.CreateMap<ServiceEntities.Hop, BlEntities.Hop>().ReverseMap();
+            this.CreateMap<ServiceEntities.Hop, BlEntities.Hop>()
+            .Include<ServiceEntities.Truck, BlEntities.Truck>()
+            .Include<ServiceEntities.Warehouse, BlEntities.Warehouse>()
+            .Include<ServiceEntities.Transferwarehouse, BlEntities.Transferwarehouse>();
+
+            this.CreateMap<BlEntities.Hop, ServiceEntities.Hop>()
+            .Include<BlEntities.Truck, ServiceEntities.Truck>()
+            .Include<BlEntities.Warehouse, ServiceEntities.Warehouse>()
+            .Include<BlEntities.Transferwarehouse, ServiceEntities.Transferwarehouse>();
+
+
             this.CreateMap<ServiceEntities.Warehouse, BlEntities.Warehouse>().ReverseMap();
             this.CreateMap<ServiceEntities.Truck, BlEntities.Truck>().ReverseMap();
             this.CreateMap<ServiceEntities.Transferwarehouse, BlEntities.Transferwarehouse>().ReverseMap();
@@ -21,7 +31,6 @@ namespace KochWermann.SKS.Package.Services.Mapper
             this.CreateMap<ServiceEntities.WarehouseNextHops, BlEntities.WarehouseNextHops>().ReverseMap();
             this.CreateMap<ServiceEntities.HopArrival, BlEntities.HopArrival>().ReverseMap();
             this.CreateMap<ServiceEntities.Recipient, BlEntities.Recipient>().ReverseMap();
-            this.CreateMap<ServiceEntities.Error, BlEntities.Error>().ReverseMap();
             this.CreateMap<ServiceEntities.GeoCoordinate, BlEntities.GeoCoordinate>().ReverseMap();
             
             this.CreateMap<ServiceEntities.Parcel, BlEntities.Parcel>();
