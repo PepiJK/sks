@@ -9,10 +9,10 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
         public HopValidator()
         {
             this.RuleFor(p => p.Code)
-                .Matches("/^[A-Z0-9]{9}$/");
+                .Matches(@"[A-Z0-9]{6,}");
 
             this.RuleFor(p => p.Description)
-                .Matches("/^[A-Za-z 0-9-]{1,}&/");
+                .Matches(@"[A-Za-zÄäÖöÜüß 0-9-]{1,}");
 
             this.RuleFor(p => p.HopType)
                 .NotNull();

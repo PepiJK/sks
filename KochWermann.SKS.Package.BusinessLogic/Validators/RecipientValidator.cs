@@ -11,16 +11,16 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
                 .Must(p => p.Equals("Österreich") || p.Equals("Austria"));
 
             this.RuleFor(p => p.PostalCode)
-                .Matches("/^A-([0-9]{4})$/");
+                .Matches(@"A-[0-9]{4}");
 
             this.RuleFor(p => p.Street)
-                .Matches("/^[A-Za-z]{3,} [0-9/A-Za-z]{1,}$/");
+                .Matches(@"[A-Za-z]{3,} [0-9/A-Za-z]{1,}");
 
             this.RuleFor (p=> p.City)
-                .Matches("/^[A-Z]{1}[A-Za-z -]{1,}&/");
+                .Matches(@"[A-Z]{1}[A-Za-z -]{1,}");
 
             this.RuleFor (p => p.Name)
-                .Matches("/^[A-Z]{1}[A-Za-z -]{1,}&/");
+                .Matches(@"[A-Z]{1}[A-Za-z -]{1,}");
         }
     } 
 }

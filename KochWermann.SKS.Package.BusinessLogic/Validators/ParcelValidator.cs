@@ -21,7 +21,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
                 .GreaterThan(0.0f);
 
             this.RuleFor(p => p.TrackingId)
-                .Matches("/^[A-Z0-9]{9}$/");
+                .Matches(@"[A-Z0-9]{9}");
 
             this.RuleFor(p => p.VisitedHops)
                 .NotNull();
