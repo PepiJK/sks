@@ -9,6 +9,24 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
         {
             this.RuleFor(p => p.TraveltimeMins)
                 .NotNull();
+
+            this.When(p => p.Hop is Warehouse, () =>
+            {
+                RuleFor(p => p.Hop as Warehouse)
+                .SetValidator(new WarehouseValidator());
+            });
+
+            this.When(p => p.Hop is Truck, () =>
+            {
+                RuleFor(p => p.Hop as Truck)
+                .SetValidator(new TruckValidator());
+            });
+
+            this.When(p => p.Hop is Transferwarehouse, () =>
+            {
+                RuleFor(p => p.Hop as Transferwarehouse)
+                .SetValidator(new TransferWarehouseValidator());
+            });
         }
     }
 }
