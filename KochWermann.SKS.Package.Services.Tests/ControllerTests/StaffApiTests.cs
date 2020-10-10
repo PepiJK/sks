@@ -4,12 +4,14 @@ using KochWermann.SKS.Package.Services.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using KochWermann.SKS.Package.Services.Mapper;
 using AutoMapper;
+using Moq;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
     public class StaffApiTests
     {
-        private StaffApiController staffApiController;
+        private StaffApiController _staffApiController;
         
         [SetUp]
         public void Setup()
@@ -21,13 +23,18 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             });
             var mapper = mockMapper.CreateMapper();
 
-            staffApiController = new StaffApiController(mapper);
+            //moq configuration
+            var mock = new Mock<ITrackingLogic>();
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(It.IsRegex("^[A-Z0-9]{9}$")));
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(It.IsRegex("^[A-Z0-9]{9}$"), It.IsRegex("/^[A-Z]{4}\\d{1,4}$/")));
+
+            _staffApiController = new StaffApiController(mapper, mock.Object);
         }
 
         [Test]
         public void Should_Report_Parcel_Delivery()
         {
-            var res = staffApiController.ReportParcelDelivery("PYJRB4HZ6") as StatusCodeResult;
+            var res = _staffApiController.ReportParcelDelivery("PYJRB4HZ6") as StatusCodeResult;
             Assert.IsNotNull(res);
             Assert.AreEqual(200, res.StatusCode);
         }
@@ -35,7 +42,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [Test]
         public void Should_Not_Report_Parcel_Delivery()
         {
-            var res = staffApiController.ReportParcelDelivery(null) as StatusCodeResult;
+            var res = _staffApiController.ReportParcelDelivery(null) as StatusCodeResult;
             Assert.IsNotNull(res);
             Assert.AreEqual(404, res.StatusCode);
         }
@@ -43,7 +50,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [Test]
         public void Should_Report_Parcel_Hop()
         {
-            var res = staffApiController.ReportParcelHop("PYJRB4HZ6", "TEST\\d") as StatusCodeResult;
+            var res = _staffApiController.ReportParcelHop("PYJRB4HZ6", "TEST\\d") as StatusCodeResult;
             Assert.IsNotNull(res);
             Assert.AreEqual(200, res.StatusCode);
         }
@@ -51,7 +58,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [Test]
         public void Should_Not_Report_Parcel_Hop()
         {
-            var res = staffApiController.ReportParcelHop(null, null) as StatusCodeResult;
+            var res = _staffApiController.ReportParcelHop(null, null) as StatusCodeResult;
             Assert.IsNotNull(res);
             Assert.AreEqual(404, res.StatusCode);
         }

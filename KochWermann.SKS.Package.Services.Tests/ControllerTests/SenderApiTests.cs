@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using AutoMapper;
 using KochWermann.SKS.Package.Services.Mapper;
+using Moq;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
     public class SenderApiTests
     {
-        private SenderApiController senderApiController;
+        private SenderApiController _senderApiController;
         
         [SetUp]
         public void Setup()
@@ -22,23 +24,27 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             });
             var mapper = mockMapper.CreateMapper();
 
-            senderApiController = new SenderApiController(mapper);
+            //moq configuration
+            var mock = new Mock<ITrackingLogic>();
+            mock.Setup(trackingLogic => trackingLogic.SubmitParcel(It.IsAny<BusinessLogic.Entities.Parcel>())).Returns(new BusinessLogic.Entities.Parcel());
+
+            _senderApiController = new SenderApiController(mapper, mock.Object);
         }
 
         [Test]
         public void Should_Submit_Parcel()
         {
-            var res = senderApiController.SubmitParcel(new Parcel()) as IStatusCodeActionResult;
-            Assert.IsNotNull(res);
-            Assert.AreEqual(200, res.StatusCode);
+            var res = _senderApiController.SubmitParcel(new Parcel());
+            Assert.IsInstanceOf<OkObjectResult>(res);
+            Assert.IsInstanceOf<NewParcelInfo>((res as OkObjectResult).Value);
         }
 
         [Test]
         public void Should_Not_Submit_Parcel()
         {
-            var res = senderApiController.SubmitParcel(null) as IStatusCodeActionResult;
-            Assert.IsNotNull(res);
-            Assert.AreEqual(400, res.StatusCode);
+            var res = _senderApiController.SubmitParcel(null);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Error>((res as BadRequestObjectResult).Value);
         }
     }
 }

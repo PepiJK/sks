@@ -26,6 +26,8 @@ using KochWermann.SKS.Package.Services.Filters;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using KochWermann.SKS.Package.BusinessLogic.Validators;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using KochWermann.SKS.Package.BusinessLogic;
 
 namespace KochWermann.SKS.Package.Services
 {
@@ -35,8 +37,7 @@ namespace KochWermann.SKS.Package.Services
     public class Startup
     {
         private readonly IWebHostEnvironment _hostingEnv;
-
-        private IConfiguration Configuration { get; }
+        private IConfiguration _configuration { get; }
 
         /// <summary>
         /// Constructor
@@ -46,7 +47,7 @@ namespace KochWermann.SKS.Package.Services
         public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
             _hostingEnv = env;
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -55,9 +56,15 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // BusinessLogic injection
+            services.AddSingleton<ITrackingLogic, TrackingLogic>();
+            services.AddSingleton<IWarehouseLogic, WarehouseLogic>();
+            services.AddSingleton<IWebhookLogic, WebhookLogic>();
+
             // Automapper
             services.AddAutoMapper(typeof(Startup));
-            // Add framework services.
+
+            // Add framework services
             services
                 .AddMvc(options =>
                 {

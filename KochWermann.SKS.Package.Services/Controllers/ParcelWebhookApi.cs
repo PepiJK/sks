@@ -41,9 +41,9 @@ namespace KochWermann.SKS.Package.Services.Controllers
         public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         { 
             if (!string.IsNullOrWhiteSpace(trackingId))
-                return StatusCode(200, default(WebhookResponses));
+                return Ok(default(WebhookResponses));
             
-            return StatusCode(404);
+            return NotFound();
         }
 
         /// <summary>
@@ -61,9 +61,9 @@ namespace KochWermann.SKS.Package.Services.Controllers
         public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromQuery][Required()]string url)
         { 
             if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(url))
-                return StatusCode(200, default(WebhookResponse));
+                return Ok(default(WebhookResponse));
             
-            return StatusCode(404);
+            return NotFound();
         }
 
         /// <summary>
@@ -79,9 +79,9 @@ namespace KochWermann.SKS.Package.Services.Controllers
         public virtual IActionResult UnsubscribeParcelWebhook([FromRoute][Required]long? id)
         { 
             if (id != null && id > 0)
-                return StatusCode(200);
+                return Ok();
 
-            return StatusCode(404);
+            return NotFound();
         }
     }
 }

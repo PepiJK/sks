@@ -21,6 +21,7 @@ using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic;
 using KochWermann.SKS.Package.BusinessLogic.Entities;
 using KochWermann.SKS.Package.Services.Mapper;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -30,16 +31,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class WarehouseManagementApiController : ControllerBase
     {
-        private readonly IMapper Mapper;
+        private readonly IMapper _mapper;
+        private readonly IWarehouseLogic _warehouseLogic;
+        
         /// <summary>
         /// 
         /// </summary>
-        public WarehouseManagementApiController(IMapper mapper)
+        public WarehouseManagementApiController(IMapper mapper, IWarehouseLogic warehouseLogic)
         {
-            Mapper = mapper;
+            _mapper = mapper;
+            _warehouseLogic = warehouseLogic;
         }
-
-        private WarehouseLogic warehouseLogic = new WarehouseLogic();
 
         /// <summary>
         /// Exports the hierarchy of Warehouse and Truck objects. 
@@ -55,10 +57,11 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "An error occurred loading.")]
         public virtual IActionResult ExportWarehouses()
         {
-            BusinessLogic.Entities.Warehouse BlWh = null;
-            BlWh = this.warehouseLogic.ExportWarehouses();
-            var ServiceWh = this.Mapper.Map<DTOs.Warehouse>(BlWh);
-            return StatusCode(200, default(DTOs.Warehouse));
+            //TODO: Implement BadRequest response
+
+            var blWarehouse = _warehouseLogic.ExportWarehouses();
+            var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
+            return Ok(serviceWarehouse);
         }
 
         /// <summary>
@@ -79,15 +82,14 @@ namespace KochWermann.SKS.Package.Services.Controllers
             if (!string.IsNullOrWhiteSpace(code))
             {
                 if (code == "ERROR")
-                    return StatusCode(400, default(DTOs.Error));
+                    return BadRequest(new DTOs.Error { ErrorMessage = "code is ERROR" });
 
-                BusinessLogic.Entities.Warehouse BlWh = null;
-                BlWh = this.warehouseLogic.ExportWarehouses();
-                var ServiceWh = this.Mapper.Map<DTOs.Warehouse>(BlWh);
-                return StatusCode(200, default(DTOs.Warehouse));
+                var blWarehouse = _warehouseLogic.GetWarehouse(code);
+                var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
+                return Ok(serviceWarehouse);
             }
 
-            return StatusCode(404);
+            return NotFound();
         }
 
         /// <summary>
@@ -105,12 +107,12 @@ namespace KochWermann.SKS.Package.Services.Controllers
         {
             if (body != null)
             {
-                var BlWh = this.Mapper.Map<BusinessLogic.Entities.Warehouse>(body);
-                this.warehouseLogic.ImportWarehouses(BlWh);
-                return this.Ok();
+                var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(body);
+                _warehouseLogic.ImportWarehouses(blWarehouse);
+                return Ok();
             }
 
-            return StatusCode(400, default(DTOs.Error));
+            return BadRequest(new DTOs.Error { ErrorMessage = "body is null" });
         }
     }
 }

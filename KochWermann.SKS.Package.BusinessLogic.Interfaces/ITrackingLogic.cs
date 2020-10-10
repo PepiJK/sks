@@ -7,17 +7,17 @@ namespace KochWermann.SKS.Package.BusinessLogic.Interfaces
         /// <summary>
         /// Transfer an existing parcel into the system from the service of a logistics partner.
         /// </summary>
-        Parcel TransitionParcel(string trackingId);
+        Parcel TransitionParcel(Parcel parcel, string trackingId);
 
         /// <summary>
-        /// Get a certain parcel by tracking ID.
+        /// Find the latest state of a parcel by its tracking ID. 
         /// </summary>
-        Parcel GetParcel(string trackingId);
+        Parcel TrackParcel(string trackingId);
 
         /// <summary>
         /// Submit a new parcel.
         /// </summary>
-        void SubmitParcel(Parcel parcel);
+        Parcel SubmitParcel(Parcel parcel);
 
         /// <summary>
         /// Report that a parcel has been delivered at it's final destination address.
