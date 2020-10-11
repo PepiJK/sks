@@ -18,8 +18,9 @@ namespace KochWermann.SKS.Package.BusinessLogic
             Hop h = warehouse.NextHops[0].Hop;
             if (h is Warehouse)
             {
-                int i = 0;
+                
             }
+            
             IValidator<Warehouse> validator = new WarehouseValidator();
             var validationResult = validator.Validate(warehouse);
 
