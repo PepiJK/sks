@@ -65,7 +65,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [Test]
         public void Should_Not_Report_Parcel_Hop()
         {
-            var res = _staffApiController.ReportParcelHop(null, null) as StatusCodeResult;
+            var res = _staffApiController.ReportParcelHop(null, null);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<NotFoundResult>(res);
         }

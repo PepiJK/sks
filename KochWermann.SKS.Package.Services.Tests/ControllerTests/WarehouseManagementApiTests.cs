@@ -8,13 +8,14 @@ using KochWermann.SKS.Package.Services.Mapper;
 using Moq;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using FizzWare.NBuilder;
+using System.Collections.Generic;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
     public class WarehouseManagementApiTests
     {
         private WarehouseManagementApiController _warehouseManagementApiController;
-        private Warehouse _testWarehouse;
+        private Services.DTOs.Warehouse _testWarehouse;
         private string _testCode = "CODE";
 
         [SetUp]
@@ -28,14 +29,14 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             var mapper = mockMapper.CreateMapper();
 
             //generate test object
-            _testWarehouse = Builder<Warehouse>.CreateNew()
+            _testWarehouse = Builder<Services.DTOs.Warehouse>.CreateNew()
                 .With(x => x.Level = 0)
-                .With(x => x.LocationCoordinates = new GeoCoordinate{Lat = 50, Lon = 50})
+                .With(x => x.LocationCoordinates = new Services.DTOs.GeoCoordinate{Lat = 50, Lon = 50})
                 .With(x => x.HopType = "Warehouse")
-                .With(x => x.NextHops = new System.Collections.Generic.List<WarehouseNextHops>{
-                    Builder<WarehouseNextHops>.CreateNew()
+                .With(x => x.NextHops = new List<Services.DTOs.WarehouseNextHops>{
+                    Builder<Services.DTOs.WarehouseNextHops>.CreateNew()
                         .With(x => x.Hop = Builder<Hop>.CreateNew()
-                            .With(x => x.LocationCoordinates = new GeoCoordinate{Lat = 100, Lon = 100})
+                            .With(x => x.LocationCoordinates = new Services.DTOs.GeoCoordinate{Lat = 100, Lon = 100})
                         .Build())
                     .Build()
                 })
@@ -63,7 +64,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             var res = _warehouseManagementApiController.ExportWarehouses();
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<OkObjectResult>(res);
-            Assert.IsInstanceOf<Warehouse>((res as OkObjectResult).Value);
+            Assert.IsInstanceOf<Services.DTOs.Warehouse>((res as OkObjectResult).Value);
         }
 
         [Test]
@@ -72,7 +73,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             var res = _warehouseManagementApiController.GetWarehouse(_testCode);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<OkObjectResult>(res);
-            Assert.IsInstanceOf<Warehouse>((res as OkObjectResult).Value);
+            Assert.IsInstanceOf<Services.DTOs.Warehouse>((res as OkObjectResult).Value);
         }
 
         [Test]
@@ -96,7 +97,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _warehouseManagementApiController.ImportWarehouses(null);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<Error>((res as BadRequestObjectResult).Value);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
     }
 }

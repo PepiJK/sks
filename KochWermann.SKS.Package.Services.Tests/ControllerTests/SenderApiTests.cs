@@ -47,7 +47,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _senderApiController.SubmitParcel(_testParcel);
             Assert.IsInstanceOf<OkObjectResult>(res);
-            Assert.IsInstanceOf<NewParcelInfo>((res as OkObjectResult).Value);
+            Assert.IsInstanceOf<Services.DTOs.NewParcelInfo>((res as OkObjectResult).Value);
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _senderApiController.SubmitParcel(null);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
-            Assert.IsInstanceOf<Error>((res as BadRequestObjectResult).Value);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
     }
 }
