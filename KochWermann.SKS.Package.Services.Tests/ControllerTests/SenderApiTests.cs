@@ -7,12 +7,14 @@ using AutoMapper;
 using KochWermann.SKS.Package.Services.Mapper;
 using Moq;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using FizzWare.NBuilder;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
     public class SenderApiTests
     {
         private SenderApiController _senderApiController;
+        private Parcel _testParcel;
         
         [SetUp]
         public void Setup()
@@ -24,17 +26,26 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             });
             var mapper = mockMapper.CreateMapper();
 
-            //moq configuration
-            var mock = new Mock<ITrackingLogic>();
-            mock.Setup(trackingLogic => trackingLogic.SubmitParcel(It.IsAny<BusinessLogic.Entities.Parcel>())).Returns(new BusinessLogic.Entities.Parcel());
+            //generate test objects
+            var recipients = Builder<Recipient>.CreateListOfSize(2).Build();
+            _testParcel = Builder<Parcel>.CreateNew()
+                .With(x => x.Recipient = recipients[0])
+                .With(x => x.Sender = recipients[1])
+            .Build();
 
+            //mock tracking logic
+            var mock = new Mock<ITrackingLogic>();
+            mock.Setup(trackingLogic => trackingLogic.SubmitParcel(
+                It.IsAny<BusinessLogic.Entities.Parcel>()
+            )).Returns(new BusinessLogic.Entities.Parcel());
+            
             _senderApiController = new SenderApiController(mapper, mock.Object);
         }
 
         [Test]
         public void Should_Submit_Parcel()
         {
-            var res = _senderApiController.SubmitParcel(new Parcel());
+            var res = _senderApiController.SubmitParcel(_testParcel);
             Assert.IsInstanceOf<OkObjectResult>(res);
             Assert.IsInstanceOf<NewParcelInfo>((res as OkObjectResult).Value);
         }

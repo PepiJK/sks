@@ -12,6 +12,8 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
     public class StaffApiTests
     {
         private StaffApiController _staffApiController;
+        private string _testTrackingId = "PYJRB4HZ6";
+        private string _testCode = "TEST\\d";
         
         [SetUp]
         public void Setup()
@@ -23,10 +25,15 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             });
             var mapper = mockMapper.CreateMapper();
 
-            //moq configuration
+            //mock tracking logic
             var mock = new Mock<ITrackingLogic>();
-            mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(It.IsRegex("^[A-Z0-9]{9}$")));
-            mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(It.IsRegex("^[A-Z0-9]{9}$"), It.IsRegex("/^[A-Z]{4}\\d{1,4}$/")));
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(
+                It.IsRegex("^[A-Z0-9]{9}$")
+            ));
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
+                It.IsRegex("^[A-Z0-9]{9}$"),
+                It.IsRegex("/^[A-Z]{4}\\d{1,4}$/")
+            ));
 
             _staffApiController = new StaffApiController(mapper, mock.Object);
         }
@@ -34,25 +41,25 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [Test]
         public void Should_Report_Parcel_Delivery()
         {
-            var res = _staffApiController.ReportParcelDelivery("PYJRB4HZ6") as StatusCodeResult;
+            var res = _staffApiController.ReportParcelDelivery(_testTrackingId);
             Assert.IsNotNull(res);
-            Assert.AreEqual(200, res.StatusCode);
+            Assert.IsInstanceOf<OkResult>(res);
         }
 
         [Test]
         public void Should_Not_Report_Parcel_Delivery()
         {
-            var res = _staffApiController.ReportParcelDelivery(null) as StatusCodeResult;
+            var res = _staffApiController.ReportParcelDelivery(null);
             Assert.IsNotNull(res);
-            Assert.AreEqual(404, res.StatusCode);
+            Assert.IsInstanceOf<NotFoundResult>(res);
         }
 
         [Test]
         public void Should_Report_Parcel_Hop()
         {
-            var res = _staffApiController.ReportParcelHop("PYJRB4HZ6", "TEST\\d") as StatusCodeResult;
+            var res = _staffApiController.ReportParcelHop(_testTrackingId, _testCode);
             Assert.IsNotNull(res);
-            Assert.AreEqual(200, res.StatusCode);
+            Assert.IsInstanceOf<OkResult>(res);
         }
 
         [Test]
@@ -60,7 +67,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _staffApiController.ReportParcelHop(null, null) as StatusCodeResult;
             Assert.IsNotNull(res);
-            Assert.AreEqual(404, res.StatusCode);
+            Assert.IsInstanceOf<NotFoundResult>(res);
         }
     }
 }
