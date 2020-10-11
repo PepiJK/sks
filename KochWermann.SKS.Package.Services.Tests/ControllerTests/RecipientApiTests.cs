@@ -5,12 +5,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using AutoMapper;
 using KochWermann.SKS.Package.Services.Mapper;
+using Moq;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using FizzWare.NBuilder;
+using System.Collections.Generic;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
     public class RecipientApiTests
     {
-        private RecipientApiController recipientApiController;
+        private RecipientApiController _recipientApiController;
+        private string _testTrackingId = "PYJRB4HZ6";
         
         [SetUp]
         public void Setup()
@@ -22,23 +27,31 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             });
             var mapper = mockMapper.CreateMapper();
 
-            recipientApiController = new RecipientApiController(mapper);
+            //mock tracking logic
+            var mock = new Mock<ITrackingLogic>();
+            mock.Setup(trackingLogic => trackingLogic.TrackParcel(
+                It.IsRegex("^[A-Z0-9]{9}$")
+            )).Returns(new BusinessLogic.Entities.Parcel());
+
+            //create api controller instance
+            _recipientApiController = new RecipientApiController(mapper, mock.Object);
         }
 
         [Test]
         public void Should_Track_Parcel()
         {
-            var res = recipientApiController.TrackParcel("PYJRB4HZ6") as IStatusCodeActionResult;
+            var res = _recipientApiController.TrackParcel(_testTrackingId);
             Assert.IsNotNull(res);
-            Assert.AreEqual(200, res.StatusCode);
+            Assert.IsInstanceOf<OkObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.TrackingInformation>((res as OkObjectResult).Value);
         }
 
         [Test]
         public void Should_Not_Track_Parcel()
         {
-            var res = recipientApiController.TrackParcel(null) as IStatusCodeActionResult;
+            var res = _recipientApiController.TrackParcel(null);
             Assert.IsNotNull(res);
-            Assert.AreEqual(404, res.StatusCode);
+            Assert.IsInstanceOf<NotFoundResult>(res);
         }
     }
 }

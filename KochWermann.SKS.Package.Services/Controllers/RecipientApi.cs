@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -29,16 +30,18 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class RecipientApiController : ControllerBase
     {
-        private readonly IMapper Mapper;
+        private readonly IMapper _mapper;
+        private ITrackingLogic _trackingLogic;
+
         /// <summary>
         /// 
         /// </summary>
-        public RecipientApiController(IMapper mapper)
+        public RecipientApiController(IMapper mapper, ITrackingLogic trackingLogic)
         {
-            Mapper = mapper;
+            _mapper = mapper;
+            _trackingLogic = trackingLogic;
         }
-
-        private TrackingLogic trackingLogic = new TrackingLogic();
+        
         /// <summary>
         /// Find the latest state of a parcel by its tracking ID. 
         /// </summary>
@@ -52,20 +55,20 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerOperation("TrackParcel")]
         [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")] string trackingId)
+        public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId)
         {
+            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
             if (!string.IsNullOrWhiteSpace(trackingId))
             {
                 if (trackingId == "ERROR1234")
-                    return StatusCode(400, default(Error));
+                    return BadRequest(new Error{ ErrorMessage = "trackingId is ERROR1234" });
 
-                BusinessLogic.Entities.Parcel parcel = null;
-                parcel = this.trackingLogic.TrackParcel(trackingId);
-                var ServiceWh = this.Mapper.Map<DTOs.Parcel>(parcel);
-                return StatusCode(200, default(TrackingInformation));
+                var blParcel = _trackingLogic.TrackParcel(trackingId);
+                var serviceTrackingInformation = _mapper.Map<DTOs.TrackingInformation>(blParcel);
+                return Ok(serviceTrackingInformation);
             }
 
-            return StatusCode(404);
+            return NotFound();
         }
     }
 }

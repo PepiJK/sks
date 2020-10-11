@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 { 
@@ -29,16 +30,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class StaffApiController : ControllerBase
     { 
-        private readonly IMapper Mapper;
+        private readonly IMapper _mapper;
+        private ITrackingLogic _trackingLogic;
+        
         /// <summary>
         /// 
         /// </summary>
-        public StaffApiController(IMapper mapper)
+        public StaffApiController(IMapper mapper, ITrackingLogic trackingLogic)
         {
-            Mapper = mapper;
+            _mapper = mapper;
+            _trackingLogic = trackingLogic;
         }
-
-        private TrackingLogic trackingLogic = new TrackingLogic();
 
         /// <summary>
         /// Report that a Parcel has been delivered at it&#x27;s final destination address. 
@@ -54,16 +56,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         {
+            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
             if (!string.IsNullOrWhiteSpace(trackingId))
             {
                 if (trackingId == "ERROR1234")
-                    return StatusCode(400, default(Error));
+                    return BadRequest(new Error{ ErrorMessage = "trackingId is ERROR1234" });
 
-                this.trackingLogic.ReportParcelDelivery(trackingId);
-                return this.Ok();    
+                _trackingLogic.ReportParcelDelivery(trackingId);
+                return Ok();
             }
 
-            return StatusCode(404);
+            return NotFound();
         }
 
         /// <summary>
@@ -81,16 +84,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromRoute][Required][RegularExpression("/^[A-Z]{4}\\d{1,4}$/")]string code)
         {
-             if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(code))
+            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
+            if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(code))
             {
                 if (trackingId == "ERROR1234" || code == "ERRO\\d")
-                    return StatusCode(400, default(Error));
+                    return BadRequest(new Error{ ErrorMessage = "trackingId is ERROR1234 or code is ERRO\\d" });
                 
-                this.trackingLogic.ReportParcelHop(trackingId, code);
-                return StatusCode(200);
+                _trackingLogic.ReportParcelHop(trackingId, code);
+                return Ok();
             }
 
-            return StatusCode(404);
+            return NotFound();
         }
     }
 }

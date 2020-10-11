@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 { 
@@ -29,16 +30,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class SenderApiController : ControllerBase
     { 
-        private readonly IMapper Mapper;
+        private readonly IMapper _mapper;
+        private ITrackingLogic _trackingLogic;
+
         /// <summary>
         /// 
         /// </summary>
-        public SenderApiController(IMapper mapper)
+        public SenderApiController(IMapper mapper, ITrackingLogic trackingLogic)
         {
-            Mapper = mapper;
+            _mapper = mapper;
+            _trackingLogic = trackingLogic;
         }
-
-        private TrackingLogic trackingLogic = new TrackingLogic();
 
         /// <summary>
         /// Submit a new parcel to the logistics service. 
@@ -56,12 +58,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
         {
             if (body != null)
             {
-                var parcel = this.Mapper.Map<BusinessLogic.Entities.Parcel>(body);
-                this.trackingLogic.SubmitParcel(parcel);
-                return this.Ok();
+                var blParcel = _mapper.Map<BusinessLogic.Entities.Parcel>(body);
+                var blSubmitedParcel = _trackingLogic.SubmitParcel(blParcel);
+                var serviceNewParcelInfo = _mapper.Map<NewParcelInfo>(blSubmitedParcel);
+                return Ok(serviceNewParcelInfo);
             }
 
-            return StatusCode(400, default(Error));
+            return BadRequest(new Error{ ErrorMessage = "body is null" });
         }
     }
 }

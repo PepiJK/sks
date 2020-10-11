@@ -3,34 +3,49 @@ using KochWermann.SKS.Package.BusinessLogic.Entities;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using FluentValidation;
 using KochWermann.SKS.Package.BusinessLogic.Validators;
+using System;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
     public class TrackingLogic : ITrackingLogic
     {
-        public Parcel TransitionParcel(string trackingId)
+        public Parcel TransitionParcel(Parcel parcel, string trackingId)
         {
+            if (string.IsNullOrWhiteSpace(trackingId)) throw new NullReferenceException();
+
+            IValidator<Parcel> validator = new ParcelValidator();
+            var validationResult = validator.Validate(parcel);
+
+            if(validationResult.IsValid)
+            {
+                return new Parcel();
+            }
+            else
+            {
+                //Unit test sends empty parcel =>
+                throw new FluentValidation.ValidationException("parcel " + validationResult.Errors.ToString()); 
+            }
+        }
+
+        public Parcel TrackParcel(string trackingId)
+        {
+            if (string.IsNullOrWhiteSpace(trackingId)) throw new NullReferenceException();
             return new Parcel();
         }
 
-        public Parcel GetParcel(string trackingId)
-        {
-            return new Parcel();
-        }
-
-        public void SubmitParcel(Parcel parcel)
+        public Parcel SubmitParcel(Parcel parcel)
         {
             IValidator<Parcel> validator = new ParcelValidator();
             var validationResult = validator.Validate(parcel);
 
             if(validationResult.IsValid)
             {
-
+                return new Parcel();
             }
             else
             {
                 //Unit test sends empty parcel =>
-                //throw new FluentValidation.ValidationException("new parcel "+ validationResult.Errors.ToString()); 
+                throw new FluentValidation.ValidationException("parcel " + validationResult.Errors.ToString()); 
             }
         }
 
@@ -43,10 +58,5 @@ namespace KochWermann.SKS.Package.BusinessLogic
         {
 
         }
-
-        public Parcel TrackParcel(string trackingID)
-        {
-            return new Parcel();
-        }    
     }
 }

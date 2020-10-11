@@ -3,7 +3,7 @@ using KochWermann.SKS.Package.BusinessLogic.Entities;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Validators
 {
-       public class RecipientValidator : AbstractValidator<Recipient>
+    public class RecipientValidator : AbstractValidator<Recipient>
     {
         public RecipientValidator()
         {

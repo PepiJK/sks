@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using KochWermann.SKS.Package.Services.DTOs;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic;
+using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 { 
@@ -29,16 +30,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
     [ApiController]
     public class LogisticsPartnerApiController : ControllerBase
     { 
-        private readonly IMapper Mapper;
+        private readonly IMapper _mapper;
+        private ITrackingLogic _trackingLogic;
+        
         /// <summary>
         /// 
         /// </summary>
-        public LogisticsPartnerApiController(IMapper mapper)
+        public LogisticsPartnerApiController(IMapper mapper, ITrackingLogic trackingLogic)
         {
-            Mapper = mapper;
+            _mapper = mapper;
+            _trackingLogic = trackingLogic;
         }
-
-        private TrackingLogic trackingLogic = new TrackingLogic();
 
         /// <summary>
         /// Transfer an existing parcel into the system from the service of a logistics partner. 
@@ -54,16 +56,18 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(NewParcelInfo), description: "Successfully transitioned the parcel")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult TransitionParcel([FromBody]Parcel body, [FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
-        { 
+        {
+            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
             if (body != null && !string.IsNullOrWhiteSpace(trackingId))
             {
-                BusinessLogic.Entities.Parcel parcel = null;
-                parcel = this.trackingLogic.TransitionParcel(trackingId);
-                var ServiceParcel = this.Mapper.Map<DTOs.Parcel>(parcel);
-                return StatusCode(200, default(NewParcelInfo));
+                var blParcel = _mapper.Map<BusinessLogic.Entities.Parcel>(body);
+                var blTransitionedParcel = _trackingLogic.TransitionParcel(blParcel, trackingId);
+                var serviceNewParcelInfo = _mapper.Map<DTOs.NewParcelInfo>(blTransitionedParcel);
+                return Ok(serviceNewParcelInfo);
             }
              
-            return StatusCode(400, default(Error));
+            return BadRequest(new Error{ ErrorMessage = "body or trackingId is null or whitespace" });
         }
     }
 }
+

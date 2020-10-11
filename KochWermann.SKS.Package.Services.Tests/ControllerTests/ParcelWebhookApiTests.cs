@@ -8,60 +8,60 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
     public class ParcelWebhookApiTests
     {
-        private ParcelWebhookApiController parcelWebhookApiController;
+        private ParcelWebhookApiController _parcelWebhookApiController;
         
         [SetUp]
         public void Setup()
         {
-            parcelWebhookApiController = new ParcelWebhookApiController();
+            _parcelWebhookApiController = new ParcelWebhookApiController();
         }
 
         [Test]
         public void Should_List_Parcel_Webhooks()
         {
-            var res = parcelWebhookApiController.ListParcelWebhooks("PYJRB4HZ6") as IStatusCodeActionResult;
+            var res = _parcelWebhookApiController.ListParcelWebhooks("PYJRB4HZ6");
             Assert.IsNotNull(res);
-            Assert.AreEqual(200, res.StatusCode);
+            Assert.IsInstanceOf<OkObjectResult>(res);
         }
 
         [Test]
         public void Should_Not_List_Parcel_Webhooks()
         {
-            var res = parcelWebhookApiController.ListParcelWebhooks(null) as IStatusCodeActionResult;
+            var res = _parcelWebhookApiController.ListParcelWebhooks(null);
             Assert.IsNotNull(res);
-            Assert.AreEqual(404, res.StatusCode);
+            Assert.IsInstanceOf<NotFoundResult>(res);
         }
 
         [Test]
         public void Should_Subscribe_Parcel_Webhook()
         {
-            var res = parcelWebhookApiController.SubscribeParcelWebhook("PYJRB4HZ6", "https://www.google.com") as IStatusCodeActionResult;
+            var res = _parcelWebhookApiController.SubscribeParcelWebhook("PYJRB4HZ6", "https://www.google.com");
             Assert.IsNotNull(res);
-            Assert.AreEqual(200, res.StatusCode);
+            Assert.IsInstanceOf<OkObjectResult>(res);
         }
 
         [Test]
         public void Should_Not_Subscribe_Parcel_Webhook()
         {
-            var res = parcelWebhookApiController.SubscribeParcelWebhook(null, null) as IStatusCodeActionResult;
+            var res = _parcelWebhookApiController.SubscribeParcelWebhook(null, null);
             Assert.IsNotNull(res);
-            Assert.AreEqual(404, res.StatusCode);
+            Assert.IsInstanceOf<NotFoundResult>(res);
         }
 
         [Test]
         public void Should_Unsubscribe_Parcel_Webhook()
         {
-            var res = parcelWebhookApiController.UnsubscribeParcelWebhook(123) as IStatusCodeActionResult;
+            var res = _parcelWebhookApiController.UnsubscribeParcelWebhook(123);
             Assert.IsNotNull(res);
-            Assert.AreEqual(200, res.StatusCode);
+            Assert.IsInstanceOf<OkResult>(res);
         }
 
         [Test]
         public void Should_Not_Unsubscribe_Parcel_Webhook()
         {
-            var res = parcelWebhookApiController.UnsubscribeParcelWebhook(null) as IStatusCodeActionResult;
+            var res = _parcelWebhookApiController.UnsubscribeParcelWebhook(null);
             Assert.IsNotNull(res);
-            Assert.AreEqual(404, res.StatusCode);
+            Assert.IsInstanceOf<NotFoundResult>(res);
         }
     }
 }

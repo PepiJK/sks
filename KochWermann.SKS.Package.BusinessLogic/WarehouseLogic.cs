@@ -29,7 +29,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
             }
             else
             {
-                throw new FluentValidation.ValidationException("new warehouse "+ validationResult.Errors.ToString()); 
+                throw new FluentValidation.ValidationException("new warehouse " + validationResult.Errors.ToString()); 
             }
         }
 
