@@ -13,7 +13,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
     {
         private StaffApiController _staffApiController;
         private string _testTrackingId = "PYJRB4HZ6";
-        private string _testCode = "TEST\\d";
+        private string _testCode = "TEST1234";
         
         [SetUp]
         public void Setup()

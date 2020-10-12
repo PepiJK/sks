@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Bus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.BusinessLogic.Entities", "KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj", "{35826B25-72F5-4867-B5C3-1368B8E79A01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.BusinessLogic.Tests", "KochWermann.SKS.Package.BusinessLogic.Tests\KochWermann.SKS.Package.BusinessLogic.Tests.csproj", "{11453825-2AC6-48A9-80C6-AA05600CC2B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,5 +116,17 @@ Global
 		{35826B25-72F5-4867-B5C3-1368B8E79A01}.Release|x64.Build.0 = Release|Any CPU
 		{35826B25-72F5-4867-B5C3-1368B8E79A01}.Release|x86.ActiveCfg = Release|Any CPU
 		{35826B25-72F5-4867-B5C3-1368B8E79A01}.Release|x86.Build.0 = Release|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Debug|x64.Build.0 = Debug|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Debug|x86.Build.0 = Debug|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Release|x64.ActiveCfg = Release|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Release|x64.Build.0 = Release|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Release|x86.ActiveCfg = Release|Any CPU
+		{11453825-2AC6-48A9-80C6-AA05600CC2B9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -85,6 +85,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromRoute][Required][RegularExpression("/^[A-Z]{4}\\d{1,4}$/")]string code)
         {
             //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
+            //TODO: is code Regex also wrong? What are potential matches?
             if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(code))
             {
                 if (trackingId == "ERROR1234" || code == "ERRO\\d")
