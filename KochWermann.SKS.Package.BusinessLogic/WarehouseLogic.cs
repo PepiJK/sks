@@ -45,10 +45,5 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
             return new Warehouse();
         }
-
-        private void ValidateWarehouse()
-        {
-
-        }
     }
 }
