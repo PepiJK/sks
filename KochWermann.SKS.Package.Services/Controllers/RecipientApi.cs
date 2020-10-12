@@ -31,7 +31,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
     public class RecipientApiController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private ITrackingLogic _trackingLogic;
+        private readonly ITrackingLogic _trackingLogic;
 
         /// <summary>
         /// 
