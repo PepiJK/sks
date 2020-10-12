@@ -19,15 +19,17 @@ namespace KochWermann.SKS.Package.BusinessLogic
         { 
             if (warehouse == null)
                 throw new ArgumentNullException();
-                
-            Hop h = warehouse.NextHops[0].Hop;
-            if (h is Warehouse)
-            {
-                // ?
-            }
             
             IValidator<Warehouse> validator = new WarehouseValidator();
             var validationResult = validator.Validate(warehouse);
+
+            var val = new NextHopValidator();
+            foreach (var nextHop in warehouse.NextHops)
+            {
+                var valResult = val.Validate(nextHop);
+                if (!valResult.IsValid)
+                    throw new ValidationException(valResult.Errors);
+            }
 
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors); 
@@ -42,6 +44,11 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 throw new ArgumentException("code does not match pattern.");
 
             return new Warehouse();
+        }
+
+        private void ValidateWarehouse()
+        {
+
         }
     }
 }

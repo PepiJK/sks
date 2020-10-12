@@ -3,7 +3,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Entities
     /// <summary>
     /// 
     /// </summary>
-    public partial class Transferwarehouse : Hop
+    public partial class TransferWarehouse : Hop
     { 
         /// <summary>
         /// GeoJSON of the are covered by the logistics partner.

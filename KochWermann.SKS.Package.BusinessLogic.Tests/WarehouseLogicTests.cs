@@ -20,7 +20,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             _validWarehouse = new Warehouse{
                 Code = _validCode,
                 Description = "This should be a valid description",
-                NextHops = new List<WarehouseNextHops>{new WarehouseNextHops()}
+                NextHops = new List<WarehouseNextHops>{new WarehouseNextHops{TraveltimeMins = 69}}
             };
         }
 
@@ -42,6 +42,27 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Code()
         {
             _validWarehouse.Code = _invalidCode;
+            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+        }
+
+        [Test]
+        public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Truck()
+        {
+            _validWarehouse.NextHops[0].Hop = new Truck(); 
+            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+        }
+
+        [Test]
+        public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Warehouse()
+        {
+            _validWarehouse.NextHops[0].Hop = new Warehouse(); 
+            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+        }
+
+        [Test]
+        public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Transferwarehouse()
+        {
+            _validWarehouse.NextHops[0].Hop = new TransferWarehouse(); 
             Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 

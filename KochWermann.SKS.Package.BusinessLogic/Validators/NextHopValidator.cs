@@ -22,9 +22,9 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
                 .SetValidator(new TruckValidator());
             });
 
-            this.When(p => p.Hop is Transferwarehouse, () =>
+            this.When(p => p.Hop is TransferWarehouse, () =>
             {
-                RuleFor(p => p.Hop as Transferwarehouse)
+                RuleFor(p => p.Hop as TransferWarehouse)
                 .SetValidator(new TransferWarehouseValidator());
             });
         }

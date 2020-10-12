@@ -16,17 +16,17 @@ namespace KochWermann.SKS.Package.Services.Mapper
             this.CreateMap<ServiceEntities.Hop, BlEntities.Hop>()
             .Include<ServiceEntities.Truck, BlEntities.Truck>()
             .Include<ServiceEntities.Warehouse, BlEntities.Warehouse>()
-            .Include<ServiceEntities.Transferwarehouse, BlEntities.Transferwarehouse>();
+            .Include<ServiceEntities.Transferwarehouse, BlEntities.TransferWarehouse>();
 
             this.CreateMap<BlEntities.Hop, ServiceEntities.Hop>()
             .Include<BlEntities.Truck, ServiceEntities.Truck>()
             .Include<BlEntities.Warehouse, ServiceEntities.Warehouse>()
-            .Include<BlEntities.Transferwarehouse, ServiceEntities.Transferwarehouse>();
+            .Include<BlEntities.TransferWarehouse, ServiceEntities.Transferwarehouse>();
 
 
             this.CreateMap<ServiceEntities.Warehouse, BlEntities.Warehouse>().ReverseMap();
             this.CreateMap<ServiceEntities.Truck, BlEntities.Truck>().ReverseMap();
-            this.CreateMap<ServiceEntities.Transferwarehouse, BlEntities.Transferwarehouse>().ReverseMap();
+            this.CreateMap<ServiceEntities.Transferwarehouse, BlEntities.TransferWarehouse>().ReverseMap();
             this.CreateMap<ServiceEntities.Warehouse, BlEntities.Warehouse>().ReverseMap();
             this.CreateMap<ServiceEntities.WarehouseNextHops, BlEntities.WarehouseNextHops>().ReverseMap();
             this.CreateMap<ServiceEntities.HopArrival, BlEntities.HopArrival>().ReverseMap();

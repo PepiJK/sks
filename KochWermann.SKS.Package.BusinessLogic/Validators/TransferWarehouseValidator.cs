@@ -4,7 +4,7 @@ using KochWermann.SKS.Package.BusinessLogic.Entities;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Validators
 {
-    public class TransferWarehouseValidator : AbstractValidator<Transferwarehouse>
+    public class TransferWarehouseValidator : AbstractValidator<TransferWarehouse>
     {
         public TransferWarehouseValidator()
         {
