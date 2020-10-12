@@ -38,7 +38,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Track_Parcel()
+        public void Should_Return_Ok_On_Track_Parcel()
         {
             var res = _recipientApiController.TrackParcel(_testTrackingId);
             Assert.IsNotNull(res);
@@ -47,11 +47,20 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Track_Parcel()
+        public void Should_Return_Not_Found_On_Track_Parcel()
         {
             var res = _recipientApiController.TrackParcel(null);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<NotFoundResult>(res);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Track_Parcel()
+        {
+            var res = _recipientApiController.TrackParcel("ERROR1234");
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
     }
 }

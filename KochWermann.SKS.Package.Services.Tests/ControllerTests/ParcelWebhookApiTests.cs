@@ -17,7 +17,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_List_Parcel_Webhooks()
+        public void Should_Return_Ok_On_List_Parcel_Webhooks()
         {
             var res = _parcelWebhookApiController.ListParcelWebhooks("PYJRB4HZ6");
             Assert.IsNotNull(res);
@@ -25,7 +25,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_List_Parcel_Webhooks()
+        public void Should_Return_Not_Found_On_List_Parcel_Webhooks()
         {
             var res = _parcelWebhookApiController.ListParcelWebhooks(null);
             Assert.IsNotNull(res);
@@ -33,7 +33,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Subscribe_Parcel_Webhook()
+        public void Should_Return_Ok_On_Subscribe_Parcel_Webhook()
         {
             var res = _parcelWebhookApiController.SubscribeParcelWebhook("PYJRB4HZ6", "https://www.google.com");
             Assert.IsNotNull(res);
@@ -41,7 +41,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Subscribe_Parcel_Webhook()
+        public void Should_Return_Not_Found_On_Subscribe_Parcel_Webhook()
         {
             var res = _parcelWebhookApiController.SubscribeParcelWebhook(null, null);
             Assert.IsNotNull(res);
@@ -49,7 +49,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Unsubscribe_Parcel_Webhook()
+        public void Should_Return_Ok_On_Unsubscribe_Parcel_Webhook()
         {
             var res = _parcelWebhookApiController.UnsubscribeParcelWebhook(123);
             Assert.IsNotNull(res);
@@ -57,7 +57,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Unsubscribe_Parcel_Webhook()
+        public void Should_Return_Not_Found_On_Unsubscribe_Parcel_Webhook()
         {
             var res = _parcelWebhookApiController.UnsubscribeParcelWebhook(null);
             Assert.IsNotNull(res);

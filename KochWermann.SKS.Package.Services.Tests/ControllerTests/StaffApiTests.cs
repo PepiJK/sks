@@ -32,14 +32,14 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             ));
             mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
                 It.IsRegex("^[A-Z0-9]{9}$"),
-                It.IsRegex("/^[A-Z]{4}\\d{1,4}$/")
+                It.IsRegex("^[A-Z]{4}\\d{1,4}$")
             ));
 
             _staffApiController = new StaffApiController(mapper, mock.Object);
         }
 
         [Test]
-        public void Should_Report_Parcel_Delivery()
+        public void Should_Return_Ok_On_Report_Parcel_Delivery()
         {
             var res = _staffApiController.ReportParcelDelivery(_testTrackingId);
             Assert.IsNotNull(res);
@@ -47,7 +47,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Report_Parcel_Delivery()
+        public void Should_Return_Not_Found_On_Report_Parcel_Delivery()
         {
             var res = _staffApiController.ReportParcelDelivery(null);
             Assert.IsNotNull(res);
@@ -55,7 +55,16 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Report_Parcel_Hop()
+        public void Should_Return_Bad_Request_On_Report_Parcel_Delivery()
+        {
+            var res = _staffApiController.ReportParcelDelivery("ERROR1234");
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public void Should_Return_Ok_On_Report_Parcel_Hop()
         {
             var res = _staffApiController.ReportParcelHop(_testTrackingId, _testCode);
             Assert.IsNotNull(res);
@@ -63,11 +72,29 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Report_Parcel_Hop()
+        public void Should_Return_Not_Found_On_Report_Parcel_Hop()
         {
             var res = _staffApiController.ReportParcelHop(null, null);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<NotFoundResult>(res);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Report_Parcel_Hop_Of_Invalid_Code()
+        {
+            var res = _staffApiController.ReportParcelHop(_testTrackingId, "ERRO1234");
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Report_Parcel_Hop_Of_Invalid_TrackingId()
+        {
+            var res = _staffApiController.ReportParcelHop("ERROR1234", _testCode);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
     }
 }

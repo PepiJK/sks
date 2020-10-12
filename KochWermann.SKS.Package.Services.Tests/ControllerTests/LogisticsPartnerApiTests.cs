@@ -46,7 +46,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Transistion_Parcel()
+        public void Should_Return_Ok_On_Transition_Parcel()
         {
             var res = _logisticsPartnerApiController.TransitionParcel(_testServiceParcel, _testTrackingId);
             Assert.IsNotNull(res);
@@ -55,7 +55,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Transistion_Parcel()
+        public void Should_Return_Bad_Request_On_Transition_Parcel()
         {
             var res = _logisticsPartnerApiController.TransitionParcel(null, null);
             Assert.IsNotNull(res);

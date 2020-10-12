@@ -43,7 +43,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Submit_Parcel()
+        public void Should_Return_Ok_On_Submit_Parcel()
         {
             var res = _senderApiController.SubmitParcel(_testParcel);
             Assert.IsInstanceOf<OkObjectResult>(res);
@@ -51,7 +51,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Submit_Parcel()
+        public void Should_Return_Bad_Request_On_Submit_Parcel()
         {
             var res = _senderApiController.SubmitParcel(null);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);

@@ -59,7 +59,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Export_Warehouses()
+        public void Should_Return_Ok_On_Export_Warehouses()
         {
             var res = _warehouseManagementApiController.ExportWarehouses();
             Assert.IsNotNull(res);
@@ -68,7 +68,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Get_Warehouse()
+        public void Should_Return_Ok_On_Get_Warehouse()
         {
             var res = _warehouseManagementApiController.GetWarehouse(_testCode);
             Assert.IsNotNull(res);
@@ -77,7 +77,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Get_Warehouse()
+        public void Should_Return_Not_Found_On_Get_Warehouse()
         {
             var res = _warehouseManagementApiController.GetWarehouse(null);
             Assert.IsNotNull(res);
@@ -85,7 +85,16 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Import_Warehouses()
+        public void Should_Return_Bad_Request_On_Get_Warehouse()
+        {
+            var res = _warehouseManagementApiController.GetWarehouse("ERROR");
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public void Should_Return_Ok_On_Import_Warehouses()
         {
             var res = _warehouseManagementApiController.ImportWarehouses(_testWarehouse);
             Assert.IsNotNull(res);
@@ -93,10 +102,11 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Not_Import_Warehouses()
+        public void Should_Return_Bad_Request_On_Import_Warehouses()
         {
             var res = _warehouseManagementApiController.ImportWarehouses(null);
             Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
             Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
     }

@@ -17,33 +17,41 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
         public void ImportWarehouses(Warehouse warehouse)
         { 
-            if (warehouse == null)
-                throw new ArgumentNullException();
-            
-            IValidator<Warehouse> validator = new WarehouseValidator();
-            var validationResult = validator.Validate(warehouse);
-
-            var val = new NextHopValidator();
-            foreach (var nextHop in warehouse.NextHops)
-            {
-                var valResult = val.Validate(nextHop);
-                if (!valResult.IsValid)
-                    throw new ValidationException(valResult.Errors);
-            }
-
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors); 
+            ValidateWarehouse(warehouse);
         }
 
         public Warehouse GetWarehouse(string code)
+        {
+            ValidateCode(code);
+            return new Warehouse();
+        }
+
+        private void ValidateWarehouse(Warehouse warehouse)
+        {
+            if (warehouse == null)
+                throw new ArgumentNullException();
+            
+            var validator = new WarehouseValidator();
+            var validationResult = validator.Validate(warehouse);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors); 
+
+            var nextHopValidator = new NextHopValidator();
+            foreach (var nextHop in warehouse.NextHops)
+            {
+                validationResult = nextHopValidator.Validate(nextHop);
+                if (!validationResult.IsValid)
+                    throw new ValidationException(validationResult.Errors);
+            }
+        }
+
+        private void ValidateCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
                 throw new ArgumentNullException();
             
             if (!Regex.IsMatch(code, _codePattern))
                 throw new ArgumentException("code does not match pattern.");
-
-            return new Warehouse();
         }
     }
 }

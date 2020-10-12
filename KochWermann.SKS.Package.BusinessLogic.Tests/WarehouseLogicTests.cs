@@ -39,6 +39,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         }
 
         [Test]
+        public void Should_Throw_Exception_On_Import_Warehouses_Of_Null_Warehouse()
+        {
+            Assert.Throws<ArgumentNullException>(() => _warehouseLogic.ImportWarehouses(null));
+        }
+
+        [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Code()
         {
             _validWarehouse.Code = _invalidCode;
@@ -78,6 +84,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Invalid_Code()
         {
             Assert.Throws<ArgumentException>(() => _warehouseLogic.GetWarehouse(_invalidCode));
+        }
+
+        [Test]
+        public void Should_Throw_Exception_On_Get_Warehouses_Of_Null_Code()
+        {
+            Assert.Throws<ArgumentNullException>(() => _warehouseLogic.GetWarehouse(null));
         }
     }
 }

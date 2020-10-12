@@ -57,9 +57,9 @@ namespace KochWermann.SKS.Package.Services
         public void ConfigureServices(IServiceCollection services)
         {
             // BusinessLogic injection
-            services.AddSingleton<ITrackingLogic, TrackingLogic>();
-            services.AddSingleton<IWarehouseLogic, WarehouseLogic>();
-            services.AddSingleton<IWebhookLogic, WebhookLogic>();
+            services.AddTransient<ITrackingLogic, TrackingLogic>();
+            services.AddTransient<IWarehouseLogic, WarehouseLogic>();
+            services.AddTransient<IWebhookLogic, WebhookLogic>();
 
             // Automapper
             services.AddAutoMapper(typeof(Startup));

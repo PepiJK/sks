@@ -5,8 +5,6 @@ namespace KochWermann.SKS.Package.BusinessLogic.Entities
     /// </summary>
     public partial class Hop
     { 
-        
-
         /// <summary>
         /// Unique CODE of the hop.
         /// </summary>
