@@ -53,11 +53,10 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}")]
         [ValidateModelState]
         [SwaggerOperation("TransitionParcel")]
-        [SwaggerResponse(statusCode: 200, type: typeof(NewParcelInfo), description: "Successfully transitioned the parcel")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult TransitionParcel([FromBody]Parcel body, [FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.NewParcelInfo), description: "Successfully transitioned the parcel")]
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
+        public virtual IActionResult TransitionParcel([FromBody]DTOs.Parcel body, [FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         {
-            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
             if (body != null && !string.IsNullOrWhiteSpace(trackingId))
             {
                 var blParcel = _mapper.Map<BusinessLogic.Entities.Parcel>(body);
@@ -66,7 +65,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 return Ok(serviceNewParcelInfo);
             }
              
-            return BadRequest(new Error{ ErrorMessage = "body or trackingId is null or whitespace" });
+            return BadRequest(new DTOs.Error{ ErrorMessage = "body or trackingId is null or whitespace" });
         }
     }
 }

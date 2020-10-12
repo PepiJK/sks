@@ -13,7 +13,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         private Parcel _validParcel;
         private string _validTrackingId = "PYJRB4HZ6";
         private string _invalidTrackingId = "hallo";
-        private string _validCode = "TEST\\d";
+        private string _validCode = "TEST1234";
         private string _invalidCode = "hi";
 
         [SetUp]
@@ -119,12 +119,10 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             Assert.DoesNotThrow(() => _trackingLogic.ReportParcelHop(_validTrackingId, _validCode));
         }
 
-        /*TODO: Add validation to ReportParcelHop Method in TrackingLogic
         [Test]
         public void Should_Throw_Exception_On_Report_Parcel_Hop_Of_Invalid_Code()
         {
             Assert.Throws<ArgumentException>(() => _trackingLogic.ReportParcelHop(_validTrackingId, _invalidCode));
         }
-        */
     }
 }

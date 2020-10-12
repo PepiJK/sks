@@ -57,11 +57,10 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId)
         {
-            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
             if (!string.IsNullOrWhiteSpace(trackingId))
             {
                 if (trackingId == "ERROR1234")
-                    return BadRequest(new Error{ ErrorMessage = "trackingId is ERROR1234" });
+                    return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234" });
 
                 var blParcel = _trackingLogic.TrackParcel(trackingId);
                 var serviceTrackingInformation = _mapper.Map<DTOs.TrackingInformation>(blParcel);

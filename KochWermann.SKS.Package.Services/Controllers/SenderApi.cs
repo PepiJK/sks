@@ -52,19 +52,19 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel")]
         [ValidateModelState]
         [SwaggerOperation("SubmitParcel")]
-        [SwaggerResponse(statusCode: 200, type: typeof(NewParcelInfo), description: "Successfully submitted the new parcel")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult SubmitParcel([FromBody]Parcel body)
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.NewParcelInfo), description: "Successfully submitted the new parcel")]
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
+        public virtual IActionResult SubmitParcel([FromBody]DTOs.Parcel body)
         {
             if (body != null)
             {
                 var blParcel = _mapper.Map<BusinessLogic.Entities.Parcel>(body);
                 var blSubmitedParcel = _trackingLogic.SubmitParcel(blParcel);
-                var serviceNewParcelInfo = _mapper.Map<NewParcelInfo>(blSubmitedParcel);
+                var serviceNewParcelInfo = _mapper.Map<DTOs.NewParcelInfo>(blSubmitedParcel);
                 return Ok(serviceNewParcelInfo);
             }
 
-            return BadRequest(new Error{ ErrorMessage = "body is null" });
+            return BadRequest(new DTOs.Error{ ErrorMessage = "body is null" });
         }
     }
 }

@@ -37,8 +37,8 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}/webhooks")]
         [ValidateModelState]
         [SwaggerOperation("ListParcelWebhooks")]
-        [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponses), description: "List of webooks for the &#x60;trackingId&#x60;")]
-        public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.WebhookResponses), description: "List of webooks for the &#x60;trackingId&#x60;")]
+        public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         { 
             if (!string.IsNullOrWhiteSpace(trackingId))
                 return Ok(default(WebhookResponses));
@@ -57,11 +57,11 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}/webhooks")]
         [ValidateModelState]
         [SwaggerOperation("SubscribeParcelWebhook")]
-        [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponse), description: "Successful response")]
-        public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromQuery][Required()]string url)
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.WebhookResponse), description: "Successful response")]
+        public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromQuery][Required()]string url)
         { 
             if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(url))
-                return Ok(default(WebhookResponse));
+                return Ok(default(DTOs.WebhookResponse));
             
             return NotFound();
         }

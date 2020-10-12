@@ -53,14 +53,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}/reportDelivery/")]
         [ValidateModelState]
         [SwaggerOperation("ReportParcelDelivery")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
+        public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         {
-            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
             if (!string.IsNullOrWhiteSpace(trackingId))
             {
                 if (trackingId == "ERROR1234")
-                    return BadRequest(new Error{ ErrorMessage = "trackingId is ERROR1234" });
+                    return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234" });
 
                 _trackingLogic.ReportParcelDelivery(trackingId);
                 return Ok();
@@ -81,15 +80,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}/reportHop/{code}")]
         [ValidateModelState]
         [SwaggerOperation("ReportParcelHop")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromRoute][Required][RegularExpression("/^[A-Z]{4}\\d{1,4}$/")]string code)
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
+        public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
         {
-            //TODO: is Regex is wrong?, ^[A-Z0-9]{9}$ matches PYJRB4HZ6
-            //TODO: is code Regex also wrong? What are potential matches?
             if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(code))
             {
-                if (trackingId == "ERROR1234" || code == "ERRO\\d")
-                    return BadRequest(new Error{ ErrorMessage = "trackingId is ERROR1234 or code is ERRO\\d" });
+                if (trackingId == "ERROR1234" || code == "ERRO1234")
+                    return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234 or code is ERRO1234" });
                 
                 _trackingLogic.ReportParcelHop(trackingId, code);
                 return Ok();

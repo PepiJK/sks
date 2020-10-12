@@ -11,7 +11,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
     public class TrackingLogic : ITrackingLogic
     {
         private string _trackingIdPattern = "^[A-Z0-9]{9}$";
-        private string _codePattern = "/^[A-Z]{4}\\d{1,4}$/";
+        private string _codePattern = "^[A-Z]{4}\\d{1,4}$";
 
         public Parcel TransitionParcel(Parcel parcel, string trackingId)
         {
@@ -69,10 +69,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
             if (!Regex.IsMatch(trackingId, _trackingIdPattern))
                 throw new ArgumentException("trackingId does not match pattern.");
             
-            /*TODO: test regex "TEST\\d" does not work?
             if (!Regex.IsMatch(code, _codePattern))
                 throw new ArgumentException("code does not match pattern.");
-            */
         }
     }
 }
