@@ -12,15 +12,14 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0"/>
     <PackageReference Include="Moq" Version="4.14.6" />
     <PackageReference Include="NBuilder" Version="6.1.0" />
+    <PackageReference Include="coverlet.msbuild" Version="2.9.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
    <ItemGroup>
-    <ProjectReference Include="..\KochWermann.SKS.Package.Services.Interfaces\KochWermann.SKS.Package.Services.Interfaces.csproj"/>
-    <ProjectReference Include="..\KochWermann.SKS.Package.Services.DTOs\KochWermann.SKS.Package.Services.DTOs.csproj"/>
     <ProjectReference Include="..\KochWermann.SKS.Package.Services\KochWermann.SKS.Package.Services.csproj"/>
-    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.BusinessLogic.csproj"/>
-    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj"/>
-    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Interfaces\KochWermann.SKS.Package.BusinessLogic.Interfaces.csproj"/>
   </ItemGroup>
 
 </Project>

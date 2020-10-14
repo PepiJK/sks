@@ -35,7 +35,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
                 .With(x => x.HopType = "Warehouse")
                 .With(x => x.NextHops = new List<Services.DTOs.WarehouseNextHops>{
                     Builder<Services.DTOs.WarehouseNextHops>.CreateNew()
-                        .With(x => x.Hop = Builder<Hop>.CreateNew()
+                        .With(x => x.Hop = Builder<Services.DTOs.Hop>.CreateNew()
                             .With(x => x.LocationCoordinates = new Services.DTOs.GeoCoordinate{Lat = 100, Lon = 100})
                         .Build())
                     .Build()
