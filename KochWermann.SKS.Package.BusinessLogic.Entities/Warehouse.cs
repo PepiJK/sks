@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Entities
 {
     /// <summary>
     /// 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class Warehouse : Hop
     {
         /// <summary>

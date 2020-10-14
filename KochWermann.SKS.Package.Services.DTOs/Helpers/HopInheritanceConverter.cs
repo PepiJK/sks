@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 
 namespace KochWermann.SKS.Package.Services.DTOs.Helpers
 {
+    [ExcludeFromCodeCoverage]
     public class HopInheritanceConverter : JsonCreationConverter<Hop>
     {
         protected override Hop Create(Type objectType, JObject jObject)

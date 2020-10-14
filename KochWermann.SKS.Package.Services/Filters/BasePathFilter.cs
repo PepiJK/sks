@@ -3,12 +3,14 @@ using System.Text.RegularExpressions;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.Services.Filters
 {
     /// <summary>
     /// BasePath Document Filter sets BasePath property of Swagger and removes it from the individual URL paths
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class BasePathFilter : IDocumentFilter
     {
         /// <summary>

@@ -28,12 +28,14 @@ using FluentValidation.AspNetCore;
 using KochWermann.SKS.Package.BusinessLogic.Validators;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.Services
 {
     /// <summary>
     /// Startup
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         private readonly IWebHostEnvironment _hostingEnv;

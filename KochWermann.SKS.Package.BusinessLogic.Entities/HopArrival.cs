@@ -1,11 +1,13 @@
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Entities
 {
     /// <summary>
     /// 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class HopArrival
     { 
         /// <summary>

@@ -18,12 +18,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using KochWermann.SKS.Package.Services.DTOs.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.Services.DTOs
 { 
     /// <summary>
     /// 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     [DataContract, JsonConverter(typeof(HopInheritanceConverter))]
     public partial class Hop
     { 

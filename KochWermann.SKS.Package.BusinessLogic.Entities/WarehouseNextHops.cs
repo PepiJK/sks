@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace KochWermann.SKS.Package.BusinessLogic.Entities
 { 
     /// <summary>
     /// 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class WarehouseNextHops
     { 
         /// <summary>
