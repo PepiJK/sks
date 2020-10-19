@@ -18,6 +18,11 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         /// Next hops after this warehouse (warehouses or trucks).
         /// </summary>
         /// <value>Next hops after this warehouse (warehouses or trucks).</value>
-        public List<WarehouseNextHops> NextHops { get; set; }
+        public List<WarehouseNextHops> NextHops {get; set;}
+
+        /// <summary>
+        /// Returns and Sets if Warehouse is Root-Warehouse?
+        /// </summary>
+        public bool IsRootWarehouse { get; set; }
     }
 }
