@@ -1,6 +1,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel.DataAnnotations;
 
 namespace KochWermann.SKS.Package.DataAccess.Entities
 {
@@ -10,10 +11,14 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class HopArrival
     { 
+        [Key]
+        public int Id;
+
         /// <summary>
         /// Unique CODE of the hop.
         /// </summary>
         /// <value>Unique CODE of the hop.</value>
+        [Required]
         public string Code { get; set; }
 
         /// <summary>

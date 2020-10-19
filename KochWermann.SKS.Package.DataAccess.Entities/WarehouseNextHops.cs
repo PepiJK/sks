@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel.DataAnnotations;
 
 namespace KochWermann.SKS.Package.DataAccess.Entities
 { 
@@ -8,6 +9,9 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class WarehouseNextHops
     { 
+        [Key]
+        public int Id {get; set;}
+
         /// <summary>
         /// Gets or Sets TraveltimeMins
         /// </summary>
@@ -16,6 +20,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         /// <summary>
         /// Gets or Sets Hop
         /// </summary>
+        [Required]
         public Hop Hop { get; set; }
     }
 }

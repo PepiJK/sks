@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel.DataAnnotations;
 
 namespace KochWermann.SKS.Package.DataAccess.Entities
 {
@@ -9,6 +10,9 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class Parcel
     {
+        [Key]
+        public int Id { get; set; }
+
         /// <summary>
         /// State of the parcel.
         /// </summary>
@@ -36,7 +40,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
             /// </summary>
             DeliveredEnum = 4
         }
-        
+
         /// <summary>
         /// Gets or Sets Weight
         /// </summary>
@@ -56,6 +60,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         /// The tracking ID of the parcel. 
         /// </summary>
         /// <value>The tracking ID of the parcel. </value>
+        [Required]
         public string TrackingId { get; set; }
 
         /// <summary>
