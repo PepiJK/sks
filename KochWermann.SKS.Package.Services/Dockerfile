@@ -16,4 +16,4 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 
-ENTRYPOINT ["dotnet", "IO.Swagger.dll"]
+ENTRYPOINT ["dotnet", "KochWermann.SKS.Package.Services.dll"]

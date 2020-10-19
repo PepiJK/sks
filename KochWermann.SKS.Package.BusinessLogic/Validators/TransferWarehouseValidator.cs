@@ -9,7 +9,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
         public TransferWarehouseValidator()
         {
             this.RuleFor(p => p.Description)
-                .Matches(@"[A-Za-zÄäÖöÜüß 0-9-]{1,}");
+                .Matches(@"[A-Za-zÄäÖöÜüß \/0-9-]+");
 
             this.RuleFor(p => p.LocationCoordinates)
                 .NotNull();

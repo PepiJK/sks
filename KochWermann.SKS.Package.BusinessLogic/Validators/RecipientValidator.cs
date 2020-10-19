@@ -14,10 +14,10 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
                 .Matches(@"A-[0-9]{4}");
 
             this.RuleFor(p => p.Street)
-                .Matches(@"[A-Za-zÄäÖöÜüß]{3,} [0-9/A-Za-zÄäÖöÜüß]{1,}");
+                .Matches(@"[A-Za-zÄäÖöÜüß]{3,} [0-9\/A-Za-zÄäÖöÜüß]{1,}");
 
             this.RuleFor (p=> p.City)
-                .Matches(@"[A-ZÄäÖöÜüß]{1}[A-Za-zÄäÖöÜüß -]{1,}");
+                .Matches(@"[A-ZÄÖÜ]{1}[A-Za-zÄäÖöÜüß -]{1,}");
 
             this.RuleFor (p => p.Name)
                 .Matches(@"[A-ZÄäÖöÜüß]{1}[A-Za-z -]{1,}");

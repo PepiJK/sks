@@ -12,7 +12,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
                 .Matches(@"[A-Z0-9]{6,}");
 
             this.RuleFor(p => p.Description)
-                .Matches(@"[A-Za-zÄäÖöÜüß 0-9-]{1,}");
+                .Matches(@"[A-Za-zÄäÖöÜüß \/0-9-]+");
 
             this.RuleFor(p => p.LocationCoordinates)
                 .NotNull();

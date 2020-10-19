@@ -1,9 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <IsPackable>false</IsPackable>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
+  
   <ItemGroup>
-    <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="3.1.9"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.sqlserver" Version="3.1.9"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NetTopologySuite.Core" Version="1.15.3"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KochWermann.SKS.Package.DataAccess.Interfaces\KochWermann.SKS.Package.DataAccess.Interfaces.csproj" />
+    <ProjectReference Include="..\KochWermann.SKS.Package.DataAccess.Entities\KochWermann.SKS.Package.DataAccess.Entities.csproj"/>
   </ItemGroup>
 </Project>
