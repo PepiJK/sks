@@ -23,5 +23,8 @@
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.BusinessLogic.csproj"/>
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj"/>
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Interfaces\KochWermann.SKS.Package.BusinessLogic.Interfaces.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.DataAccess.Entities\KochWermann.SKS.Package.DataAccess.Entities.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.DataAccess.Interfaces\KochWermann.SKS.Package.DataAccess.Interfaces.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.DataAccess.Sql\KochWermann.SKS.Package.DataAccess.Sql.csproj"/>
   </ItemGroup>
 </Project>
