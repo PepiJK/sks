@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using ServiceEntities = KochWermann.SKS.Package.Services.DTOs;
 using BlEntities = KochWermann.SKS.Package.BusinessLogic.Entities;
 using DALEntities = KochWermann.SKS.Package.DataAccess.Entities;
@@ -12,6 +14,7 @@ namespace KochWermann.SKS.Package.Services.Mapper
         /// <summary>
         /// 
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public BlMapperProfile()
         {
             //ServiceLayer <=> BL
@@ -34,7 +37,7 @@ namespace KochWermann.SKS.Package.Services.Mapper
             this.CreateMap<ServiceEntities.HopArrival, BlEntities.HopArrival>().ReverseMap();
             this.CreateMap<ServiceEntities.Recipient, BlEntities.Recipient>().ReverseMap();
             this.CreateMap<ServiceEntities.GeoCoordinate, BlEntities.GeoCoordinate>().ReverseMap();
-            
+
             this.CreateMap<ServiceEntities.Parcel, BlEntities.Parcel>();
             this.CreateMap<ServiceEntities.TrackingInformation, BlEntities.Parcel>();
             this.CreateMap<ServiceEntities.NewParcelInfo, BlEntities.Parcel>();
@@ -62,7 +65,7 @@ namespace KochWermann.SKS.Package.Services.Mapper
             this.CreateMap<BlEntities.HopArrival, DALEntities.HopArrival>().ReverseMap();
             this.CreateMap<BlEntities.Recipient, DALEntities.Recipient>().ReverseMap();
             this.CreateMap<BlEntities.GeoCoordinate, DALEntities.GeoCoordinate>().ReverseMap();
-            
+
             this.CreateMap<BlEntities.Parcel, DALEntities.Parcel>().ReverseMap();
         }
     }
