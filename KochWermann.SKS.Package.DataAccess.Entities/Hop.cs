@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using NetTopologySuite.Geometries;
 
 namespace KochWermann.SKS.Package.DataAccess.Entities
 {
@@ -9,6 +11,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class Hop
     { 
+        [Required]
         [Key]
         public int Id {get; set;}
 
@@ -44,8 +47,9 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         public string LocationName { get; set; }
 
         /// <summary>
-        /// Gets or Sets LocationCoordinates
+        /// GeometryPoint instead of GeoCoordinate
         /// </summary>
-        public GeoCoordinate LocationCoordinates { get; set; }
+        [Column(TypeName = "Geometry")]
+        public Point LocationCoordinates { get; set; }
     }
 }

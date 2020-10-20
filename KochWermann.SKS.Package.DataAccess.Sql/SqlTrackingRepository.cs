@@ -44,22 +44,20 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         public void Delete(int id)
         {
 
-            var parcel = _context.Parcels
-                .SingleOrDefault(e => e.Id == id);
-            _context.Parcels.Remove(parcel);
+            _context.Remove(_context.Parcels.Single(x => x.Id == id));
             _context.SaveChanges();
         }
 
         public IEnumerable<Parcel> GetParcelByRecipient(Recipient recipient)
         {
-                IEnumerable<Parcel> parcelList = _context.Parcels
-                    .Include(parcel => parcel.Recipient)
-                    .Include(parcel => parcel.Sender)
-                    .Include(parcel => parcel.VisitedHops)
-                    .Include(parcel => parcel.FutureHops)
-                    .Where(e => e.Recipient == recipient);
+            IEnumerable<Parcel> parcelList = _context.Parcels
+                .Include(parcel => parcel.Recipient)
+                .Include(parcel => parcel.Sender)
+                .Include(parcel => parcel.VisitedHops)
+                .Include(parcel => parcel.FutureHops)
+                .Where(e => e.Recipient == recipient);
 
-                return parcelList; 
+            return parcelList;
         }
 
         public Parcel GetParcelById(int id)
@@ -83,6 +81,11 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 .SingleOrDefault(e => e.TrackingId == trackingid);
 
             return parcel;
+        }
+
+        public IEnumerable<Parcel> GetAllParcels()
+        {
+            return _context.Parcels.AsEnumerable();
         }
     }
 }

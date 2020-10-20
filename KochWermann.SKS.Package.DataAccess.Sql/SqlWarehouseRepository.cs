@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections.Generic;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
 using KochWermann.SKS.Package.DataAccess.Entities;
 
@@ -14,46 +15,29 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             _context = context;
         }
 
-        public int Create(Warehouse warehouse)
+        public int Create(Hop hop)
         {
-            _context.Warehouses.Add(warehouse);
+            _context.Hops.Add(hop);
             _context.SaveChanges();
-            return warehouse.Id;
+            return hop.Id;
         }
 
         public void Delete(int id)
         {
-            var warehouse = _context.Warehouses
-                .SingleOrDefault(e => e.Id == id);
-
-            _context.Warehouses.Remove(warehouse);
+            _context.Remove(_context.Hops.Single(x => x.Id == id));
             _context.SaveChanges();
         }
 
-        public void Update(Warehouse warehouse)
+        public void Update(Hop hop)
         {
-            var entity = _context.Warehouses.FirstOrDefault(item => item.Id == warehouse.Id);
-
-            if (entity != null)
-            {
-                entity.HopType = warehouse.HopType;
-                entity.Code = warehouse.Code;
-                entity.Description = warehouse.Description;
-                entity.ProcessingDelayMins = warehouse.ProcessingDelayMins;
-                entity.NextHops = warehouse.NextHops;
-
-                _context.Warehouses.Update(entity);
+                var hopToUpdate = GetHopById(hop.Id);
+                _context.Entry(hopToUpdate).CurrentValues.SetValues(hop);
                 _context.SaveChanges();
-            }
         }
 
-        
-        public Warehouse GetWarehouseById(int id)
+        public Hop GetHopById(int id)
         {
-            var warehouse = _context.Warehouses
-                .SingleOrDefault(e => e.Id == id);
-
-            return warehouse;
+            return _context.Hops.Single(x => x.Id == id);
         }
 
         public Warehouse GetWarehouseByCode(string code)
@@ -70,26 +54,42 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             _context.WarehouseNextHops.Load();
             _context.Trucks.Load();
             _context.TransferWarehouses.Load();
-
-            var rootWarehouse = _context.Warehouses
-                .SingleOrDefault(e => e.IsRootWarehouse == true);
-            return rootWarehouse;
+            return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).FirstOrDefault(x => x.Id == 1);
         }
 
         public Hop GetHopByCode(string code)
         {
-            var hop = _context.Hops
-                .SingleOrDefault(e => e.Code == code);
-
-            return hop;
+            return _context.Hops.Single(x => x.Code == code);
         }
 
         public TransferWarehouse GetTransferWarehouseByCode(string code)
         {
-            var warehouse = _context.TransferWarehouses
-                .SingleOrDefault(e => e.Code == code);
+            return _context.TransferWarehouses.Single(x => x.Code == code);
+        }
 
-            return warehouse;
+        public IEnumerable<Hop> GetAllHops()
+        {
+            return _context.Hops;
+        }
+
+        public IEnumerable<Truck> GetAllTrucks()
+        {
+            return _context.Hops.Where(x => x.HopType == "Truck").AsEnumerable().Cast<Truck>();
+        }
+
+        public IEnumerable<WarehouseNextHops> GetAllWarehouseNextHops()
+        {
+            return _context.Hops.AsEnumerable().Cast<WarehouseNextHops>();
+        }
+
+        public IEnumerable<Warehouse> GetAllWarehouses()
+        {
+            _context.Warehouses.Load();
+            _context.WarehouseNextHops.Load();
+            _context.Trucks.Load();
+            _context.TransferWarehouses.Load();
+
+            return _context.Warehouses.Include(wh => wh.NextHops);
         }
     }
 }

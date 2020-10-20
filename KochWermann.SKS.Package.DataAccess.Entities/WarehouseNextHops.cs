@@ -9,6 +9,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class WarehouseNextHops
     { 
+        [Required]
         [Key]
         public int Id {get; set;}
 

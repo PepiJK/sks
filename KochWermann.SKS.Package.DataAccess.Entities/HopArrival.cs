@@ -11,6 +11,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class HopArrival
     { 
+        [Required]
         [Key]
         public int Id;
 

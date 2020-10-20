@@ -10,6 +10,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class Parcel
     {
+        [Required]
         [Key]
         public int Id { get; set; }
 

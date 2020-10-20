@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries;
 
 namespace KochWermann.SKS.Package.DataAccess.Entities
@@ -11,13 +12,11 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     public partial class Truck : Hop
     { 
         /// <summary>
-        /// GeoJSON of the are covered by the truck.
+        /// Geometry instead of RegionGeoJson
         /// </summary>
-        /// <value>GeoJSON of the are covered by the truck.</value>
         [Required]
-        public string RegionGeoJson { get; set; }
-        // [Column(TypeName = "Geometry")]
-        // public Geometry RegionGeometry { get; set; }
+        [Column(TypeName = "Geometry")]
+        public Geometry RegionGeometry { get; set; }
 
         /// <summary>
         /// The truck&#x27;s number plate.

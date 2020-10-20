@@ -9,6 +9,16 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             this.Database.EnsureCreated();
         }
+
+        protected override void OnModelCreating (ModelBuilder builder)
+        {
+            builder.Entity<Hop>().HasDiscriminator(h => h.HopType);
+            builder.Entity<Truck>().HasBaseType<Hop>();
+            builder.Entity<Warehouse>().HasBaseType<Hop>();
+            builder.Entity<TransferWarehouse>().HasBaseType<Hop>();
+            builder.Entity<Warehouse>().HasMany(wh => wh.NextHops);
+        }
+
         public DbSet<Parcel> Parcels { get; set; }
         public DbSet<Hop> Hops { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
