@@ -5,8 +5,10 @@
   <ItemGroup>
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj"/>
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic.Interfaces\KochWermann.SKS.Package.BusinessLogic.Interfaces.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.DataAccess.Interfaces\KochWermann.SKS.Package.DataAccess.Interfaces.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.2.0"/>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1"/>
   </ItemGroup>
 </Project>

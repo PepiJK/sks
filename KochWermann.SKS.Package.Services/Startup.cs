@@ -29,6 +29,9 @@ using KochWermann.SKS.Package.BusinessLogic.Validators;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using KochWermann.SKS.Package.DataAccess.Sql;
+using KochWermann.SKS.Package.DataAccess.Interfaces;
 
 namespace KochWermann.SKS.Package.Services
 {
@@ -58,6 +61,10 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // DAL injection
+            services.AddTransient<IParcelRepository, SqlParcelRepository>();
+            services.AddTransient<IWarehouseRepository, SqlWarehouseRepository>();
+
             // BusinessLogic injection
             services.AddTransient<ITrackingLogic, TrackingLogic>();
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
@@ -65,6 +72,12 @@ namespace KochWermann.SKS.Package.Services
 
             // Automapper
             services.AddAutoMapper(typeof(Startup));
+
+            // Setup Database Connection
+            services.AddDbContext<DatabaseContext>(options => {
+                options.UseSqlServer(_configuration.GetConnectionString("Dev"));
+            });
+
 
             // Add framework services
             services

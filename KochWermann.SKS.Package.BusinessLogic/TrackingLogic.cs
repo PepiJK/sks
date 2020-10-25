@@ -5,13 +5,23 @@ using FluentValidation;
 using KochWermann.SKS.Package.BusinessLogic.Validators;
 using System;
 using System.Text.RegularExpressions;
+using AutoMapper;
+using KochWermann.SKS.Package.DataAccess.Interfaces;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
     public class TrackingLogic : ITrackingLogic
     {
+        private readonly IMapper _mapper;
+        private readonly IParcelRepository _trackingRepository;
         private string _trackingIdPattern = "^[A-Z0-9]{9}$";
         private string _codePattern = "^[A-Z]{4}\\d{1,4}$";
+
+        public TrackingLogic(IMapper mapper, IParcelRepository trackingRepository)
+        {
+            _trackingRepository = trackingRepository;
+            _mapper = mapper;
+        }
 
         public Parcel TransitionParcel(Parcel parcel, string trackingId)
         {
@@ -29,6 +39,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
         public Parcel SubmitParcel(Parcel parcel)
         {
             ValidateParcel(parcel);
+            var dalParcel = _mapper.Map<DataAccess.Entities.Parcel>(parcel);
+            _trackingRepository.Create(dalParcel);
             return new Parcel();
         }
 

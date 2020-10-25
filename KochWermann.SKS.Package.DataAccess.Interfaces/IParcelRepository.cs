@@ -3,7 +3,7 @@ using KochWermann.SKS.Package.DataAccess.Entities;
 
 namespace KochWermann.SKS.Package.DataAccess.Interfaces
 {
-    public interface ITrackingRepository
+    public interface IParcelRepository
     {
         int Create(Parcel parcel);
         void Update(Parcel parcel);

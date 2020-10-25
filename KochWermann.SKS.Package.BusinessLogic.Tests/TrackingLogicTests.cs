@@ -9,7 +9,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
     public class TrackingLogicTests
     {
-        private ITrackingLogic _trackingLogic = new TrackingLogic();
+        private ITrackingLogic _trackingLogic = new TrackingLogic(null, null);
         private Parcel _validParcel;
         private string _validTrackingId = "PYJRB4HZ6";
         private string _invalidTrackingId = "hallo";

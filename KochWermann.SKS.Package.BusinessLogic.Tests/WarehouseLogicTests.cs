@@ -9,7 +9,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
     public class WarehouseLogicTests
     {
-        private IWarehouseLogic _warehouseLogic = new WarehouseLogic();
+        private IWarehouseLogic _warehouseLogic = new WarehouseLogic(null, null);
         private Warehouse _validWarehouse;
         private string _validCode = "CODE123";
         private string _invalidCode = "hi";

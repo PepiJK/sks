@@ -7,7 +7,7 @@ using KochWermann.SKS.Package.DataAccess.Entities;
 
 namespace KochWermann.SKS.Package.DataAccess.Sql
 {
-    public class SqlParcelRepository : ITrackingRepository
+    public class SqlParcelRepository : IParcelRepository
     {
         private readonly DatabaseContext _context;
 

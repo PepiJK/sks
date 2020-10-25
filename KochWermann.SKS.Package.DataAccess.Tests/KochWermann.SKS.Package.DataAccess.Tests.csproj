@@ -16,9 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.DataAccess.Sql"/>
-    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.DataAccess.Entities"/>
-    <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.DataAccess.Interfaces"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.DataAccess.Sql\KochWermann.SKS.Package.DataAccess.Sql.csproj"/>
   </ItemGroup>
 
 </Project>

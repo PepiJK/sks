@@ -4,12 +4,24 @@ using FluentValidation;
 using KochWermann.SKS.Package.BusinessLogic.Validators;
 using System;
 using System.Text.RegularExpressions;
+using AutoMapper;
+using KochWermann.SKS.Package.DataAccess.Interfaces;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
     public class WarehouseLogic : IWarehouseLogic
     {
+        private readonly IMapper _mapper;
+        private readonly IWarehouseRepository _warehouseRepository;
+
         private string _codePattern = @"[A-Z0-9]{6,}";
+
+        public WarehouseLogic(IMapper mapper, IWarehouseRepository warehouseRepository)
+        {
+            _mapper = mapper;
+            _warehouseRepository = warehouseRepository;
+        }
+        
         public Warehouse ExportWarehouses()
         {
             return new Warehouse();
