@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 /*
  * Parcel Logistics Service
  *
@@ -10,7 +9,6 @@ using System.ComponentModel.DataAnnotations;
  */
 using System;
 using System.IO;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,12 +18,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using KochWermann.SKS.Package.Services.Filters;
 using AutoMapper;
 using FluentValidation.AspNetCore;
-using KochWermann.SKS.Package.BusinessLogic.Validators;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic;
 using System.Diagnostics.CodeAnalysis;
@@ -61,6 +56,9 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // DbContext injection
+            services.AddTransient<IDatabaseContext, DatabaseContext>();
+
             // DAL injection
             services.AddTransient<IParcelRepository, SqlParcelRepository>();
             services.AddTransient<IWarehouseRepository, SqlWarehouseRepository>();
@@ -75,7 +73,7 @@ namespace KochWermann.SKS.Package.Services
 
             // Setup Database Connection
             services.AddDbContext<DatabaseContext>(options => {
-                options.UseSqlServer(_configuration.GetConnectionString("Dev"));
+                options.UseSqlServer(_configuration.GetConnectionString("Dev"), x => x.UseNetTopologySuite());
             });
 
 

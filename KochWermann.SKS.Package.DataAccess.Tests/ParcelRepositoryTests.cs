@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using KochWermann.SKS.Package.DataAccess.Entities;
+using KochWermann.SKS.Package.DataAccess.Interfaces;
+using KochWermann.SKS.Package.DataAccess.Sql;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using NUnit.Framework;
+
+namespace KochWermann.SKS.Package.DataAccess.Tests
+{
+    public class ParcelRepositoryTests
+    {
+        private IParcelRepository _parcelRepository;
+        private List<Parcel> _parcels;
+
+
+        [SetUp]
+        public void Setup()
+        {
+            _parcels = new List<Parcel>{new Parcel{
+                Id = 1,
+                VisitedHops = new List<HopArrival>{new HopArrival{
+                    Id = 1,
+                    Code = "Code1",
+                    Description = "Visited hops blabla",
+                    DateTime = DateTime.Today
+                }},
+                FutureHops = new List<HopArrival>{new HopArrival{
+                    Id = 2,
+                    Code = "Code2",
+                    Description = "Future hops blabla",
+                    DateTime = DateTime.Now
+                }},
+                Recipient = new Recipient{
+                    Id = 1,
+                    Country = "Österreich",
+                    PostalCode = "A-1120",
+                    Street = "Hauptstraße 12/12/12",
+                    City = "Wien",
+                    Name = "Josef Koch"
+                },
+                Sender = new Recipient{
+                    Id = 2,
+                    Country = "Austria",
+                    PostalCode = "A-1210",
+                    Street = "Landstraße 27a",
+                    City = "Wien",
+                    Name = "Josef Wermann"
+                },
+                State = Parcel.StateEnum.InTransportEnum,
+                TrackingId = "PYJRB4HZ6",
+                Weight = 6.9f
+            }};
+
+            var mockContext = new Mock<IDatabaseContext>();
+            mockContext.Setup(p => p.Parcels).Returns(DbContextMock.GetQueryableMockDbSet<Parcel>(_parcels));
+            mockContext.Setup(p => p.SaveChanges()).Returns(1);
+
+            _parcelRepository = new SqlParcelRepository(mockContext.Object);
+        }
+
+        [Test]
+        public void Should_Create()
+        {
+            var newParcel = new Parcel();
+
+            _parcelRepository.Create(newParcel);
+
+            Assert.AreEqual(2, _parcels.Count);
+            Assert.AreEqual(newParcel, _parcels[1]);
+        }
+
+        [Test]
+        public void Should_Delete()
+        {
+            _parcelRepository.Delete(1);
+
+            Assert.AreEqual(0, _parcels.Count);
+        }
+
+        [Test]
+        public void Should_Not_Delete()
+        {
+            _parcelRepository.Delete(2);
+            
+            Assert.AreEqual(1, _parcels.Count);
+        }
+
+        [Test]
+        public void Should_Get_Parcel_By_Id()
+        {
+            var parcel = _parcelRepository.GetParcelById(1);
+
+            Assert.AreEqual(_parcels[0], parcel);
+        }
+
+        [Test]
+        public void Should_Not_Get_Parcel_By_Id()
+        {
+            var parcel = _parcelRepository.GetParcelById(2);
+
+            Assert.AreEqual(null, parcel);
+        }
+
+        [Test]
+        public void Should_Get_Parcel_By_Recipient()
+        {
+            var recipient = new Recipient{
+                Id = 1,
+                Country = "Österreich",
+                PostalCode = "A-1120",
+                Street = "Hauptstraße 12/12/12",
+                City = "Wien",
+                Name = "Josef Koch"
+            };
+
+            var parcels = _parcelRepository.GetParcelByRecipient(recipient);
+
+            Assert.AreEqual(1, parcels.Count());
+        }
+
+        [Test]
+        public void Should_Not_Get_Parcel_By_Recipient()
+        {
+            var parcels = _parcelRepository.GetParcelByRecipient(new Recipient());
+
+            Assert.AreEqual(0, parcels.Count());
+        }
+
+        [Test]
+        public void Should_Get_Parcel_By_TrackingId()
+        {
+            var parcel = _parcelRepository.GetParcelByTrackingId("PYJRB4HZ6");
+
+            Assert.AreEqual(_parcels[0], parcel);
+        }
+
+        [Test]
+        public void Should_Not_Get_Parcel_By_TrackingId()
+        {
+            var parcel = _parcelRepository.GetParcelByTrackingId("");
+
+            Assert.AreEqual(null, parcel);
+        }
+
+        [Test]
+        public void Should_Get_All_Parcels()
+        {
+            var parcels = _parcelRepository.GetAllParcels();
+
+            Assert.AreEqual(_parcels, parcels.ToList());
+        }
+    }
+}

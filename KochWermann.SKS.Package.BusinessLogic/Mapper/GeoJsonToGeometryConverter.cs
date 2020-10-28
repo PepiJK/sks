@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using NetTopologySuite.IO;
 
-namespace KochWermann.SKS.Package.Services.Mapper
+namespace KochWermann.SKS.Package.BusinessLogic.Mapper
 {
     /// <summary>
     ///

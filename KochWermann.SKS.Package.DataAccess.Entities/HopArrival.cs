@@ -13,7 +13,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     { 
         [Required]
         [Key]
-        public int Id;
+        public int Id { get; set; }
 
         /// <summary>
         /// Unique CODE of the hop.

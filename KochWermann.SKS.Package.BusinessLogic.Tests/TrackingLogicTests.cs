@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
+using AutoMapper;
 using FluentValidation;
 using KochWermann.SKS.Package.BusinessLogic.Entities;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using NUnit.Framework;
+using KochWermann.SKS.Package.DataAccess.Interfaces;
+using Moq;
+using KochWermann.SKS.Package.BusinessLogic.Mapper;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
     public class TrackingLogicTests
     {
-        private ITrackingLogic _trackingLogic = new TrackingLogic(null, null);
+        private ITrackingLogic _trackingLogic;
         private Parcel _validParcel;
         private string _validTrackingId = "PYJRB4HZ6";
         private string _invalidTrackingId = "hallo";
@@ -18,7 +22,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
 
         [SetUp]
         public void Setup()
-        {
+        {      
             _validParcel = new Parcel{
                 VisitedHops = new List<HopArrival>{new HopArrival{
                     Code = "Code1",
@@ -48,6 +52,22 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 TrackingId = _validTrackingId,
                 Weight = 6.9f
             };
+
+            //auto mapper configuration
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new DalMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            //mock parcel repository
+            var mock = new Mock<IParcelRepository>();
+            mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
+                It.IsRegex("^[A-Z0-9]{9}$")
+            )).Returns(new DataAccess.Entities.Parcel());
+            
+
+            _trackingLogic = new TrackingLogic(mapper, mock.Object);
         }
 
         [Test]
@@ -82,7 +102,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Invalid_TrackingId()
         {
-            Assert.Throws<ArgumentException>(() => _trackingLogic.TransitionParcel(_validParcel, _invalidTrackingId));
+            Assert.Throws<ValidationException>(() => _trackingLogic.TransitionParcel(_validParcel, _invalidTrackingId));
         }
 
         [Test]
@@ -135,7 +155,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Report_Parcel_Hop_Of_Invalid_Code()
         {
-            Assert.Throws<ArgumentException>(() => _trackingLogic.ReportParcelHop(_validTrackingId, _invalidCode));
+            Assert.Throws<ValidationException>(() => _trackingLogic.ReportParcelHop(_validTrackingId, _invalidCode));
         }
 
         [Test]

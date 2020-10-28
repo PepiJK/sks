@@ -9,9 +9,9 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 {
     public class SqlParcelRepository : IParcelRepository
     {
-        private readonly DatabaseContext _context;
+        private readonly IDatabaseContext _context;
 
-        public SqlParcelRepository(DatabaseContext context)
+        public SqlParcelRepository(IDatabaseContext context)
         {
             _context = context;
         }
@@ -25,26 +25,14 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public void Update(Parcel parcel)
         {
-            var entity = _context.Parcels.FirstOrDefault(item => item.TrackingId == parcel.TrackingId);
-
-            if (entity != null)
-            {
-                entity.Recipient = parcel.Recipient;
-                entity.Sender = parcel.Sender;
-                entity.Weight = parcel.Weight;
-                entity.State = parcel.State;
-                entity.VisitedHops = parcel.VisitedHops;
-                entity.FutureHops = parcel.FutureHops;
-
-                _context.Parcels.Update(entity);
-                _context.SaveChanges();
-            }
+            _context.Parcels.Update(parcel);
+            _context.SaveChanges();
         }
 
         public void Delete(int id)
         {
-
-            _context.Remove(_context.Parcels.Single(x => x.Id == id));
+            var parcel = _context.Parcels.FirstOrDefault(x => x.Id == id);
+            _context.Parcels.Remove(parcel);
             _context.SaveChanges();
         }
 
@@ -55,7 +43,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 .Include(parcel => parcel.Sender)
                 .Include(parcel => parcel.VisitedHops)
                 .Include(parcel => parcel.FutureHops)
-                .Where(e => e.Recipient == recipient);
+                .Where(e => e.Recipient.Id == recipient.Id);
 
             return parcelList;
         }
@@ -67,7 +55,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 .Include(parcel => parcel.Sender)
                 .Include(parcel => parcel.VisitedHops)
                 .Include(parcel => parcel.FutureHops)
-                .SingleOrDefault(e => e.Id == id);
+                .FirstOrDefault(e => e.Id == id);
             return parcel;
         }
 
@@ -78,14 +66,14 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 .Include(parcel => parcel.Sender)
                 .Include(parcel => parcel.VisitedHops)
                 .Include(parcel => parcel.FutureHops)
-                .SingleOrDefault(e => e.TrackingId == trackingid);
+                .FirstOrDefault(e => e.TrackingId == trackingid);
 
             return parcel;
         }
 
         public IEnumerable<Parcel> GetAllParcels()
         {
-            return _context.Parcels.AsEnumerable();
+            return _context.Parcels;
         }
     }
 }

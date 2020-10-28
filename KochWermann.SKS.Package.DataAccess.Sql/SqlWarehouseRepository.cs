@@ -8,9 +8,9 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 {
     public class SqlWarehouseRepository : IWarehouseRepository
     {
-        private readonly DatabaseContext _context;
+        private readonly IDatabaseContext _context;
 
-        public SqlWarehouseRepository(DatabaseContext context)
+        public SqlWarehouseRepository(IDatabaseContext context)
         {
             _context = context;
         }
@@ -24,26 +24,27 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public void Delete(int id)
         {
-            _context.Remove(_context.Hops.Single(x => x.Id == id));
+            var hop = _context.Hops.FirstOrDefault(h => h.Id == id);
+            _context.Hops.Remove(hop);
             _context.SaveChanges();
         }
 
         public void Update(Hop hop)
         {
-                var hopToUpdate = GetHopById(hop.Id);
-                _context.Entry(hopToUpdate).CurrentValues.SetValues(hop);
-                _context.SaveChanges();
+            _context.Hops.Update(hop);
+            _context.SaveChanges();
         }
 
         public Hop GetHopById(int id)
         {
-            return _context.Hops.Single(x => x.Id == id);
+            var hop = _context.Hops.FirstOrDefault(h => h.Id == id);
+
+            return hop;
         }
 
         public Warehouse GetWarehouseByCode(string code)
         {
-            var warehouse = _context.Warehouses
-                .SingleOrDefault(e => e.Code == code);
+            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Code == code);
 
             return warehouse;
         }
@@ -54,17 +55,21 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             _context.WarehouseNextHops.Load();
             _context.Trucks.Load();
             _context.TransferWarehouses.Load();
-            return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).FirstOrDefault(x => x.Id == 1);
+            return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).FirstOrDefault(w => w.Id == 1);
         }
 
         public Hop GetHopByCode(string code)
         {
-            return _context.Hops.Single(x => x.Code == code);
+            var hop = _context.Hops.FirstOrDefault(h => h.Code == code);
+
+            return hop;
         }
 
         public TransferWarehouse GetTransferWarehouseByCode(string code)
         {
-            return _context.TransferWarehouses.Single(x => x.Code == code);
+            var transferWarehouse = _context.TransferWarehouses.FirstOrDefault(h => h.Code == code);
+            
+            return transferWarehouse;
         }
 
         public IEnumerable<Hop> GetAllHops()
@@ -74,12 +79,12 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public IEnumerable<Truck> GetAllTrucks()
         {
-            return _context.Hops.Where(x => x.HopType == "Truck").AsEnumerable().Cast<Truck>();
+            return _context.Hops.Where(x => x.HopType == "Truck").Cast<Truck>();
         }
 
         public IEnumerable<WarehouseNextHops> GetAllWarehouseNextHops()
         {
-            return _context.Hops.AsEnumerable().Cast<WarehouseNextHops>();
+            return _context.WarehouseNextHops;
         }
 
         public IEnumerable<Warehouse> GetAllWarehouses()

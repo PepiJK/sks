@@ -2,8 +2,6 @@ using KochWermann.SKS.Package.BusinessLogic.Entities;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using FluentValidation;
 using KochWermann.SKS.Package.BusinessLogic.Validators;
-using System;
-using System.Text.RegularExpressions;
 using AutoMapper;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
 
@@ -13,8 +11,9 @@ namespace KochWermann.SKS.Package.BusinessLogic
     {
         private readonly IMapper _mapper;
         private readonly IWarehouseRepository _warehouseRepository;
-
-        private string _codePattern = @"[A-Z0-9]{6,}";
+        private readonly WarehouseValidator _warehouseValidator = new WarehouseValidator();
+        private readonly NextHopValidator _nextHopValidator = new NextHopValidator();
+        private readonly CodeValidator _codeValidator = new CodeValidator();
 
         public WarehouseLogic(IMapper mapper, IWarehouseRepository warehouseRepository)
         {
@@ -24,46 +23,36 @@ namespace KochWermann.SKS.Package.BusinessLogic
         
         public Warehouse ExportWarehouses()
         {
-            return new Warehouse();
+            var dalWarehouse = _warehouseRepository.GetRootWarehouse();
+            var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(dalWarehouse);
+
+            return blWarehouse;
         }
 
         public void ImportWarehouses(Warehouse warehouse)
         { 
-            ValidateWarehouse(warehouse);
+            Validate<Warehouse>(warehouse, _warehouseValidator);
+            warehouse.NextHops.ForEach(nextHop => Validate<WarehouseNextHops>(nextHop, _nextHopValidator));
+
+            var dalWarehouse = _mapper.Map<DataAccess.Entities.Warehouse>(warehouse);
+            _warehouseRepository.Create(dalWarehouse);
         }
 
         public Warehouse GetWarehouse(string code)
         {
-            ValidateCode(code);
-            return new Warehouse();
+            Validate<string>(code, _codeValidator);
+
+            var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
+            var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(dalWarehouse);
+
+            return blWarehouse;
         }
 
-        private void ValidateWarehouse(Warehouse warehouse)
+        private void Validate<T>(T instanceToValidate, AbstractValidator<T> validator)
         {
-            if (warehouse == null)
-                throw new ArgumentNullException();
-            
-            var validator = new WarehouseValidator();
-            var validationResult = validator.Validate(warehouse);
+            var validationResult = validator.Validate(instanceToValidate);
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors); 
-
-            var nextHopValidator = new NextHopValidator();
-            foreach (var nextHop in warehouse.NextHops)
-            {
-                validationResult = nextHopValidator.Validate(nextHop);
-                if (!validationResult.IsValid)
-                    throw new ValidationException(validationResult.Errors);
-            }
-        }
-
-        private void ValidateCode(string code)
-        {
-            if (string.IsNullOrWhiteSpace(code))
-                throw new ArgumentNullException();
-            
-            if (!Regex.IsMatch(code, _codePattern))
-                throw new ArgumentException("code does not match pattern.");
         }
     }
 }

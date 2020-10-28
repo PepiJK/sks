@@ -13,6 +13,7 @@ namespace KochWermann.SKS.Package.DataAccess.Interfaces
         Hop GetHopByCode(string code);
         Warehouse GetRootWarehouse();
         TransferWarehouse GetTransferWarehouseByCode(string code);
+        Warehouse GetWarehouseByCode(string code);
         IEnumerable<Hop> GetAllHops();
         IEnumerable<Truck> GetAllTrucks();
         IEnumerable<Warehouse> GetAllWarehouses();

@@ -11,7 +11,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     { 
         [Required]
         [Key]
-        public int Id {get; set;}
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or Sets TraveltimeMins

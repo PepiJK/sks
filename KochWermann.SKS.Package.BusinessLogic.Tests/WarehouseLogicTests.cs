@@ -4,12 +4,16 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using FluentValidation;
 using System;
+using AutoMapper;
+using Moq;
+using KochWermann.SKS.Package.DataAccess.Interfaces;
+using KochWermann.SKS.Package.BusinessLogic.Mapper;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
     public class WarehouseLogicTests
     {
-        private IWarehouseLogic _warehouseLogic = new WarehouseLogic(null, null);
+        private IWarehouseLogic _warehouseLogic;
         private Warehouse _validWarehouse;
         private string _validCode = "CODE123";
         private string _invalidCode = "hi";
@@ -22,6 +26,25 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 Description = "This should be a valid description",
                 NextHops = new List<WarehouseNextHops>{new WarehouseNextHops{TraveltimeMins = 69}}
             };
+
+            //auto mapper configuration
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new DalMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            //mock warehouse repository
+            var mock = new Mock<IWarehouseRepository>();
+            mock.Setup(warehouseRepository => warehouseRepository.GetRootWarehouse()).Returns(new DataAccess.Entities.Warehouse());
+            mock.Setup(warehouseRepository => warehouseRepository.Create(
+                It.IsAny<DataAccess.Entities.Hop>()
+            )).Returns(1);
+            mock.Setup(warehouseRepository => warehouseRepository.GetWarehouseByCode(
+                It.IsRegex("^[A-Z]{4}\\d{1,4}$")
+            )).Returns(new DataAccess.Entities.Warehouse());
+
+            _warehouseLogic = new WarehouseLogic(mapper, mock.Object);
         }
 
         [Test]
@@ -83,7 +106,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Invalid_Code()
         {
-            Assert.Throws<ArgumentException>(() => _warehouseLogic.GetWarehouse(_invalidCode));
+            Assert.Throws<ValidationException>(() => _warehouseLogic.GetWarehouse(_invalidCode));
         }
 
         [Test]
