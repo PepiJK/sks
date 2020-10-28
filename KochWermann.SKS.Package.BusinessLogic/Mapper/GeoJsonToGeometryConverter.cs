@@ -6,9 +6,38 @@ using NetTopologySuite.Features;
 using System.IO;
 using System.Text;
 using NetTopologySuite.IO;
+using KochWermann.SKS.Package.BusinessLogic.Entities;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Mapper
 {
+    public class GeoCoordinatesToPointConverter : ITypeConverter<KochWermann.SKS.Package.BusinessLogic.Entities.GeoCoordinate, NetTopologySuite.Geometries.Point>
+    {
+        public Point Convert(GeoCoordinate source, Point destination, ResolutionContext context)
+        {
+            if (source == null)
+                return null;
+
+            destination.X = System.Convert.ToDouble(source.Lon);
+            destination.Y = System.Convert.ToDouble(source.Lat);
+
+            return destination;
+        }
+    }
+
+    public class PointToGeoCoordinatesConverter : ITypeConverter<NetTopologySuite.Geometries.Point, KochWermann.SKS.Package.BusinessLogic.Entities.GeoCoordinate>
+    {
+        public GeoCoordinate Convert(Point source, GeoCoordinate destination, ResolutionContext context)
+        {
+            if (source == null)
+                return null;
+
+            destination.Lon = source.X;
+            destination.Lat = source.Y;
+
+            return destination;
+        }
+    }
+
     /// <summary>
     ///
     /// </summary>

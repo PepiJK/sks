@@ -18,10 +18,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Mapper
         {
             CreateMap<string, Geometry>().ConvertUsing<GeoJsonToGeometryConverter>();
             CreateMap<Geometry, string>().ConvertUsing<GeometryToGeoJsonConverter>();
+            CreateMap<BlEntities.GeoCoordinate, Point>().ConvertUsing<GeoCoordinatesToPointConverter>();
+            CreateMap<Point, BlEntities.GeoCoordinate>().ConvertUsing<PointToGeoCoordinatesConverter>();
+
 
             this.CreateMap<BlEntities.Hop, DALEntities.Hop>()
-            .ForPath(dest => dest.LocationCoordinates.X, opt => opt.MapFrom(src => src.LocationCoordinates.Lat))
-            .ForPath(dest => dest.LocationCoordinates.Y, opt => opt.MapFrom(src => src.LocationCoordinates.Lon))
+            .ForMember(dest => dest.LocationCoordinates, opt => opt.MapFrom(src => src.LocationCoordinates))
             .Include<BlEntities.Truck, DALEntities.Truck>()
             .Include<BlEntities.Warehouse, DALEntities.Warehouse>()
             .Include<BlEntities.TransferWarehouse, DALEntities.TransferWarehouse>()
@@ -29,8 +31,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Mapper
                
 
             this.CreateMap<DALEntities.Hop, BlEntities.Hop>()
-            .ForPath(dest => dest.LocationCoordinates.Lat, opt => opt.MapFrom(src => src.LocationCoordinates.X))
-            .ForPath(dest => dest.LocationCoordinates.Lon, opt => opt.MapFrom(src => src.LocationCoordinates.Y))
+            .ForMember(dest => dest.LocationCoordinates, opt => opt.MapFrom(src => src.LocationCoordinates))
             .Include<DALEntities.Truck, BlEntities.Truck>()
             .Include<DALEntities.Warehouse, BlEntities.Warehouse>()
             .Include<DALEntities.TransferWarehouse, BlEntities.TransferWarehouse>();
