@@ -19,6 +19,10 @@
     <PackageReference Include="NetTopologySuite" Version="2.1.0"/>
     <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.4"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
+    <PrivateAssets>all</PrivateAssets>
+    <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+  </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KochWermann.SKS.Package.Services.Interfaces\KochWermann.SKS.Package.Services.Interfaces.csproj"/>

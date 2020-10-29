@@ -8,7 +8,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> opt) : base(opt)
         {
-            this.Database.EnsureCreated();
+            // this.Database.EnsureCreated();
         }
 
         protected override void OnModelCreating (ModelBuilder builder)

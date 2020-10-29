@@ -73,7 +73,10 @@ namespace KochWermann.SKS.Package.Services
 
             // Setup Database Connection
             services.AddDbContext<DatabaseContext>(options => {
-                options.UseSqlServer(_configuration.GetConnectionString("Dev"), x => x.UseNetTopologySuite());
+                options.UseSqlServer(_configuration.GetConnectionString("Database"), x => {
+                    x.UseNetTopologySuite();
+                    x.MigrationsAssembly("KochWermann.SKS.Package.Services");
+                });
             });
 
 
@@ -123,8 +126,11 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="app"></param>
         /// <param name="env"></param>
         /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        /// <param name="databaseContext"></param>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, DatabaseContext databaseContext)
         {
+            databaseContext.Database.Migrate();
+
             app.UseRouting();
 
             //TODO: Uncomment this if you need wwwroot folder
