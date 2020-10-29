@@ -27,6 +27,8 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using KochWermann.SKS.Package.DataAccess.Sql;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
+using KochWermann.SKS.Package.BusinessLogic.Mapper;
+using KochWermann.SKS.Package.Services.Mapper;
 
 namespace KochWermann.SKS.Package.Services
 {
@@ -69,7 +71,7 @@ namespace KochWermann.SKS.Package.Services
             services.AddTransient<IWebhookLogic, WebhookLogic>();
 
             // Automapper
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(DalMapperProfile), typeof(BlMapperProfile));
 
             // Setup Database Connection
             services.AddDbContext<DatabaseContext>(options => {

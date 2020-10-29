@@ -8,37 +8,34 @@ using System.Text;
 using NetTopologySuite.IO;
 using KochWermann.SKS.Package.BusinessLogic.Entities;
 using System.Diagnostics.CodeAnalysis;
+using System.Data;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Mapper
 {
     [ExcludeFromCodeCoverage]
-    public class GeoCoordinatesToPointConverter : ITypeConverter<KochWermann.SKS.Package.BusinessLogic.Entities.GeoCoordinate, NetTopologySuite.Geometries.Point>
+    public class PointConverter : IValueConverter<GeoCoordinate, Point>, IValueConverter<Point, GeoCoordinate>
     {
-        public Point Convert(GeoCoordinate source, Point destination, ResolutionContext context)
+        private ResolutionContext _context;
+
+        Point IValueConverter<GeoCoordinate, Point>.Convert(GeoCoordinate src, ResolutionContext context)
         {
-            if (source == null)
-                return null;
+            _context = context;
+            if (src.Lat == null || src.Lon == null)
+            {
+                throw new NoNullAllowedException();
+            }
 
-            destination.X = System.Convert.ToDouble(source.Lon);
-            destination.Y = System.Convert.ToDouble(source.Lat);
+            return new Point((double) src.Lon, (double) src.Lat) { SRID = 4326 };
+        }
 
-            return destination;
+
+        GeoCoordinate IValueConverter<Point, GeoCoordinate>.Convert(Point src, ResolutionContext context)
+        {
+            _context = context;
+            return new GeoCoordinate(){Lon = src.X, Lat = src.Y};
         }
     }
-    [ExcludeFromCodeCoverage]
-    public class PointToGeoCoordinatesConverter : ITypeConverter<NetTopologySuite.Geometries.Point, KochWermann.SKS.Package.BusinessLogic.Entities.GeoCoordinate>
-    {
-        public GeoCoordinate Convert(Point source, GeoCoordinate destination, ResolutionContext context)
-        {
-            if (source == null)
-                return null;
 
-            destination.Lon = source.X;
-            destination.Lat = source.Y;
-
-            return destination;
-        }
-    }
 
     /// <summary>
     ///

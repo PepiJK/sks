@@ -18,24 +18,21 @@ namespace KochWermann.SKS.Package.BusinessLogic.Mapper
         {
             CreateMap<string, Geometry>().ConvertUsing<GeoJsonToGeometryConverter>();
             CreateMap<Geometry, string>().ConvertUsing<GeometryToGeoJsonConverter>();
-            CreateMap<BlEntities.GeoCoordinate, Point>().ConvertUsing<GeoCoordinatesToPointConverter>();
-            CreateMap<Point, BlEntities.GeoCoordinate>().ConvertUsing<PointToGeoCoordinatesConverter>();
-
 
             this.CreateMap<BlEntities.Hop, DALEntities.Hop>()
-            .ForMember(dest => dest.LocationCoordinates, opt => opt.MapFrom(src => src.LocationCoordinates))
+            .ForMember(dest => dest.LocationCoordinates, opt => opt.ConvertUsing(new PointConverter(), src => src.LocationCoordinates))
             .Include<BlEntities.Truck, DALEntities.Truck>()
             .Include<BlEntities.Warehouse, DALEntities.Warehouse>()
             .Include<BlEntities.TransferWarehouse, DALEntities.TransferWarehouse>()
             .ForMember(dest => dest.Id, opt => opt.Ignore());
-               
+
 
             this.CreateMap<DALEntities.Hop, BlEntities.Hop>()
-            .ForMember(dest => dest.LocationCoordinates, opt => opt.MapFrom(src => src.LocationCoordinates))
+            .ForMember(dest => dest.LocationCoordinates, opt => opt.ConvertUsing(new PointConverter(), src => src.LocationCoordinates))
             .Include<DALEntities.Truck, BlEntities.Truck>()
             .Include<DALEntities.Warehouse, BlEntities.Warehouse>()
             .Include<DALEntities.TransferWarehouse, BlEntities.TransferWarehouse>();
-                
+
 
             this.CreateMap<BlEntities.Warehouse, DALEntities.Warehouse>().ReverseMap();
             this.CreateMap<BlEntities.Truck, DALEntities.Truck>()
