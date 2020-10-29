@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 
 namespace KochWermann.SKS.Package.Services.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class Initial : Migration
     {
         /// <summary>

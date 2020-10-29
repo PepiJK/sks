@@ -12,12 +12,12 @@ namespace KochWermann.SKS.Package.Services.Mapper
     /// <summary>
     /// 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class BlMapperProfile : AutoMapper.Profile
     {
         /// <summary>
         /// 
         /// </summary>
-        [ExcludeFromCodeCoverage]
         public BlMapperProfile()
         {
             //ServiceLayer <=> BL

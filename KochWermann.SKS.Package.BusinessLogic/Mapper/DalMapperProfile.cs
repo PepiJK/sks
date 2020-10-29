@@ -8,12 +8,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Mapper
     /// <summary>
     /// 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class DalMapperProfile : AutoMapper.Profile
     {
         /// <summary>
         /// 
         /// </summary>
-        [ExcludeFromCodeCoverage]
         public DalMapperProfile()
         {
             CreateMap<string, Geometry>().ConvertUsing<GeoJsonToGeometryConverter>();
