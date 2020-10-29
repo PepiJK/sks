@@ -24,6 +24,11 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             _validWarehouse = new Warehouse{
                 Code = _validCode,
                 Description = "This should be a valid description",
+                HopType = "Warehouse",
+                Level = 0,
+                ProcessingDelayMins = 1,
+                LocationName = "Root",
+                LocationCoordinates = new GeoCoordinate{Lat = 13, Lon = 47},
                 NextHops = new List<WarehouseNextHops>{new WarehouseNextHops{TraveltimeMins = 69}}
             };
 
@@ -36,13 +41,17 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
 
             //mock warehouse repository
             var mock = new Mock<IWarehouseRepository>();
-            mock.Setup(warehouseRepository => warehouseRepository.GetRootWarehouse()).Returns(new DataAccess.Entities.Warehouse());
+            mock.Setup(warehouseRepository => warehouseRepository.GetRootWarehouse()).Returns(new DataAccess.Entities.Warehouse{
+                LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1)
+            });
             mock.Setup(warehouseRepository => warehouseRepository.Create(
                 It.IsAny<DataAccess.Entities.Hop>()
             )).Returns(1);
             mock.Setup(warehouseRepository => warehouseRepository.GetWarehouseByCode(
                 It.IsRegex("^[A-Z]{4}\\d{1,4}$")
-            )).Returns(new DataAccess.Entities.Warehouse());
+            )).Returns(new DataAccess.Entities.Warehouse{
+                LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1)
+            });
 
             _warehouseLogic = new WarehouseLogic(mapper, mock.Object);
         }
