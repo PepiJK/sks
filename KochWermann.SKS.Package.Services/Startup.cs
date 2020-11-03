@@ -58,8 +58,6 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // DbContext injection
-            services.AddTransient<IDatabaseContext, DatabaseContext>();
 
             // DAL injection
             services.AddTransient<IParcelRepository, SqlParcelRepository>();

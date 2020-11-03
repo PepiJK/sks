@@ -4,7 +4,7 @@ using KochWermann.SKS.Package.DataAccess.Interfaces;
 
 namespace KochWermann.SKS.Package.DataAccess.Sql
 {
-    public class DatabaseContext : DbContext, IDatabaseContext
+    public class DatabaseContext : DbContext
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> opt) : base(opt)
         {

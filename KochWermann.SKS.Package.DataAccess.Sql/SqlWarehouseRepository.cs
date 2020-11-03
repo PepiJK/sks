@@ -8,9 +8,9 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 {
     public class SqlWarehouseRepository : IWarehouseRepository
     {
-        private readonly IDatabaseContext _context;
+        private readonly DatabaseContext _context;
 
-        public SqlWarehouseRepository(IDatabaseContext context)
+        public SqlWarehouseRepository(DatabaseContext context)
         {
             _context = context;
         }

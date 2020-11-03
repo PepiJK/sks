@@ -59,7 +59,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
                 (_hops[0] as Warehouse).NextHops[0].Hop as TransferWarehouse
             };
 
-            var mockContext = new Mock<IDatabaseContext>();
+            var mockContext = new Mock<DatabaseContext>();
             mockContext.Setup(p => p.Hops).Returns(DbContextMock.GetQueryableMockDbSet<Hop>(_hops));
             mockContext.Setup(p => p.Warehouses).Returns(DbContextMock.GetQueryableMockDbSet<Warehouse>(_warehouses));
             mockContext.Setup(p => p.WarehouseNextHops).Returns(DbContextMock.GetQueryableMockDbSet<WarehouseNextHops>(_warehouseNextHops));

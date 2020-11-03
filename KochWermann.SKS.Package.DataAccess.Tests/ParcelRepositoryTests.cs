@@ -7,6 +7,7 @@ using KochWermann.SKS.Package.DataAccess.Sql;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using Microsoft.Extensions.Logging;
 
 namespace KochWermann.SKS.Package.DataAccess.Tests
 {
@@ -14,7 +15,9 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
     {
         private IParcelRepository _parcelRepository;
         private List<Parcel> _parcels;
+        private readonly ILogger<SqlParcelRepository> _logger;
 
+        
 
         [SetUp]
         public void Setup()
@@ -54,11 +57,11 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
                 Weight = 6.9f
             }};
 
-            var mockContext = new Mock<IDatabaseContext>();
+            var mockContext = new Mock<DatabaseContext>();
             mockContext.Setup(p => p.Parcels).Returns(DbContextMock.GetQueryableMockDbSet<Parcel>(_parcels));
             mockContext.Setup(p => p.SaveChanges()).Returns(1);
 
-            _parcelRepository = new SqlParcelRepository(mockContext.Object);
+            _parcelRepository = new SqlParcelRepository(mockContext.Object, _logger);
         }
 
         [Test]
@@ -84,7 +87,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         public void Should_Not_Delete()
         {
             _parcelRepository.Delete(2);
-            
+
             Assert.AreEqual(1, _parcels.Count);
         }
 
@@ -107,7 +110,8 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Get_Parcel_By_Recipient()
         {
-            var recipient = new Recipient{
+            var recipient = new Recipient
+            {
                 Id = 1,
                 Country = "Österreich",
                 PostalCode = "A-1120",
