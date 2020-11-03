@@ -8,6 +8,7 @@ using KochWermann.SKS.Package.Services.Mapper;
 using Moq;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using FizzWare.NBuilder;
+using Microsoft.Extensions.Logging;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
@@ -41,8 +42,10 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
                 It.IsRegex("^[A-Z0-9]{9}$")
             )).Returns(new BusinessLogic.Entities.Parcel());
 
+            var loggerMock = new Mock<ILogger<LogisticsPartnerApiController>>();
+
             //create api controller instance
-            _logisticsPartnerApiController = new LogisticsPartnerApiController(mapper, mock.Object);
+            _logisticsPartnerApiController = new LogisticsPartnerApiController(mapper, mock.Object, loggerMock.Object);
         }
 
         [Test]
@@ -60,7 +63,6 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             var res = _logisticsPartnerApiController.TransitionParcel(null, null);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
-            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
     }
 }
