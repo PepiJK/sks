@@ -9,6 +9,7 @@ using Moq;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using FizzWare.NBuilder;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
@@ -55,7 +56,9 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
                 It.IsAny<BusinessLogic.Entities.Warehouse>()
             ));
 
-            _warehouseManagementApiController = new WarehouseManagementApiController(mapper, mock.Object);
+            var loggerMock = new Mock<ILogger<WarehouseManagementApiController>>();
+
+            _warehouseManagementApiController = new WarehouseManagementApiController(mapper, mock.Object, loggerMock.Object);
         }
 
         [Test]
@@ -81,7 +84,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _warehouseManagementApiController.GetWarehouse(null);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<NotFoundResult>(res);
+            Assert.IsInstanceOf<NotFoundObjectResult>(res);
         }
 
         [Test]
@@ -107,7 +110,6 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             var res = _warehouseManagementApiController.ImportWarehouses(null);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
-            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
     }
 }
