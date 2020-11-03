@@ -2,9 +2,9 @@
 
 namespace KochWermann.SKS.Package.BusinessLogic.Entities
 {
-    public class BL_Exeption : Exception
+    public class BL_Exception : Exception
     {
-        public BL_Exeption (string message, Exception inner)
+        public BL_Exception (string message, Exception inner)
             : base(message, inner) {}
     }
 }

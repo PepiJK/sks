@@ -98,7 +98,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return NotFound("No Parcel exist with this tracking ID.");
             }
-            catch (BusinessLogic.Entities.BL_Exeption ex)
+            catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("The operation failed due to an error.", ex);
             }

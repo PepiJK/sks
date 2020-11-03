@@ -82,7 +82,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 var serviceNewParcelInfo = _mapper.Map<DTOs.NewParcelInfo>(blSubmitedParcel);
                 return Ok(serviceNewParcelInfo);
             }
-            catch (BusinessLogic.Entities.BL_Exeption ex)
+            catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("Error.", ex);
             }

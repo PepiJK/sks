@@ -90,7 +90,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return NotFound("No parcel exists with this tracking Id.");
             }
-            catch (BusinessLogic.Entities.BL_Exeption ex)
+            catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("Error.", ex);
             }
@@ -136,7 +136,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return NotFound("No parcel exists with this tracking Id.");
             }
-            catch (BusinessLogic.Entities.BL_Exeption ex)
+            catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("Error.", ex);
             }

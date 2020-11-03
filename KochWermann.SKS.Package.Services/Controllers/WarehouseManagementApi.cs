@@ -91,7 +91,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return NotFound("No hierarchy loaded");
             }
-            catch (BusinessLogic.Entities.BL_Exeption ex)
+            catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("Error: ", ex);
             }
@@ -130,7 +130,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
                 return Ok(serviceWarehouse);
             }
-            catch (BusinessLogic.Entities.BL_Exeption ex)
+            catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("Error: ", ex);
             }
@@ -164,7 +164,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _warehouseLogic.ImportWarehouses(blWarehouse);
                 return Ok();
             }
-            catch (BusinessLogic.Entities.BL_Exeption ex)
+            catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("Error: ", ex);
             }
