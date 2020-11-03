@@ -68,7 +68,8 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                _context.Remove(_context.Parcels.Single(x => x.Id == id));
+                var parcel = _context.Parcels.FirstOrDefault(x => x.Id == id);
+                _context.Parcels.Remove(parcel);
                 _context.SaveChanges();
             }
             catch (InvalidOperationException ex)
@@ -84,14 +85,21 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public IEnumerable<Parcel> GetParcelByRecipient(Recipient recipient)
         {
-            return _context.Parcels.Where(x => x.Sender == recipient || x.Recipient == recipient).AsEnumerable();
+            IEnumerable<Parcel> parcelList = _context.Parcels
+                .Include(parcel => parcel.Recipient)
+                .Include(parcel => parcel.Sender)
+                .Include(parcel => parcel.VisitedHops)
+                .Include(parcel => parcel.FutureHops)
+                .Where(e => e.Recipient.Id == recipient.Id);
+
+            return parcelList;
         }
 
         public Parcel GetParcelById(int id)
         {
             try
             {
-                return _context.Parcels.Single(x => x.Id == id);
+                return _context.Parcels.FirstOrDefault(x => x.Id == id);
             }
             catch (InvalidOperationException ex)
             {

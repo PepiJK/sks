@@ -6,6 +6,10 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 {
     public class DatabaseContext : DbContext
     {
+        public DatabaseContext()
+        {
+            
+        }
         public DatabaseContext(DbContextOptions<DatabaseContext> opt) : base(opt)
         {
             // this.Database.EnsureCreated();

@@ -15,9 +15,6 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
     {
         private IParcelRepository _parcelRepository;
         private List<Parcel> _parcels;
-        private readonly ILogger<SqlParcelRepository> _logger;
-
-        
 
         [SetUp]
         public void Setup()
@@ -57,11 +54,13 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
                 Weight = 6.9f
             }};
 
+            var loggerMock = new Mock<ILogger<SqlParcelRepository>>();
+
             var mockContext = new Mock<DatabaseContext>();
             mockContext.Setup(p => p.Parcels).Returns(DbContextMock.GetQueryableMockDbSet<Parcel>(_parcels));
             mockContext.Setup(p => p.SaveChanges()).Returns(1);
 
-            _parcelRepository = new SqlParcelRepository(mockContext.Object, _logger);
+            _parcelRepository = new SqlParcelRepository(mockContext.Object, loggerMock.Object);
         }
 
         [Test]
