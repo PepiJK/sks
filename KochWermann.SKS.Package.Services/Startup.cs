@@ -127,9 +127,10 @@ namespace KochWermann.SKS.Package.Services
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        /// <param name="loggerFactory"></param>
         /// <param name="databaseContext"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, DatabaseContext databaseContext)
+        /// <param name="logger"></param>
+        // <param name="loggerFactory"></param>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, /*ILoggerFactory loggerFactory, */ ILogger<Startup> logger, DatabaseContext databaseContext)
         {
             databaseContext.Database.Migrate();
 
@@ -158,16 +159,24 @@ namespace KochWermann.SKS.Package.Services
                 endpoints.MapControllers();
             });
 
-            if (env.IsDevelopment())
+            if (env.IsProduction())
             {
+                logger.LogInformation("using production environment");
+            }
+            else if (env.IsStaging())
+            {
+                logger.LogInformation("using staging environment");
+            }
+            else if (env.IsDevelopment())
+            {
+                logger.LogInformation("using development environment");
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 //TODO: Enable production exception handling (https://docs.microsoft.com/en-us/aspnet/core/fundamentals/error-handling)
-                app.UseExceptionHandler("/Error");
-
-                app.UseHsts();
+                //app.UseExceptionHandler("/Error");
+                //app.UseHsts();
             }
         }
     }
