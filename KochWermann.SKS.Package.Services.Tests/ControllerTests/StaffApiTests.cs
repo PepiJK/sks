@@ -71,7 +71,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _staffApiController.ReportParcelHop(_testTrackingId, _testCode);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<OkResult>(res);
+            Assert.IsInstanceOf<OkObjectResult>(res);
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _staffApiController.ReportParcelHop(null, null);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<NotFoundResult>(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
         }
 
         [Test]

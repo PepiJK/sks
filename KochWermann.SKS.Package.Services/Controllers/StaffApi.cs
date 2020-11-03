@@ -79,9 +79,9 @@ namespace KochWermann.SKS.Package.Services.Controllers
             
             try
             {
-                _logger.LogTrace($"ReportParcelDelivery with trackingId: {trackingId}.");
+                _logger.LogTrace($"ReportParcelDelivery: trackingId: {trackingId}.");
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return ExceptionHandler("invalid TrackingId");
+                    return ExceptionHandler("Invalid TrackingId");
 
                 _trackingLogic.ReportParcelDelivery(trackingId);
                 return Ok("Successfull delivery.");
@@ -113,18 +113,37 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("ReportParcelHop")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No parcel exists with this tracking ID.")]
+
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
         {
-            if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(code))
-            {
-                if (trackingId == "ERROR1234" || code == "ERRO1234")
+            if (trackingId == "ERROR1234" || code == "ERRO1234")
                     return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234 or code is ERRO1234" });
-                
-                _trackingLogic.ReportParcelHop(trackingId, code);
-                return Ok();
-            }
 
-            return NotFound();
+            try
+            {
+                _logger.LogTrace($"ReportParcelHop: trackingId: {trackingId} and code: {code}.");
+                if (string.IsNullOrWhiteSpace(trackingId))
+                    return ExceptionHandler("Invalid TrackingId");
+
+                if (string.IsNullOrWhiteSpace(code))
+                    return ExceptionHandler("Invalid Code");
+
+                _trackingLogic.ReportParcelHop(trackingId, code);
+                return Ok("Successfully reported hop");
+            }
+            catch (BusinessLogic.Entities.BL_NotFound_Exception)
+            {
+                return NotFound("No parcel exists with this tracking Id.");
+            }
+            catch (BusinessLogic.Entities.BL_Exeption ex)
+            {
+                return ExceptionHandler("Error.", ex);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHandler("Error.", ex);
+            }
         }
     }
 }
