@@ -21,6 +21,7 @@ using KochWermann.SKS.Package.Services.DTOs;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -32,16 +33,38 @@ namespace KochWermann.SKS.Package.Services.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ITrackingLogic _trackingLogic;
+        private readonly ILogger<RecipientApiController> _logger;
+
 
         /// <summary>
         /// 
         /// </summary>
-        public RecipientApiController(IMapper mapper, ITrackingLogic trackingLogic)
+        public RecipientApiController(IMapper mapper, ITrackingLogic trackingLogic, ILogger<RecipientApiController> logger)
         {
             _mapper = mapper;
             _trackingLogic = trackingLogic;
+            _logger = logger;
+            _logger.LogTrace("RecipientApiController created");
         }
         
+        private IActionResult ExceptionHandler(string message, Exception ex = null)
+        {
+            if (ex != null)
+            {
+                _logger.LogError(ex.ToString());
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
+                    }
+                }
+            }
+            return BadRequest(message);
+        }
+
+
         /// <summary>
         /// Find the latest state of a parcel by its tracking ID. 
         /// </summary>
@@ -55,19 +78,34 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerOperation("TrackParcel")]
         [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "No Parcel exist with this trackingId.")]
+
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId)
         {
-            if (!string.IsNullOrWhiteSpace(trackingId))
-            {
-                if (trackingId == "ERROR1234")
+            if (trackingId == "ERROR1234")
                     return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234" });
+                    
+            try
+            {
+                _logger.LogTrace($"TrackParcel: trackingId: {trackingId}.");
+                if (string.IsNullOrWhiteSpace(trackingId))
+                    return ExceptionHandler("Invalid TrackingId");
 
                 var blParcel = _trackingLogic.TrackParcel(trackingId);
-                var serviceTrackingInformation = _mapper.Map<DTOs.TrackingInformation>(blParcel);
-                return Ok(serviceTrackingInformation);
+                return Ok(_mapper.Map<TrackingInformation>(blParcel));
             }
-
-            return NotFound();
+            catch (BusinessLogic.Entities.BL_NotFound_Exception)
+            {
+                return NotFound("No Parcel exist with this tracking ID.");
+            }
+            catch (BusinessLogic.Entities.BL_Exeption ex)
+            {
+                return ExceptionHandler("The operation failed due to an error.", ex);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHandler("The operation failed due to an error.", ex);
+            }
         }
     }
 }
