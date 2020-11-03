@@ -8,6 +8,7 @@ using KochWermann.SKS.Package.Services.Mapper;
 using Moq;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using FizzWare.NBuilder;
+using Microsoft.Extensions.Logging;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
@@ -39,7 +40,9 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
                 It.IsAny<BusinessLogic.Entities.Parcel>()
             )).Returns(new BusinessLogic.Entities.Parcel());
             
-            _senderApiController = new SenderApiController(mapper, mock.Object);
+            var loggerMock = new Mock<ILogger<SenderApiController>>();
+
+            _senderApiController = new SenderApiController(mapper, mock.Object, loggerMock.Object);
         }
 
         [Test]
