@@ -8,6 +8,9 @@ using AutoMapper;
 using Moq;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic.Mapper;
+using Microsoft.Extensions.Logging;
+
+using BL_Exception = KochWermann.SKS.Package.BusinessLogic.Entities.BL_Exception;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
@@ -53,7 +56,9 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1)
             });
 
-            _warehouseLogic = new WarehouseLogic(mapper, mock.Object);
+            var loggerMock = new Mock<ILogger<WarehouseLogic>>();
+
+            _warehouseLogic = new WarehouseLogic(mapper, mock.Object, loggerMock.Object);
         }
 
         [Test]
@@ -73,35 +78,35 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Null_Warehouse()
         {
-            Assert.Throws<ArgumentNullException>(() => _warehouseLogic.ImportWarehouses(null));
+            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(null));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Code()
         {
             _validWarehouse.Code = _invalidCode;
-            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Truck()
         {
             _validWarehouse.NextHops[0].Hop = new Truck(); 
-            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Warehouse()
         {
             _validWarehouse.NextHops[0].Hop = new Warehouse(); 
-            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Transferwarehouse()
         {
             _validWarehouse.NextHops[0].Hop = new TransferWarehouse(); 
-            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
@@ -115,13 +120,13 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Invalid_Code()
         {
-            Assert.Throws<ValidationException>(() => _warehouseLogic.GetWarehouse(_invalidCode));
+            Assert.Throws<BL_Exception>(() => _warehouseLogic.GetWarehouse(_invalidCode));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Null_Code()
         {
-            Assert.Throws<ArgumentNullException>(() => _warehouseLogic.GetWarehouse(null));
+            Assert.Throws<BL_Exception>(() => _warehouseLogic.GetWarehouse(null));
         }
     }
 }

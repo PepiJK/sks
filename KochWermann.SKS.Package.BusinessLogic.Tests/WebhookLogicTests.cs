@@ -1,16 +1,30 @@
 using System;
+using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using KochWermann.SKS.Package.BusinessLogic.Mapper;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
     public class WebhookLogicTests
     {
-        private IWebhookLogic _webhookLogic = new WebhookLogic();
+        private WebhookLogic _webhookLogic;
 
         [SetUp]
         public void Setup()
         {
+            //auto mapper configuration
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new DalMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            var loggerMock = new Mock<ILogger<WebhookLogic>>();
+
+            _webhookLogic = new WebhookLogic(mapper, loggerMock.Object);
         }
 
         [Test]
