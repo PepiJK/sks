@@ -52,7 +52,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
                         message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
                     }
                 }
-                //return BadRequest("An error occurred loading.");
             }
             return BadRequest(message);
         }

@@ -6,6 +6,7 @@ using KochWermann.SKS.Package.Services.Mapper;
 using AutoMapper;
 using Moq;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
 {
@@ -35,7 +36,9 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
                 It.IsRegex("^[A-Z]{4}\\d{1,4}$")
             ));
 
-            _staffApiController = new StaffApiController(mapper, mock.Object);
+            var loggerMock = new Mock<ILogger<StaffApiController>>();
+
+            _staffApiController = new StaffApiController(mapper, mock.Object, loggerMock.Object);
         }
 
         [Test]
@@ -43,7 +46,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _staffApiController.ReportParcelDelivery(_testTrackingId);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<OkResult>(res);
+            Assert.IsInstanceOf<OkObjectResult>(res);
         }
 
         [Test]
@@ -51,7 +54,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _staffApiController.ReportParcelDelivery(null);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<NotFoundResult>(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
         }
 
         [Test]
