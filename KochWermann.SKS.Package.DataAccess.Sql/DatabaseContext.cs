@@ -21,7 +21,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             builder.Entity<Truck>().HasBaseType<Hop>();
             builder.Entity<Warehouse>().HasBaseType<Hop>();
             builder.Entity<TransferWarehouse>().HasBaseType<Hop>();
-            builder.Entity<Warehouse>().HasMany(wh => wh.NextHops);
         }
 
         public virtual DbSet<Parcel> Parcels { get; set; }

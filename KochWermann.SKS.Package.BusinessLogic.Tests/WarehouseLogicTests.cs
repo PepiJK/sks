@@ -49,7 +49,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             });
             mock.Setup(warehouseRepository => warehouseRepository.Create(
                 It.IsAny<DataAccess.Entities.Hop>()
-            )).Returns(1);
+            )).Returns(_validCode);
             mock.Setup(warehouseRepository => warehouseRepository.GetWarehouseByCode(
                 It.IsRegex("^[A-Z]{4}\\d{1,4}$")
             )).Returns(new DataAccess.Entities.Warehouse{

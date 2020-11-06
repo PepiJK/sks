@@ -88,8 +88,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             IEnumerable<Parcel> parcelList = _context.Parcels
                 .Include(parcel => parcel.Recipient)
                 .Include(parcel => parcel.Sender)
-                .Include(parcel => parcel.VisitedHops)
-                .Include(parcel => parcel.FutureHops)
+                .Include(parcel => parcel.HopArrivals)
                 .Where(e => e.Recipient.Id == recipient.Id);
 
             return parcelList;
@@ -119,8 +118,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 var parcel = _context.Parcels
                     .Include(parcel => parcel.Recipient)
                     .Include(parcel => parcel.Sender)
-                    .Include(parcel => parcel.VisitedHops)
-                    .Include(parcel => parcel.FutureHops)
+                    .Include(parcel => parcel.HopArrivals)
                     .FirstOrDefault(x => x.TrackingId == trackingid);
 
                 return parcel;

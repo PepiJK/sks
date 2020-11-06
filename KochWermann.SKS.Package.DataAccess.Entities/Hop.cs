@@ -11,14 +11,10 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     [ExcludeFromCodeCoverage]
     public partial class Hop
     { 
-        [Required]
-        [Key]
-        public int Id { get; set; }
-
         /// <summary>
         /// Gets or Sets HopType
         /// </summary>
-        [Required]        
+        [Required]     
         public string HopType { get; set; }
 
         /// <summary>
@@ -26,6 +22,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         /// </summary>
         /// <value>Unique CODE of the hop.</value>
         [Required]
+        [Key]
         public string Code { get; set; }
 
         /// <summary>

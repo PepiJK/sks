@@ -5,11 +5,10 @@ namespace KochWermann.SKS.Package.DataAccess.Interfaces
 {
     public interface IWarehouseRepository
     {
-        int Create(Hop hop);
+        string Create(Hop hop);
         void Update(Hop hop);
-        void Delete(int id);
+        void Delete(string code);
 
-        Hop GetHopById(int id);
         Hop GetHopByCode(string code);
         Warehouse GetRootWarehouse();
         TransferWarehouse GetTransferWarehouseByCode(string code);

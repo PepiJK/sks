@@ -30,12 +30,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 VisitedHops = new List<HopArrival>{new HopArrival{
                     Code = "Code1",
                     Description = "Visited hops blabla",
-                    DateTime = DateTime.Today
+                    DateTime = DateTime.Now.AddDays(-1)
                 }},
                 FutureHops = new List<HopArrival>{new HopArrival{
                     Code = "Code2",
                     Description = "Future hops blabla",
-                    DateTime = DateTime.Now
+                    DateTime = DateTime.Now.AddDays(1)
                 }},
                 Recipient = new Recipient{
                     Country = "Österreich",

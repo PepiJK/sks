@@ -23,14 +23,12 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         {
             _hops = new List<Hop>{
                 new Warehouse{
-                    Id = 1,
                     IsRootWarehouse = true,
                     Code = "CODE1234",
                     HopType = "Warehouse",
                     NextHops = new List<WarehouseNextHops>{
                         new WarehouseNextHops{
                             Hop = new TransferWarehouse{
-                                Id = 1,
                                 Code = "TRAN1234",
                                 HopType = "TransferWarehouse"
                             }
@@ -38,7 +36,6 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
                     }
                 },
                 new Truck{
-                    Id = 1,
                     Code = "TRUC1234",
                     HopType = "Truck"
                 }
@@ -87,17 +84,9 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Delete()
         {
-            _warehouseRepository.Delete(1);
+            _warehouseRepository.Delete("CODE1234");
 
             Assert.AreEqual(1, _hops.Count);
-        }
-
-        [Test]
-        public void Should_Get_Hop_By_Id()
-        {
-            var hop = _warehouseRepository.GetHopById(1);
-
-            Assert.AreEqual(_hops[0], hop);
         }
 
         [Test]

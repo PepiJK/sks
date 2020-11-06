@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KochWermann.SKS.Package.DataAccess.Entities
 {
@@ -20,6 +21,7 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         /// </summary>
         /// <value>Unique CODE of the hop.</value>
         [Required]
+        [ForeignKey("Hop")]
         public string Code { get; set; }
 
         /// <summary>
@@ -33,5 +35,9 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         /// </summary>
         /// <value>The date/time the parcel arrived at the hop.</value>
         public DateTime? DateTime { get; set; }
+
+        public Parcel Parcel { get; set; }
+
+        public Hop Hop { get; set; }
     }
 }

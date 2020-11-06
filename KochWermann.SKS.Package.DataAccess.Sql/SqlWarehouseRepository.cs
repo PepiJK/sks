@@ -27,13 +27,18 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             return new DAL_Exception(message, inner);
         }
 
-        public int Create(Hop hop)
+        public string Create(Hop hop)
         {
             try
             {
+                if ((hop as Warehouse)?.Level == 0)
+                {
+                    (hop as Warehouse).IsRootWarehouse = true;
+                }
+                   
                 _context.Hops.Add(hop);
                 _context.SaveChanges();
-                return hop.Id;
+                return hop.Code;
             }
             catch (SqlException ex)
             {
@@ -45,11 +50,11 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             }
         }
 
-        public void Delete(int id)
+        public void Delete(string code)
         {
             try
             {
-                var hop = _context.Hops.FirstOrDefault(h => h.Id == id);
+                var hop = _context.Hops.FirstOrDefault(h => h.Code == code);
                 _context.Hops.Remove(hop);
                 _context.SaveChanges();
             }
@@ -72,30 +77,13 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var h = GetHopById(hop.Id);
+                var h = GetHopByCode(hop.Code);
                 _context.Entry(h).CurrentValues.SetValues(h);
                 _context.SaveChanges();
             }
             catch (SqlException ex)
             {
                 throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
-            catch (Exception ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
-        }
-
-        public Hop GetHopById(int id)
-        {
-            try
-            {
-                return _context.Hops.FirstOrDefault(x => x.Id == id);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogError(ex.ToString());
-                throw new DAL_NotFound_Exception($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {
@@ -128,7 +116,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 _context.WarehouseNextHops.Load();
                 _context.Trucks.Load();
                 _context.TransferWarehouses.Load();
-                return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).FirstOrDefault(w => w.Id == 1);
+                return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).FirstOrDefault(w => w.IsRootWarehouse);
             }
             catch (SqlException ex)
             {

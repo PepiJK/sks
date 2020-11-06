@@ -117,7 +117,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         public virtual IActionResult GetWarehouse([FromRoute][Required] string code)
         {
             if (code == "ERROR")
-                    return BadRequest(new DTOs.Error { ErrorMessage = "code is ERROR" });
+                return BadRequest(new DTOs.Error { ErrorMessage = "code is ERROR" });
 
             try
             {

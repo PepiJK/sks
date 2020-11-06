@@ -21,17 +21,11 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         {
             _parcels = new List<Parcel>{new Parcel{
                 Id = 1,
-                VisitedHops = new List<HopArrival>{new HopArrival{
+                HopArrivals = new List<HopArrival>{new HopArrival{
                     Id = 1,
                     Code = "Code1",
                     Description = "Visited hops blabla",
                     DateTime = DateTime.Today
-                }},
-                FutureHops = new List<HopArrival>{new HopArrival{
-                    Id = 2,
-                    Code = "Code2",
-                    Description = "Future hops blabla",
-                    DateTime = DateTime.Now
                 }},
                 Recipient = new Recipient{
                     Id = 1,

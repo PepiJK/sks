@@ -58,7 +58,6 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-
             // DAL injection
             services.AddTransient<IParcelRepository, SqlParcelRepository>();
             services.AddTransient<IWarehouseRepository, SqlWarehouseRepository>();
@@ -76,6 +75,7 @@ namespace KochWermann.SKS.Package.Services
                 options.UseSqlServer(_configuration.GetConnectionString("Database"), x => {
                     x.UseNetTopologySuite();
                     x.MigrationsAssembly("KochWermann.SKS.Package.Services");
+                    x.EnableRetryOnFailure();
                 });
             });
 
@@ -87,7 +87,7 @@ namespace KochWermann.SKS.Package.Services
                     options.InputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter>();
                     options.OutputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter>();
                 })
-                .AddFluentValidation(mvcConfiguration => mvcConfiguration.RegisterValidatorsFromAssemblyContaining<BusinessLogic.Validators.ParcelValidator>()) //FluentValidation
+                //.AddFluentValidation(mvcConfiguration => mvcConfiguration.RegisterValidatorsFromAssemblyContaining<BusinessLogic.Validators.ParcelValidator>()) //FluentValidation
                 .AddNewtonsoftJson(opts =>
                 {
                     opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -126,9 +126,8 @@ namespace KochWermann.SKS.Package.Services
         /// <param name="app"></param>
         /// <param name="env"></param>
         /// <param name="databaseContext"></param>
-        /// <param name="logger"></param>
-        // <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, /*ILoggerFactory loggerFactory, */ ILogger<Startup> logger, DatabaseContext databaseContext)
+        /// <param name="loggerFactory"></param>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, DatabaseContext databaseContext)
         {
             databaseContext.Database.Migrate();
 
@@ -157,24 +156,15 @@ namespace KochWermann.SKS.Package.Services
                 endpoints.MapControllers();
             });
 
-            if (env.IsProduction())
+            if (env.IsDevelopment())
             {
-                logger.LogInformation("using production environment");
-            }
-            else if (env.IsStaging())
-            {
-                logger.LogInformation("using staging environment");
-            }
-            else if (env.IsDevelopment())
-            {
-                logger.LogInformation("using development environment");
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 //TODO: Enable production exception handling (https://docs.microsoft.com/en-us/aspnet/core/fundamentals/error-handling)
-                //app.UseExceptionHandler("/Error");
-                //app.UseHsts();
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
         }
     }
