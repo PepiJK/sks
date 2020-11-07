@@ -17,7 +17,9 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
     {
         private WarehouseManagementApiController _warehouseManagementApiController;
         private Services.DTOs.Warehouse _testWarehouse;
-        private string _testCode = "CODE";
+        private string _testCode = "CODE123";
+        private string _notFoundCode = "CODE321";
+        private string _invalidCode = "hallo";
 
         [SetUp]
         public void Setup()
@@ -51,6 +53,12 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
                 _testCode
             )).Returns(new BusinessLogic.Entities.Warehouse());
+            mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
+                _notFoundCode
+            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("Code Not Found", new System.Exception()));
+            mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
+                _invalidCode
+            )).Throws(new BusinessLogic.Entities.BL_Exception("Code Is Invalid", new System.Exception()));
             
             mock.Setup(trackingLogic => trackingLogic.ImportWarehouses(
                 It.IsAny<BusinessLogic.Entities.Warehouse>()
@@ -85,9 +93,26 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [Test]
         public void Should_Return_Not_Found_On_Get_Warehouse()
         {
-            var res = _warehouseManagementApiController.GetWarehouse(null);
+            var res = _warehouseManagementApiController.GetWarehouse(_notFoundCode);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<NotFoundObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as NotFoundObjectResult).Value);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Get_Warehouse_Of_Null_Code()
+        {
+            var res = _warehouseManagementApiController.GetWarehouse(null);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Get_Warehouse_Of_Invalid_Code()
+        {
+            var res = _warehouseManagementApiController.GetWarehouse(_invalidCode);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
         }
 
         [Test]

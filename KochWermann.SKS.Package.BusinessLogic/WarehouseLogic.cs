@@ -6,6 +6,7 @@ using AutoMapper;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using KochWermann.SKS.Package.BusinessLogic.Helpers;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
@@ -13,10 +14,10 @@ namespace KochWermann.SKS.Package.BusinessLogic
     {
         private readonly IMapper _mapper;
         private readonly IWarehouseRepository _warehouseRepository;
+        private readonly ILogger _logger;
         private readonly WarehouseValidator _warehouseValidator = new WarehouseValidator();
         private readonly NextHopValidator _nextHopValidator = new NextHopValidator();
         private readonly CodeValidator _codeValidator = new CodeValidator();
-        private readonly ILogger _logger;
 
 
         public WarehouseLogic(IMapper mapper, IWarehouseRepository warehouseRepository, ILogger<WarehouseLogic> logger)
@@ -32,19 +33,20 @@ namespace KochWermann.SKS.Package.BusinessLogic
             try
             {
                 var root = _warehouseRepository.GetRootWarehouse();
-                return _mapper.Map<Warehouse>(root);
+                var blRoot = _mapper.Map<Warehouse>(root);
+                return blRoot;
             }
             catch (DataAccess.Entities.DAL_NotFound_Exception ex)
             {
-                throw NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (DataAccess.Entities.DAL_Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
         }
 
@@ -53,19 +55,19 @@ namespace KochWermann.SKS.Package.BusinessLogic
             try
             {
                 _logger.LogInformation("Importing Warehouse");
-                Validate<Warehouse>(warehouse, _warehouseValidator);
-                warehouse.NextHops.ForEach(nextHop => Validate<WarehouseNextHops>(nextHop, _nextHopValidator));
+                BusinessLogicHelper.Validate<Warehouse>(warehouse, _warehouseValidator, _logger);
+                warehouse.NextHops.ForEach(nextHop => BusinessLogicHelper.Validate<WarehouseNextHops>(nextHop, _nextHopValidator, _logger));
 
                 var dalWarehouse = _mapper.Map<DataAccess.Entities.Warehouse>(warehouse);
                 _warehouseRepository.Create(dalWarehouse);
             }
             catch (DataAccess.Entities.DAL_Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
 
         }
@@ -74,7 +76,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
         {
             try
             {
-                Validate<string>(code, _codeValidator);
+                BusinessLogicHelper.Validate<string>(code, _codeValidator, _logger);
 
                 var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
                 var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(dalWarehouse);
@@ -83,35 +85,18 @@ namespace KochWermann.SKS.Package.BusinessLogic
             }
             catch (DataAccess.Entities.DAL_NotFound_Exception ex)
             {
-                throw NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (DataAccess.Entities.DAL_Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
         }
 
-        private void Validate<T>(T instanceToValidate, AbstractValidator<T> validator)
-        {
-            var validationResult = validator.Validate(instanceToValidate);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
-        }
 
-        private BL_Exception ExceptionHandler(string method, Exception ex)
-        {
-            _logger.LogError(ex.ToString());
-            return new BL_Exception(method, ex);
-        }
-
-        private BL_NotFound_Exception NotFound_ExceptionHandler(string method, Exception ex)
-        {
-            _logger.LogError(ex.ToString());
-            return new BL_NotFound_Exception(method, ex);
-        }
     }
 }

@@ -19,7 +19,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         private ITrackingLogic _trackingLogic;
         private Parcel _validParcel;
         private string _validTrackingId = "PYJRB4HZ6";
-        private string _validNotAvailableTrackingId = "PYJRB4HZ9";
+        private string _notFoundTrackingId = "PYJRB4HZ9";
         private string _invalidTrackingId = "hallo";
         private string _validCode = "TEST1234";
         private string _invalidCode = "hi";
@@ -67,8 +67,25 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             //mock parcel repository
             var mock = new Mock<IParcelRepository>();
             mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
-                It.IsRegex("^[A-Z0-9]{9}$")
+                _validTrackingId
             )).Returns(new DataAccess.Entities.Parcel());
+            mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
+                _notFoundTrackingId
+            )).Throws(new DataAccess.Entities.DAL_NotFound_Exception("TrackingId Not Found", new Exception()));
+            mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
+                _invalidTrackingId
+            )).Throws(new DataAccess.Entities.DAL_Exception("Invalid TrackingId", new Exception()));
+
+            mock.Setup(parcelRepository => parcelRepository.Create(
+                It.IsAny<DataAccess.Entities.Parcel>()
+            )).Returns<DataAccess.Entities.Parcel>(p => p.Id);
+
+            mock.Setup(parcelRepository => parcelRepository.Update(
+                It.IsAny<DataAccess.Entities.Parcel>()
+            ));
+            mock.Setup(parcelRepository => parcelRepository.Update(
+                It.Is<DataAccess.Entities.Parcel>(p => p.TrackingId == _notFoundTrackingId)
+            )).Throws(new DataAccess.Entities.DAL_NotFound_Exception("Parcel Not Found", new Exception()));
             
             var loggerMock = new Mock<ILogger<TrackingLogic>>();
 
@@ -138,6 +155,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         }
 
         [Test]
+        public void Should_Throw_Not_Found_Exception_On_Track_Parcel()
+        {
+            Assert.Throws<BL_NotFound_Exception>(() => _trackingLogic.TrackParcel(_notFoundTrackingId));
+        }
+
+        [Test]
         public void Should_Submit_Parcel()
         {
             var res = _trackingLogic.SubmitParcel(_validParcel);
@@ -152,11 +175,16 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         }
 
         [Test]
+        public void Should_Throw_Not_Found_Exception_On_Report_Parcel_Delivery()
+        {
+            Assert.Throws<BL_NotFound_Exception>(() => _trackingLogic.ReportParcelDelivery(_notFoundTrackingId));
+        }
+
+        [Test]
         public void Should_Report_Parcel_Hop()
         {
             Assert.DoesNotThrow(() => _trackingLogic.ReportParcelHop(_validTrackingId, _validCode));
         }
-
         [Test]
         public void Should_Throw_Exception_On_Report_Parcel_Hop_Of_Invalid_Code()
         {

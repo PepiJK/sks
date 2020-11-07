@@ -19,6 +19,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         private IWarehouseLogic _warehouseLogic;
         private Warehouse _validWarehouse;
         private string _validCode = "CODE123";
+        private string _notFoundCode = "CODE321";
         private string _invalidCode = "hi";
 
         [SetUp]
@@ -49,12 +50,15 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             });
             mock.Setup(warehouseRepository => warehouseRepository.Create(
                 It.IsAny<DataAccess.Entities.Hop>()
-            )).Returns(_validCode);
+            )).Returns<DataAccess.Entities.Hop>(h => h.Code);
             mock.Setup(warehouseRepository => warehouseRepository.GetWarehouseByCode(
-                It.IsRegex("^[A-Z]{4}\\d{1,4}$")
+                _validCode
             )).Returns(new DataAccess.Entities.Warehouse{
                 LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1)
             });
+            mock.Setup(warehouseRepository => warehouseRepository.GetWarehouseByCode(
+                _notFoundCode
+            )).Throws(new DataAccess.Entities.DAL_NotFound_Exception("Code Not Found", new Exception()));
 
             var loggerMock = new Mock<ILogger<WarehouseLogic>>();
 
@@ -127,6 +131,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Null_Code()
         {
             Assert.Throws<BL_Exception>(() => _warehouseLogic.GetWarehouse(null));
+        }
+
+        [Test]
+        public void Should_Throw_Not_Found_Exception_On_Get_Warehouses_Of_Not_Found_Code()
+        {
+            Assert.Throws<BL_NotFound_Exception>(() => _warehouseLogic.GetWarehouse(_notFoundCode));
         }
     }
 }

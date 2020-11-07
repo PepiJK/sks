@@ -22,6 +22,7 @@ using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using Microsoft.Extensions.Logging;
+using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -59,9 +60,9 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}")]
         [ValidateModelState]
         [SwaggerOperation("TrackParcel")]
-        [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "No Parcel exist with this trackingId.")]
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
+        [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No Parcel exist with this trackingId.")]
 
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId)
         {                    
@@ -69,41 +70,24 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 _logger.LogTrace($"TrackParcel: trackingId: {trackingId}.");
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return ExceptionHandler("Invalid TrackingId");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid TrackingId", _logger));
 
                 var blParcel = _trackingLogic.TrackParcel(trackingId);
-                var serviceTrackingInfo = _mapper.Map<TrackingInformation>(blParcel);
+                var serviceTrackingInfo = _mapper.Map<DTOs.TrackingInformation>(blParcel);
                 return Ok(serviceTrackingInfo);
             }
             catch (BusinessLogic.Entities.BL_NotFound_Exception)
             {
-                return NotFound(new Error{ErrorMessage = "No Parcel exist with this tracking ID."});
+                return NotFound(ControllerApiHelper.CreateErrorDTO("No Parcel exist with this tracking ID.", _logger));
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
-                return ExceptionHandler("The operation failed due to an error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
             catch (Exception ex)
             {
-                return ExceptionHandler("The operation failed due to an error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
-        }
-
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(new Error{ErrorMessage = message});
         }
     }
 }

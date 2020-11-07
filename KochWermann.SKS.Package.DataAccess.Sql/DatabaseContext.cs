@@ -1,18 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using KochWermann.SKS.Package.DataAccess.Entities;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.DataAccess.Sql
 {
+    [ExcludeFromCodeCoverage]
     public class DatabaseContext : DbContext
     {
         public DatabaseContext()
         {
-            
         }
         public DatabaseContext(DbContextOptions<DatabaseContext> opt) : base(opt)
         {
-            // this.Database.EnsureCreated();
         }
 
         protected override void OnModelCreating (ModelBuilder builder)

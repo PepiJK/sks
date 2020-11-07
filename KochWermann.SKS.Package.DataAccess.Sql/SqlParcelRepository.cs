@@ -30,10 +30,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 _context.SaveChanges();
                 return parcel.Id;
             }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
             catch (Exception ex)
             {
                 throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
@@ -48,10 +44,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 _context.Entry(p).CurrentValues.SetValues(parcel);
                 _context.SaveChanges();
             }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
             catch (Exception ex)
             {
                 throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
@@ -62,7 +54,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var parcel = _context.Parcels.FirstOrDefault(x => x.Id == id);
+                var parcel = _context.Parcels.First(x => x.Id == id);
                 _context.Parcels.Remove(parcel);
                 _context.SaveChanges();
             }
@@ -79,7 +71,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public IEnumerable<Parcel> GetParcelByRecipient(Recipient recipient)
         {
-            IEnumerable<Parcel> parcelList = _context.Parcels
+            var parcelList = _context.Parcels
                 .Include(parcel => parcel.Recipient)
                 .Include(parcel => parcel.Sender)
                 .Include(parcel => parcel.HopArrivals)
@@ -92,7 +84,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                return _context.Parcels.FirstOrDefault(x => x.Id == id);
+                return _context.Parcels.First(x => x.Id == id);
             }
             catch (InvalidOperationException ex)
             {
@@ -113,7 +105,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                     .Include(parcel => parcel.Recipient)
                     .Include(parcel => parcel.Sender)
                     .Include(parcel => parcel.HopArrivals)
-                    .FirstOrDefault(x => x.TrackingId == trackingid);
+                    .First(x => x.TrackingId == trackingid);
 
                 return parcel;
             }

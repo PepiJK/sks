@@ -34,10 +34,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 _context.SaveChanges();
                 return hop.Code;
             }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
             catch (Exception ex)
             {
                 throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
@@ -48,7 +44,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var hop = _context.Hops.FirstOrDefault(h => h.Code == code);
+                var hop = _context.Hops.First(h => h.Code == code);
                 _context.Hops.Remove(hop);
                 _context.SaveChanges();
             }
@@ -56,10 +52,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             {
                 _logger.LogError(ex.ToString());
                 throw new DAL_NotFound_Exception($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {
@@ -75,10 +67,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 _context.Entry(h).CurrentValues.SetValues(h);
                 _context.SaveChanges();
             }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
             catch (Exception ex)
             {
                 throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
@@ -89,7 +77,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                return _context.Warehouses.FirstOrDefault(x => x.Code == code);
+                return _context.Warehouses.First(x => x.Code == code);
             }
             catch (InvalidOperationException ex)
             {
@@ -106,11 +94,16 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).FirstOrDefault(w => w.IsRootWarehouse);
+                _context.Warehouses.Load();
+                _context.WarehouseNextHops.Load();
+                _context.Trucks.Load();
+                _context.TransferWarehouses.Load();
+                return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).First(w => w.IsRootWarehouse);
             }
-            catch (SqlException ex)
+            catch (InvalidOperationException ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError(ex.ToString());
+                throw new DAL_NotFound_Exception($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {
@@ -122,7 +115,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                return _context.Hops.Single(x => x.Code == code);
+                return _context.Hops.First(x => x.Code == code);
             }
             catch (InvalidOperationException ex)
             {
@@ -137,7 +130,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public TransferWarehouse GetTransferWarehouseByCode(string code)
         {
-            var transferWarehouse = _context.TransferWarehouses.FirstOrDefault(h => h.Code == code);
+            var transferWarehouse = _context.TransferWarehouses.First(h => h.Code == code);
 
             return transferWarehouse;
         }
@@ -149,23 +142,23 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public IEnumerable<Truck> GetAllTrucks()
         {
-            return _context.Hops.Where(x => x.HopType == "Truck").AsEnumerable().Cast<Truck>();
+            return _context.Hops.Where(x => x.HopType == "Truck").Cast<Truck>();
         }
 
         public IEnumerable<WarehouseNextHops> GetAllWarehouseNextHops()
         {
-            return _context.WarehouseNextHops.AsEnumerable();
+            return _context.WarehouseNextHops;
         }
 
         public IEnumerable<Warehouse> GetAllWarehouses()
         {
             try
             {
+                _context.Warehouses.Load();
+                _context.WarehouseNextHops.Load();
+                _context.Trucks.Load();
+                _context.TransferWarehouses.Load();
                 return _context.Warehouses.Include(wh => wh.NextHops);
-            }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {

@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using System;
+using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -60,10 +61,10 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 _logger.LogTrace($"TransitionParcel: trackingId: {trackingId}.");
                 if (body == null)
-                    return ExceptionHandler("Parcel should not be null");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Parcel should not be null", _logger));
 
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return ExceptionHandler("Invalid TrackingId");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid TrackingId", _logger));
 
                 var blParcel = _mapper.Map<BusinessLogic.Entities.Parcel>(body);
                 var blTransitionedParcel = _trackingLogic.TransitionParcel(blParcel, trackingId);
@@ -72,31 +73,16 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
-                return ExceptionHandler("Error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
 
             }
             catch (Exception ex)
             {
-                return ExceptionHandler("Error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
         }
 
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(new DTOs.Error{ErrorMessage = message});
-        }
+        
     }
 }
 

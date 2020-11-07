@@ -16,6 +16,7 @@ using KochWermann.SKS.Package.Services.Attributes;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using Microsoft.Extensions.Logging;
+using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -64,7 +65,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
 
                 var root = _warehouseLogic.ExportWarehouses();
                 if (root == null)
-                    return NotFound("No hierarchy loaded");
+                    return NotFound(ControllerApiHelper.CreateErrorDTO("No hierarchy loaded yet.", _logger));
 
                 var blWarehouse = _warehouseLogic.ExportWarehouses();
                 var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
@@ -72,15 +73,15 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
             catch (BusinessLogic.Entities.BL_NotFound_Exception)
             {
-                return NotFound("No hierarchy loaded");
+                return NotFound(ControllerApiHelper.CreateErrorDTO("No hierarchy loaded", _logger));
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
-                return ExceptionHandler("Error: ", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
             catch (Exception ex)
             {
-                return ExceptionHandler("Error: ", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
         }
 
@@ -97,6 +98,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerOperation("GetWarehouse")]
         [SwaggerResponse(statusCode: 200, type: typeof(DTOs.Warehouse), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "An error occurred loading.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "Warehouse id not found")]
         public virtual IActionResult GetWarehouse([FromRoute][Required] string code)
         {
             try
@@ -104,20 +106,23 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _logger.LogTrace("GetWarehouse");
 
                 if (string.IsNullOrWhiteSpace(code))
-                    return NotFound("Code empty or null");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Code empty or null", _logger));
 
                 var blWarehouse = _warehouseLogic.GetWarehouse(code);
                 var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
                 return Ok(serviceWarehouse);
             }
-            // catch BL_Not_Found ???
+            catch (BusinessLogic.Entities.BL_NotFound_Exception)
+            {
+                return NotFound(ControllerApiHelper.CreateErrorDTO("No warehouse found", _logger));
+            }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
-                return ExceptionHandler("Error: ", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
             catch (Exception ex)
             {
-                return ExceptionHandler("Error: ", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
         }
 
@@ -139,7 +144,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _logger.LogTrace("ImportWarehouses");
 
                 if (body == null)
-                    return ExceptionHandler("body is null");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("body is null", _logger));
 
                 var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(body);
                 _warehouseLogic.ImportWarehouses(blWarehouse);
@@ -147,29 +152,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
-                return ExceptionHandler("Error: ", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
             catch (Exception ex)
             {
-                return ExceptionHandler("Error: ", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
         }
 
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(new DTOs.Error{ErrorMessage = message});
-        }
     }
 }

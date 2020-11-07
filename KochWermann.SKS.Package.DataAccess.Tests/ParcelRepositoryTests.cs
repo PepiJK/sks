@@ -77,11 +77,9 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
-        public void Should_Not_Delete()
+        public void Should_Throw_Not_Found_On_Delete()
         {
-            _parcelRepository.Delete(2);
-
-            Assert.AreEqual(1, _parcels.Count);
+            Assert.Throws<DataAccess.Entities.DAL_NotFound_Exception>(() => _parcelRepository.Delete(2));
         }
 
         [Test]
@@ -93,11 +91,9 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
-        public void Should_Not_Get_Parcel_By_Id()
+        public void Should_Throw_Not_Found_On_Get_Parcel_By_Id()
         {
-            var parcel = _parcelRepository.GetParcelById(2);
-
-            Assert.AreEqual(null, parcel);
+            Assert.Throws<DataAccess.Entities.DAL_NotFound_Exception>(() => _parcelRepository.GetParcelById(2));
         }
 
         [Test]
@@ -135,11 +131,9 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
-        public void Should_Not_Get_Parcel_By_TrackingId()
+        public void Should_Throw_Not_Found_On_Get_Parcel_By_TrackingId()
         {
-            var parcel = _parcelRepository.GetParcelByTrackingId("");
-
-            Assert.AreEqual(null, parcel);
+            Assert.Throws<DataAccess.Entities.DAL_NotFound_Exception>(() => _parcelRepository.GetParcelByTrackingId(""));
         }
 
         [Test]

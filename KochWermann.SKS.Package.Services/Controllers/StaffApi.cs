@@ -16,6 +16,7 @@ using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -61,22 +62,22 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 _logger.LogTrace($"ReportParcelDelivery: trackingId: {trackingId}.");
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return ExceptionHandler("Invalid TrackingId");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid TrackingId", _logger));
 
                 _trackingLogic.ReportParcelDelivery(trackingId);
                 return Ok("Successfull delivery.");
             }
             catch (BusinessLogic.Entities.BL_NotFound_Exception)
             {
-                return NotFound(new DTOs.Error{ErrorMessage = "No parcel exists with this tracking Id."});
+                return NotFound(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking Id.", _logger));
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
-                return ExceptionHandler("Error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
             catch (Exception ex)
             {
-                return ExceptionHandler("Error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
         }
 
@@ -101,43 +102,26 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 _logger.LogTrace($"ReportParcelHop: trackingId: {trackingId} and code: {code}.");
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return ExceptionHandler("Invalid TrackingId");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid TrackingId", _logger));
 
                 if (string.IsNullOrWhiteSpace(code))
-                    return ExceptionHandler("Invalid Code");
+                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid Code", _logger));
 
                 _trackingLogic.ReportParcelHop(trackingId, code);
                 return Ok("Successfully reported hop");
             }
             catch (BusinessLogic.Entities.BL_NotFound_Exception)
             {
-                return NotFound(new DTOs.Error{ErrorMessage = "No parcel exists with this tracking Id."});
+                return NotFound(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking Id.", _logger));
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
-                return ExceptionHandler("Error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
             catch (Exception ex)
             {
-                return ExceptionHandler("Error.", ex);
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
             }
-        }
-
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(new DTOs.Error{ErrorMessage = message});
         }
     }
 }
