@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.DataAccess.Entities
 {
+    [ExcludeFromCodeCoverage]
     public class DAL_NotFound_Exception : Exception
     {
         public DAL_NotFound_Exception (string message)

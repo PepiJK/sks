@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace KochWermann.SKS.Package.Services.Migrations
 {
     /// <summary>
     /// 
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class UpdatedHopAndHopArrival : Migration
     {
         /// <summary>
