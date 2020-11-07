@@ -19,6 +19,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         private ITrackingLogic _trackingLogic;
         private Parcel _validParcel;
         private string _validTrackingId = "PYJRB4HZ6";
+        private string _validNotAvailableTrackingId = "PYJRB4HZ9";
         private string _invalidTrackingId = "hallo";
         private string _validCode = "TEST1234";
         private string _invalidCode = "hi";

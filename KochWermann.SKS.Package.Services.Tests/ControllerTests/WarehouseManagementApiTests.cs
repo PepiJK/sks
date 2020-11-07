@@ -49,12 +49,15 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             mock.Setup(trackingLogic => trackingLogic.ExportWarehouses()).Returns(new BusinessLogic.Entities.Warehouse());     
             
             mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
-                It.IsAny<string>()
-            )).Returns(new BusinessLogic.Entities.Warehouse());            
+                _testCode
+            )).Returns(new BusinessLogic.Entities.Warehouse());
             
             mock.Setup(trackingLogic => trackingLogic.ImportWarehouses(
                 It.IsAny<BusinessLogic.Entities.Warehouse>()
             ));
+            mock.Setup(trackingLogic => trackingLogic.ImportWarehouses(
+                It.Is<BusinessLogic.Entities.Warehouse>(w => w.LocationCoordinates == null)
+            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid Warehouse", new System.Exception()));
 
             var loggerMock = new Mock<ILogger<WarehouseManagementApiController>>();
 
@@ -88,15 +91,6 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Bad_Request_On_Get_Warehouse()
-        {
-            var res = _warehouseManagementApiController.GetWarehouse("ERROR");
-            Assert.IsNotNull(res);
-            Assert.IsInstanceOf<BadRequestObjectResult>(res);
-            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
-        }
-
-        [Test]
         public void Should_Return_Ok_On_Import_Warehouses()
         {
             var res = _warehouseManagementApiController.ImportWarehouses(_testWarehouse);
@@ -105,9 +99,18 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Bad_Request_On_Import_Warehouses()
+        public void Should_Return_Bad_Request_On_Import_Null_Warehouses()
         {
             var res = _warehouseManagementApiController.ImportWarehouses(null);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Import_Invalid_Warehouses()
+        {
+            _testWarehouse.LocationCoordinates = null;
+            var res = _warehouseManagementApiController.ImportWarehouses(_testWarehouse);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
         }

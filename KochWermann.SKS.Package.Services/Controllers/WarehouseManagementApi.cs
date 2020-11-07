@@ -41,23 +41,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
             _logger.LogTrace("WarehouseManagementApiController created");
         }
 
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(message);
-        }
-
 
         /// <summary>
         /// Exports the hierarchy of Warehouse and Truck objects. 
@@ -116,9 +99,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "An error occurred loading.")]
         public virtual IActionResult GetWarehouse([FromRoute][Required] string code)
         {
-            if (code == "ERROR")
-                return BadRequest(new DTOs.Error { ErrorMessage = "code is ERROR" });
-
             try
             {
                 _logger.LogTrace("GetWarehouse");
@@ -130,6 +110,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
                 return Ok(serviceWarehouse);
             }
+            // catch BL_Not_Found ???
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
                 return ExceptionHandler("Error: ", ex);
@@ -158,7 +139,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _logger.LogTrace("ImportWarehouses");
 
                 if (body == null)
-                    return ExceptionHandler("no root");
+                    return ExceptionHandler("body is null");
 
                 var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(body);
                 _warehouseLogic.ImportWarehouses(blWarehouse);
@@ -172,6 +153,23 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return ExceptionHandler("Error: ", ex);
             }
+        }
+
+        private IActionResult ExceptionHandler(string message, Exception ex = null)
+        {
+            if (ex != null)
+            {
+                _logger.LogError(ex.ToString());
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
+                    }
+                }
+            }
+            return BadRequest(new DTOs.Error{ErrorMessage = message});
         }
     }
 }

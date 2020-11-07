@@ -41,23 +41,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
             _logger.LogTrace("LogisticsPartnerApiController created");
         }
 
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(message);
-        }
-
         /// <summary>
         /// Transfer an existing parcel into the system from the service of a logistics partner. 
         /// </summary>
@@ -96,6 +79,23 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return ExceptionHandler("Error.", ex);
             }
+        }
+
+        private IActionResult ExceptionHandler(string message, Exception ex = null)
+        {
+            if (ex != null)
+            {
+                _logger.LogError(ex.ToString());
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
+                    }
+                }
+            }
+            return BadRequest(new DTOs.Error{ErrorMessage = message});
         }
     }
 }

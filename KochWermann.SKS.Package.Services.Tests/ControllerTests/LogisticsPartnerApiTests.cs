@@ -17,6 +17,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         private LogisticsPartnerApiController _logisticsPartnerApiController;
         private Parcel _testServiceParcel;
         private string _testTrackingId = "PYJRB4HZ6";
+        private string _invalidTrackingId = "hallo";
         
         [SetUp]
         public void Setup()
@@ -39,8 +40,12 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             var mock = new Mock<ITrackingLogic>();
             mock.Setup(trackingLogic => trackingLogic.TransitionParcel(
                 It.IsAny<BusinessLogic.Entities.Parcel>(),
-                It.IsRegex("^[A-Z0-9]{9}$")
+                _testTrackingId
             )).Returns(new BusinessLogic.Entities.Parcel());
+            mock.Setup(trackingLogic => trackingLogic.TransitionParcel(
+                It.IsAny<BusinessLogic.Entities.Parcel>(),
+                _invalidTrackingId
+            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid TrackingId", new System.Exception()));
 
             var loggerMock = new Mock<ILogger<LogisticsPartnerApiController>>();
 
@@ -58,9 +63,25 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Bad_Request_On_Transition_Parcel()
+        public void Should_Return_Bad_Request_On_Transition_Parcel_Of_Null_Parcel()
         {
-            var res = _logisticsPartnerApiController.TransitionParcel(null, null);
+            var res = _logisticsPartnerApiController.TransitionParcel(null, _testTrackingId);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Transition_Parcel_Of_Null_TrackingId()
+        {
+            var res = _logisticsPartnerApiController.TransitionParcel(_testServiceParcel, null);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+        }
+
+        [Test]
+        public void Should_Catch_Custom_Exception()
+        {
+            var res = _logisticsPartnerApiController.TransitionParcel(_testServiceParcel, _invalidTrackingId);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
         }

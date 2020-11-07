@@ -22,12 +22,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             _logger.LogTrace("SqlParcelRepository created");
         }
 
-        private DAL_Exception ExceptionHandler(string message, Exception inner)
-        {
-            _logger.LogError(inner.ToString());
-            return new DAL_Exception(message, inner);
-        }
-
         public int Create(Parcel parcel)
         {
             try
@@ -137,6 +131,12 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         public IEnumerable<Parcel> GetAllParcels()
         {
             return _context.Parcels.AsEnumerable();
+        }
+
+        private DAL_Exception ExceptionHandler(string message, Exception inner)
+        {
+            _logger.LogError(inner.ToString());
+            return new DAL_Exception(message, inner);
         }
     }
 }

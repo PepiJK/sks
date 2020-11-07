@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace KochWermann.SKS.Package.DataAccess.Tests
 {
+    [ExcludeFromCodeCoverage]
     public static class DbContextMock
     {
         public static DbSet<T> GetQueryableMockDbSet<T>(List<T> sourceList) where T: class

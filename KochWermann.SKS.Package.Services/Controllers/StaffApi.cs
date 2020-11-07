@@ -41,23 +41,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
             _logger.LogTrace("StaffApiController created");
         }
 
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(message);
-        }
-
         /// <summary>
         /// Report that a Parcel has been delivered at it&#x27;s final destination address. 
         /// </summary>
@@ -73,10 +56,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "Parcel does not exist with this tracking ID.")]
 
         public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
-        {
-            if (trackingId == "ERROR1234")
-                    return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234" });
-            
+        {            
             try
             {
                 _logger.LogTrace($"ReportParcelDelivery: trackingId: {trackingId}.");
@@ -88,7 +68,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
             catch (BusinessLogic.Entities.BL_NotFound_Exception)
             {
-                return NotFound("No parcel exists with this tracking Id.");
+                return NotFound(new DTOs.Error{ErrorMessage = "No parcel exists with this tracking Id."});
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
@@ -117,9 +97,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
 
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
         {
-            if (trackingId == "ERROR1234" || code == "ERRO1234")
-                    return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234 or code is ERRO1234" });
-
             try
             {
                 _logger.LogTrace($"ReportParcelHop: trackingId: {trackingId} and code: {code}.");
@@ -134,7 +111,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
             catch (BusinessLogic.Entities.BL_NotFound_Exception)
             {
-                return NotFound("No parcel exists with this tracking Id.");
+                return NotFound(new DTOs.Error{ErrorMessage = "No parcel exists with this tracking Id."});
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
@@ -144,6 +121,23 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return ExceptionHandler("Error.", ex);
             }
+        }
+
+        private IActionResult ExceptionHandler(string message, Exception ex = null)
+        {
+            if (ex != null)
+            {
+                _logger.LogError(ex.ToString());
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
+                    }
+                }
+            }
+            return BadRequest(new DTOs.Error{ErrorMessage = message});
         }
     }
 }

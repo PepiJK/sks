@@ -21,12 +21,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             _logger.LogTrace("SqlWarehouseRepository created");
         }
 
-        private DAL_Exception ExceptionHandler(string message, Exception inner)
-        {
-            _logger.LogError(inner.ToString());
-            return new DAL_Exception(message, inner);
-        }
-
         public string Create(Hop hop)
         {
             try
@@ -95,7 +89,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                return _context.Warehouses.Single(x => x.Code == code);
+                return _context.Warehouses.FirstOrDefault(x => x.Code == code);
             }
             catch (InvalidOperationException ex)
             {
@@ -112,10 +106,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                _context.Warehouses.Load();
-                _context.WarehouseNextHops.Load();
-                _context.Trucks.Load();
-                _context.TransferWarehouses.Load();
                 return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).FirstOrDefault(w => w.IsRootWarehouse);
             }
             catch (SqlException ex)
@@ -171,11 +161,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                _context.Warehouses.Load();
-                _context.WarehouseNextHops.Load();
-                _context.Trucks.Load();
-                _context.TransferWarehouses.Load();
-
                 return _context.Warehouses.Include(wh => wh.NextHops);
             }
             catch (SqlException ex)
@@ -186,6 +171,12 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             {
                 throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
+        }
+
+        private DAL_Exception ExceptionHandler(string message, Exception inner)
+        {
+            _logger.LogError(inner.ToString());
+            return new DAL_Exception(message, inner);
         }
     }
 }

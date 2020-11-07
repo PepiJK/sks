@@ -46,23 +46,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
             _logger = logger;
             _logger.LogTrace("RecipientApiController created");
         }
-        
-        private IActionResult ExceptionHandler(string message, Exception ex = null)
-        {
-            if (ex != null)
-            {
-                _logger.LogError(ex.ToString());
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
-                }
-            }
-            return BadRequest(message);
-        }
 
 
         /// <summary>
@@ -81,10 +64,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "No Parcel exist with this trackingId.")]
 
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId)
-        {
-            if (trackingId == "ERROR1234")
-                    return BadRequest(new DTOs.Error{ ErrorMessage = "trackingId is ERROR1234" });
-                    
+        {                    
             try
             {
                 _logger.LogTrace($"TrackParcel: trackingId: {trackingId}.");
@@ -92,11 +72,12 @@ namespace KochWermann.SKS.Package.Services.Controllers
                     return ExceptionHandler("Invalid TrackingId");
 
                 var blParcel = _trackingLogic.TrackParcel(trackingId);
-                return Ok(_mapper.Map<TrackingInformation>(blParcel));
+                var serviceTrackingInfo = _mapper.Map<TrackingInformation>(blParcel);
+                return Ok(serviceTrackingInfo);
             }
             catch (BusinessLogic.Entities.BL_NotFound_Exception)
             {
-                return NotFound("No Parcel exist with this tracking ID.");
+                return NotFound(new Error{ErrorMessage = "No Parcel exist with this tracking ID."});
             }
             catch (BusinessLogic.Entities.BL_Exception ex)
             {
@@ -106,6 +87,23 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 return ExceptionHandler("The operation failed due to an error.", ex);
             }
+        }
+
+        private IActionResult ExceptionHandler(string message, Exception ex = null)
+        {
+            if (ex != null)
+            {
+                _logger.LogError(ex.ToString());
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
+                    }
+                }
+            }
+            return BadRequest(new Error{ErrorMessage = message});
         }
     }
 }

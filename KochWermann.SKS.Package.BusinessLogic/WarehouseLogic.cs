@@ -27,18 +27,6 @@ namespace KochWermann.SKS.Package.BusinessLogic
             _logger.LogTrace("WarehouseLogic created");
         }
 
-        private BL_Exception ExceptionHandler(string method, Exception ex)
-        {
-            _logger.LogError(ex.ToString());
-            return new BL_Exception(method, ex);
-        }
-
-        private BL_NotFound_Exception NotFound_ExceptionHandler(string method, Exception ex)
-        {
-            _logger.LogError(ex.ToString());
-            return new BL_NotFound_Exception(method, ex);
-        }
-
         public Warehouse ExportWarehouses()
         {
             try
@@ -112,6 +100,18 @@ namespace KochWermann.SKS.Package.BusinessLogic
             var validationResult = validator.Validate(instanceToValidate);
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
+        }
+
+        private BL_Exception ExceptionHandler(string method, Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return new BL_Exception(method, ex);
+        }
+
+        private BL_NotFound_Exception NotFound_ExceptionHandler(string method, Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return new BL_NotFound_Exception(method, ex);
         }
     }
 }

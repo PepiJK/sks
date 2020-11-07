@@ -14,7 +14,11 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
     {
         private StaffApiController _staffApiController;
         private string _testTrackingId = "PYJRB4HZ6";
+        private string _notFoundTrackingId = "PYJRB4HZ9";
+        private string _invalidTrackingId = "hallo";
         private string _testCode = "TEST1234";
+        private string _notFoundCode = "TEST9878";
+        private string _invalidCode = "hallo";
         
         [SetUp]
         public void Setup()
@@ -29,12 +33,27 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             //mock tracking logic
             var mock = new Mock<ITrackingLogic>();
             mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(
-                It.IsRegex("^[A-Z0-9]{9}$")
+                _testTrackingId
+            ));
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(
+                _notFoundTrackingId
+            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("TrackingId Not Found", new System.Exception()));
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(
+                _invalidTrackingId
+            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid TrackingId", new System.Exception()));
+            
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
+                _testTrackingId,
+                _testCode
             ));
             mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
-                It.IsRegex("^[A-Z0-9]{9}$"),
-                It.IsRegex("^[A-Z]{4}\\d{1,4}$")
-            ));
+                _testTrackingId,
+                _notFoundCode
+            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("Code Not Found", new System.Exception()));
+            mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
+                _testTrackingId,
+                _invalidCode
+            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid Code", new System.Exception()));
 
             var loggerMock = new Mock<ILogger<StaffApiController>>();
 
@@ -50,20 +69,30 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Not_Found_On_Report_Parcel_Delivery()
+        public void Should_Return_Bad_Request_On_Report_Parcel_Delivery_Of_Null_TrackingId()
         {
             var res = _staffApiController.ReportParcelDelivery(null);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
 
         [Test]
-        public void Should_Return_Bad_Request_On_Report_Parcel_Delivery()
+        public void Should_Return_Bad_Request_On_Report_Parcel_Delivery_Of_Invalid_TrackingId()
         {
-            var res = _staffApiController.ReportParcelDelivery("ERROR1234");
+            var res = _staffApiController.ReportParcelDelivery(_invalidTrackingId);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
             Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public void Should_Return_Not_Found_On_Report_Parcel_Delivery_Of_Not_Found_TrackingId()
+        {
+            var res = _staffApiController.ReportParcelDelivery(_notFoundTrackingId);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<NotFoundObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as NotFoundObjectResult).Value);
         }
 
         [Test]
@@ -75,7 +104,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Not_Found_On_Report_Parcel_Hop()
+        public void Should_Return_Bad_Request_On_Report_Parcel_Hop_On_Null()
         {
             var res = _staffApiController.ReportParcelHop(null, null);
             Assert.IsNotNull(res);
@@ -85,19 +114,19 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         [Test]
         public void Should_Return_Bad_Request_On_Report_Parcel_Hop_Of_Invalid_Code()
         {
-            var res = _staffApiController.ReportParcelHop(_testTrackingId, "ERRO1234");
+            var res = _staffApiController.ReportParcelHop(_testTrackingId, _invalidCode);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
             Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
 
         [Test]
-        public void Should_Return_Bad_Request_On_Report_Parcel_Hop_Of_Invalid_TrackingId()
+        public void Should_Return_Not_Found_On_Report_Parcel_Hop_Of_Not_Found_Code()
         {
-            var res = _staffApiController.ReportParcelHop("ERROR1234", _testCode);
+            var res = _staffApiController.ReportParcelHop(_testTrackingId, _notFoundCode);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<BadRequestObjectResult>(res);
-            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
+            Assert.IsInstanceOf<NotFoundObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as NotFoundObjectResult).Value);
         }
     }
 }

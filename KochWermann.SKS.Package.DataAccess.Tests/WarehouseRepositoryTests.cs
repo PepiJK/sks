@@ -23,7 +23,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         {
             _hops = new List<Hop>{
                 new Warehouse{
-                    IsRootWarehouse = true,
+                    Level = 0,
                     Code = "CODE1234",
                     HopType = "Warehouse",
                     NextHops = new List<WarehouseNextHops>{
@@ -44,6 +44,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
             _warehouses = new List<Warehouse>{
                 _hops[0] as Warehouse
             };
+            _warehouses[0].IsRootWarehouse = true;
 
             _warehouseNextHops = new List<WarehouseNextHops>{
                 (_hops[0] as Warehouse).NextHops[0]
@@ -71,7 +72,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
-        public void Should_Create()
+        public void Should_Create_Hop()
         {
             var newHop = new Hop();
 
@@ -102,7 +103,8 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         {
             var warehouse = _warehouseRepository.GetRootWarehouse();
 
-            Assert.AreEqual(_hops[0], warehouse);
+            Assert.AreEqual(_hops[0].Code, warehouse.Code);
+            Assert.AreEqual(true, warehouse.IsRootWarehouse);
         }
 
         [Test]

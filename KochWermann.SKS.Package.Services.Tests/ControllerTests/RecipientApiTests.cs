@@ -13,6 +13,8 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
     {
         private RecipientApiController _recipientApiController;
         private string _testTrackingId = "PYJRB4HZ6";
+        private string _notFoundTrackingId = "PYJRB4HZ9";
+        private string _invalidTrackingId = "hallo";
         
         [SetUp]
         public void Setup()
@@ -27,8 +29,15 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             //mock tracking logic
             var mock = new Mock<ITrackingLogic>();
             mock.Setup(trackingLogic => trackingLogic.TrackParcel(
-                It.IsRegex("^[A-Z0-9]{9}$")
+                _testTrackingId
             )).Returns(new BusinessLogic.Entities.Parcel());
+            mock.Setup(trackingLogic => trackingLogic.TrackParcel(
+                _notFoundTrackingId
+            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("Not Found", new System.Exception()));
+            mock.Setup(trackingLogic => trackingLogic.TrackParcel(
+                _invalidTrackingId
+            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid TrackingId", new System.Exception()));
+
 
             var loggerMock = new Mock<ILogger<RecipientApiController>>();
             
@@ -46,7 +55,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Not_Found_On_Track_Parcel()
+        public void Should_Return_Bad_Request_On_Track_Parcel_On_Null_TrackingId()
         {
             var res = _recipientApiController.TrackParcel(null);
             Assert.IsNotNull(res);
@@ -54,12 +63,20 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Bad_Request_On_Track_Parcel()
+        public void Should_Return_Bad_Request_On_Track_Parcel_On_Invalid_TrackingId()
         {
-            var res = _recipientApiController.TrackParcel("ERROR1234");
+            var res = _recipientApiController.TrackParcel(_invalidTrackingId);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
-            //Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public void Should_Return_Not_Found_On_On_Track_Parcel()
+        {
+            var res = _recipientApiController.TrackParcel(_notFoundTrackingId);
+            Assert.IsNotNull(res);
+            Assert.IsInstanceOf<NotFoundObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as NotFoundObjectResult).Value);
         }
     }
 }

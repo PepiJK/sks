@@ -39,6 +39,9 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             mock.Setup(trackingLogic => trackingLogic.SubmitParcel(
                 It.IsAny<BusinessLogic.Entities.Parcel>()
             )).Returns(new BusinessLogic.Entities.Parcel());
+            mock.Setup(trackingLogic => trackingLogic.SubmitParcel(
+                It.Is<BusinessLogic.Entities.Parcel>(p => p.Recipient == null)
+            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid Parcel", new System.Exception()));
             
             var loggerMock = new Mock<ILogger<SenderApiController>>();
 
@@ -54,9 +57,18 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         }
 
         [Test]
-        public void Should_Return_Bad_Request_On_Submit_Parcel()
+        public void Should_Return_Bad_Request_On_Submit_Parcel_Of_Null_Parcel()
         {
             var res = _senderApiController.SubmitParcel(null);
+            Assert.IsInstanceOf<BadRequestObjectResult>(res);
+            Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public void Should_Return_Bad_Request_On_Submit_Parcel_Of_Invalid_Parcel()
+        {
+            _testParcel.Recipient = null;
+            var res = _senderApiController.SubmitParcel(_testParcel);
             Assert.IsInstanceOf<BadRequestObjectResult>(res);
             Assert.IsInstanceOf<Services.DTOs.Error>((res as BadRequestObjectResult).Value);
         }
