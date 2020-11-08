@@ -75,8 +75,8 @@ namespace KochWermann.SKS.Package.Services
                 options.UseSqlServer(_configuration.GetConnectionString("Database"), x => {
                     x.UseNetTopologySuite();
                     x.MigrationsAssembly("KochWermann.SKS.Package.Services");
-                    x.EnableRetryOnFailure();
-                });
+                    // defaults are 5 retries, one retry every 30s, we use 10 so the azure db has enough time to startup
+                    x.EnableRetryOnFailure(10);
             });
 
 
