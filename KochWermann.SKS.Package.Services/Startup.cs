@@ -77,6 +77,7 @@ namespace KochWermann.SKS.Package.Services
                     x.MigrationsAssembly("KochWermann.SKS.Package.Services");
                     // defaults are 5 retries, one retry every 30s, we use 10 so the azure db has enough time to startup
                     x.EnableRetryOnFailure(10);
+                });
             });
 
 
@@ -96,28 +97,26 @@ namespace KochWermann.SKS.Package.Services
                 .AddXmlSerializerFormatters();
 
 
-            services
-                .AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("1.20.1", new OpenApiInfo
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("1.20.1", new OpenApiInfo {
+                    Version = "1.20.1",
+                    Title = "Parcel Logistics Service",
+                    Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
+                    Contact = new OpenApiContact()
                     {
-                        Version = "1.20.1",
-                        Title = "Parcel Logistics Service",
-                        Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
-                        Contact = new OpenApiContact()
-                        {
-                            Name = "SKS",
-                            Url = new Uri("http://www.technikum-wien.at/"),
-                            Email = ""
-                        },
-                    });
-                    c.CustomSchemaIds(type => type.FullName);
-                    c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
-
-                    // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
-                    // Use [ValidateModelState] on Actions to actually validate it in C# as well!
-                    c.OperationFilter<GeneratePathParamsValidationFilter>();
+                        Name = "SKS",
+                        Url = new Uri("http://www.technikum-wien.at/"),
+                        Email = ""
+                    },
                 });
+                c.CustomSchemaIds(type => type.FullName);
+                c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
+
+                // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
+                // Use [ValidateModelState] on Actions to actually validate it in C# as well!
+                c.OperationFilter<GeneratePathParamsValidationFilter>();
+            });
+            
         }
 
         /// <summary>
