@@ -75,7 +75,7 @@ namespace KochWermann.SKS.Package.Services
                 options.UseSqlServer(_configuration.GetConnectionString("Database"), x => {
                     x.UseNetTopologySuite();
                     x.MigrationsAssembly("KochWermann.SKS.Package.Services");
-                    x.EnableRetryOnFailure(20, new TimeSpan(0, 1, 0), null);
+                    x.EnableRetryOnFailure(20, new TimeSpan(0, 0, 30), null);
                 });
             });
 
