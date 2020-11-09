@@ -29,6 +29,8 @@ using KochWermann.SKS.Package.DataAccess.Sql;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic.Mapper;
 using KochWermann.SKS.Package.Services.Mapper;
+using KochWermann.SKS.Package.ServiceAgents;
+using KochWermann.SKS.Package.ServiceAgents.Interfaces;
 
 namespace KochWermann.SKS.Package.Services
 {
@@ -66,6 +68,9 @@ namespace KochWermann.SKS.Package.Services
             services.AddTransient<ITrackingLogic, TrackingLogic>();
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<IWebhookLogic, WebhookLogic>();
+
+            //ServiceAgents
+            services.AddTransient<IGeoEncodingAgent, OpenStreetMapEncodingAgent>();
 
             // Automapper
             services.AddAutoMapper(typeof(DalMapperProfile), typeof(BlMapperProfile));

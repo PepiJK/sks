@@ -32,7 +32,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Mapper
         GeoCoordinate IValueConverter<Point, GeoCoordinate>.Convert(Point src, ResolutionContext context)
         {
             _context = context;
-            return new GeoCoordinate(){Lon = src.X, Lat = src.Y};
+            return new GeoCoordinate(src.X, src.Y);
         }
     }
 

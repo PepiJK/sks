@@ -8,6 +8,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Entities
     [ExcludeFromCodeCoverage]
     public partial class GeoCoordinate
     {
+        public GeoCoordinate(double lat, double lon)  
+        {
+            Lat = lat;
+            Lon = lon;
+        }
+
         /// <summary>
         /// Latitude of the coordinate.
         /// </summary>

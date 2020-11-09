@@ -32,7 +32,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 Level = 0,
                 ProcessingDelayMins = 1,
                 LocationName = "Root",
-                LocationCoordinates = new GeoCoordinate{Lat = 13, Lon = 47},
+                LocationCoordinates = new GeoCoordinate(13, 47),
                 NextHops = new List<WarehouseNextHops>{new WarehouseNextHops{TraveltimeMins = 69}}
             };
 

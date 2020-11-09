@@ -1,31 +1,35 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Services", "KochWermann.SKS.Package.Services\KochWermann.SKS.Package.Services.csproj", "{777CA50B-86B8-462D-B59F-6F1484CC6FCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.Services", "KochWermann.SKS.Package.Services\KochWermann.SKS.Package.Services.csproj", "{777CA50B-86B8-462D-B59F-6F1484CC6FCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Services.DTOs", "KochWermann.SKS.Package.Services.DTOs\KochWermann.SKS.Package.Services.DTOs.csproj", "{AA9E3DC8-CE43-4CE0-B158-2EF65D79E5A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.Services.DTOs", "KochWermann.SKS.Package.Services.DTOs\KochWermann.SKS.Package.Services.DTOs.csproj", "{AA9E3DC8-CE43-4CE0-B158-2EF65D79E5A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Services.Interfaces", "KochWermann.SKS.Package.Services.Interfaces\KochWermann.SKS.Package.Services.Interfaces.csproj", "{82F9B244-E851-4134-AC75-060ED3C9C59B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.Services.Interfaces", "KochWermann.SKS.Package.Services.Interfaces\KochWermann.SKS.Package.Services.Interfaces.csproj", "{82F9B244-E851-4134-AC75-060ED3C9C59B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.Services.Tests", "KochWermann.SKS.Package.Services.Tests\KochWermann.SKS.Package.Services.Tests.csproj", "{D2D5F571-15EC-42C3-88E9-2B4980397838}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.Services.Tests", "KochWermann.SKS.Package.Services.Tests\KochWermann.SKS.Package.Services.Tests.csproj", "{D2D5F571-15EC-42C3-88E9-2B4980397838}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.BusinessLogic", "KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.BusinessLogic.csproj", "{2923EDF5-79F5-4DE0-B3B4-FEC5E08EEDEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.BusinessLogic", "KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.BusinessLogic.csproj", "{2923EDF5-79F5-4DE0-B3B4-FEC5E08EEDEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.BusinessLogic.Interfaces", "KochWermann.SKS.Package.BusinessLogic.Interfaces\KochWermann.SKS.Package.BusinessLogic.Interfaces.csproj", "{1E2B4088-8049-4F4D-9166-94104EC7FD58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.BusinessLogic.Interfaces", "KochWermann.SKS.Package.BusinessLogic.Interfaces\KochWermann.SKS.Package.BusinessLogic.Interfaces.csproj", "{1E2B4088-8049-4F4D-9166-94104EC7FD58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.BusinessLogic.Entities", "KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj", "{35826B25-72F5-4867-B5C3-1368B8E79A01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.BusinessLogic.Entities", "KochWermann.SKS.Package.BusinessLogic.Entities\KochWermann.SKS.Package.BusinessLogic.Entities.csproj", "{35826B25-72F5-4867-B5C3-1368B8E79A01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.BusinessLogic.Tests", "KochWermann.SKS.Package.BusinessLogic.Tests\KochWermann.SKS.Package.BusinessLogic.Tests.csproj", "{11453825-2AC6-48A9-80C6-AA05600CC2B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.BusinessLogic.Tests", "KochWermann.SKS.Package.BusinessLogic.Tests\KochWermann.SKS.Package.BusinessLogic.Tests.csproj", "{11453825-2AC6-48A9-80C6-AA05600CC2B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.DataAccess.Entities", "KochWermann.SKS.Package.DataAccess.Entities\KochWermann.SKS.Package.DataAccess.Entities.csproj", "{A0E3BED5-E316-40B0-BC49-A070356DA163}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.DataAccess.Entities", "KochWermann.SKS.Package.DataAccess.Entities\KochWermann.SKS.Package.DataAccess.Entities.csproj", "{A0E3BED5-E316-40B0-BC49-A070356DA163}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.DataAccess.Interfaces", "KochWermann.SKS.Package.DataAccess.Interfaces\KochWermann.SKS.Package.DataAccess.Interfaces.csproj", "{60489739-0D93-4CA0-B1A9-199C9FA43F52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.DataAccess.Interfaces", "KochWermann.SKS.Package.DataAccess.Interfaces\KochWermann.SKS.Package.DataAccess.Interfaces.csproj", "{60489739-0D93-4CA0-B1A9-199C9FA43F52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.DataAccess.Sql", "KochWermann.SKS.Package.DataAccess.Sql\KochWermann.SKS.Package.DataAccess.Sql.csproj", "{91FFF033-D59E-4973-9BED-35E90AFAC479}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.DataAccess.Sql", "KochWermann.SKS.Package.DataAccess.Sql\KochWermann.SKS.Package.DataAccess.Sql.csproj", "{91FFF033-D59E-4973-9BED-35E90AFAC479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KochWermann.SKS.Package.DataAccess.Tests", "KochWermann.SKS.Package.DataAccess.Tests\KochWermann.SKS.Package.DataAccess.Tests.csproj", "{827E122C-140C-4B64-9B0A-9D70AA190BC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.DataAccess.Tests", "KochWermann.SKS.Package.DataAccess.Tests\KochWermann.SKS.Package.DataAccess.Tests.csproj", "{827E122C-140C-4B64-9B0A-9D70AA190BC4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.ServiceAgents", "KochWermann.SKS.Package.ServiceAgents\KochWermann.SKS.Package.ServiceAgents.csproj", "{27CD67A4-FB03-40C3-AAF3-45940303F889}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KochWermann.SKS.Package.ServiceAgents.Interfaces", "KochWermann.SKS.Package.ServiceAgents.Interfaces\KochWermann.SKS.Package.ServiceAgents.Interfaces.csproj", "{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,9 +39,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{777CA50B-86B8-462D-B59F-6F1484CC6FCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -184,5 +185,35 @@ Global
 		{827E122C-140C-4B64-9B0A-9D70AA190BC4}.Release|x64.Build.0 = Release|Any CPU
 		{827E122C-140C-4B64-9B0A-9D70AA190BC4}.Release|x86.ActiveCfg = Release|Any CPU
 		{827E122C-140C-4B64-9B0A-9D70AA190BC4}.Release|x86.Build.0 = Release|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Debug|x64.Build.0 = Debug|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Debug|x86.Build.0 = Debug|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Release|x64.ActiveCfg = Release|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Release|x64.Build.0 = Release|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Release|x86.ActiveCfg = Release|Any CPU
+		{27CD67A4-FB03-40C3-AAF3-45940303F889}.Release|x86.Build.0 = Release|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Debug|x64.Build.0 = Debug|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Debug|x86.Build.0 = Debug|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Release|x64.ActiveCfg = Release|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Release|x64.Build.0 = Release|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Release|x86.ActiveCfg = Release|Any CPU
+		{A755AE21-03A6-4ABF-A95C-4E1D7DC6238A}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04C2A198-D606-43C1-863D-A10CACF4AD8B}
 	EndGlobalSection
 EndGlobal
