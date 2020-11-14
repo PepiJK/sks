@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace KochWermann.SKS.Package.DataAccess.Entities
 {
     [ExcludeFromCodeCoverage]
-    public class DAL_NotFound_Exception : Exception
+    public class DALException : Exception
     {
-        public DAL_NotFound_Exception (string message)
+        public DALException (string message)
             : base(message) {}
 
-        public DAL_NotFound_Exception (string message, Exception inner)
+        public DALException (string message, Exception inner)
             : base(message, inner) {}
     }
 }

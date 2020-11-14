@@ -120,6 +120,12 @@ namespace KochWermann.SKS.Package.Services
                 // Use [ValidateModelState] on Actions to actually validate it in C# as well!
                 c.OperationFilter<GeneratePathParamsValidationFilter>();
             });
+
+            services.AddHttpClient("openstreetmap", c =>
+            {
+                c.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
+                c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
+            });
             
         }
 

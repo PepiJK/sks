@@ -55,17 +55,17 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             )).Returns(new BusinessLogic.Entities.Warehouse());
             mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
                 _notFoundCode
-            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("Code Not Found", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLNotFoundException("Code Not Found", new System.Exception()));
             mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
                 _invalidCode
-            )).Throws(new BusinessLogic.Entities.BL_Exception("Code Is Invalid", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLException("Code Is Invalid", new System.Exception()));
             
             mock.Setup(trackingLogic => trackingLogic.ImportWarehouses(
                 It.IsAny<BusinessLogic.Entities.Warehouse>()
             ));
             mock.Setup(trackingLogic => trackingLogic.ImportWarehouses(
                 It.Is<BusinessLogic.Entities.Warehouse>(w => w.LocationCoordinates == null)
-            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid Warehouse", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLException("Invalid Warehouse", new System.Exception()));
 
             var loggerMock = new Mock<ILogger<WarehouseManagementApiController>>();
 

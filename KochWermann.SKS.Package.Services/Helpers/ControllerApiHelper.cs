@@ -18,11 +18,7 @@ namespace KochWermann.SKS.Package.Services.Helpers
                 logger.LogError(ex.ToString());
                 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
                 {
-                    message += "\n" + ex.Message + "\n" + ex.StackTrace;
-                    if (ex.InnerException.InnerException != null)
-                    {
-                        message += "\n" + ex.InnerException.InnerException.Message + "\n" + ex.InnerException.InnerException.StackTrace;
-                    }
+                    message += " " + ex.ToString();
                 }
             }
             return new DTOs.Error{ErrorMessage = message};

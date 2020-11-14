@@ -33,10 +33,10 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             )).Returns(new BusinessLogic.Entities.Parcel());
             mock.Setup(trackingLogic => trackingLogic.TrackParcel(
                 _notFoundTrackingId
-            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("Not Found", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLNotFoundException("Not Found", new System.Exception()));
             mock.Setup(trackingLogic => trackingLogic.TrackParcel(
                 _invalidTrackingId
-            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid TrackingId", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLException("Invalid TrackingId", new System.Exception()));
 
 
             var loggerMock = new Mock<ILogger<RecipientApiController>>();

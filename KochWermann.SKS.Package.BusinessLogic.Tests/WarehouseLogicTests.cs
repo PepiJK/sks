@@ -10,7 +10,7 @@ using KochWermann.SKS.Package.DataAccess.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic.Mapper;
 using Microsoft.Extensions.Logging;
 
-using BL_Exception = KochWermann.SKS.Package.BusinessLogic.Entities.BL_Exception;
+using BLException = KochWermann.SKS.Package.BusinessLogic.Entities.BLException;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
@@ -32,7 +32,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 Level = 0,
                 ProcessingDelayMins = 1,
                 LocationName = "Root",
-                LocationCoordinates = new GeoCoordinate(13, 47),
+                LocationCoordinates = new GeoCoordinate{Lat = 13, Lon = 47},
                 NextHops = new List<WarehouseNextHops>{new WarehouseNextHops{TraveltimeMins = 69}}
             };
 
@@ -58,7 +58,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             });
             mock.Setup(warehouseRepository => warehouseRepository.GetWarehouseByCode(
                 _notFoundCode
-            )).Throws(new DataAccess.Entities.DAL_NotFound_Exception("Code Not Found", new Exception()));
+            )).Throws(new DataAccess.Entities.DALNotFoundException("Code Not Found", new Exception()));
 
             var loggerMock = new Mock<ILogger<WarehouseLogic>>();
 
@@ -82,35 +82,35 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Null_Warehouse()
         {
-            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(null));
+            Assert.Throws<BLException>(() => _warehouseLogic.ImportWarehouses(null));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Code()
         {
             _validWarehouse.Code = _invalidCode;
-            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Truck()
         {
             _validWarehouse.NextHops[0].Hop = new Truck(); 
-            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Warehouse()
         {
             _validWarehouse.NextHops[0].Hop = new Warehouse(); 
-            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Invalid_Next_Hop_Transferwarehouse()
         {
             _validWarehouse.NextHops[0].Hop = new TransferWarehouse(); 
-            Assert.Throws<BL_Exception>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
 
         [Test]
@@ -124,19 +124,19 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Invalid_Code()
         {
-            Assert.Throws<BL_Exception>(() => _warehouseLogic.GetWarehouse(_invalidCode));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.GetWarehouse(_invalidCode));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Null_Code()
         {
-            Assert.Throws<BL_Exception>(() => _warehouseLogic.GetWarehouse(null));
+            Assert.Throws<BLException>(() => _warehouseLogic.GetWarehouse(null));
         }
 
         [Test]
         public void Should_Throw_Not_Found_Exception_On_Get_Warehouses_Of_Not_Found_Code()
         {
-            Assert.Throws<BL_NotFound_Exception>(() => _warehouseLogic.GetWarehouse(_notFoundCode));
+            Assert.Throws<BLNotFoundException>(() => _warehouseLogic.GetWarehouse(_notFoundCode));
         }
     }
 }

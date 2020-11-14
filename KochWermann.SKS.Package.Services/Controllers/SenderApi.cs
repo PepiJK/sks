@@ -65,13 +65,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 var serviceNewParcelInfo = _mapper.Map<DTOs.NewParcelInfo>(blSubmitedParcel);
                 return Ok(serviceNewParcelInfo);
             }
-            catch (BusinessLogic.Entities.BL_Exception ex)
+            catch (BusinessLogic.Entities.BLException ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
         }
     }

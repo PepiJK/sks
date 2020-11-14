@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Entities
 {
     [ExcludeFromCodeCoverage]
-    public class BL_NotFound_Exception : Exception
+    public class BLValidationException : BLException
     {
-        public BL_NotFound_Exception (string message, Exception inner)
+        public BLValidationException (string message, Exception inner)
             : base(message, inner) {}
     }
 }

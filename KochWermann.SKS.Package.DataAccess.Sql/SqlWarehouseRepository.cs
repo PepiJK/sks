@@ -51,7 +51,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex.ToString());
-                throw new DAL_NotFound_Exception($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {
@@ -82,7 +82,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex.ToString());
-                throw new DAL_NotFound_Exception($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {
@@ -103,7 +103,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex.ToString());
-                throw new DAL_NotFound_Exception($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {
@@ -120,7 +120,7 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex.ToString());
-                throw new DAL_NotFound_Exception($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
             catch (Exception ex)
             {
@@ -166,10 +166,10 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             }
         }
 
-        private DAL_Exception ExceptionHandler(string message, Exception inner)
+        private DALException ExceptionHandler(string message, Exception inner)
         {
             _logger.LogError(inner.ToString());
-            return new DAL_Exception(message, inner);
+            return new DALException(message, inner);
         }
     }
 }

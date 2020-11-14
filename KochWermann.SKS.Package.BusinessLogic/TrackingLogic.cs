@@ -6,6 +6,7 @@ using KochWermann.SKS.Package.DataAccess.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using KochWermann.SKS.Package.BusinessLogic.Helpers;
+using FluentValidation;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
@@ -37,9 +38,13 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 SubmitParcel(parcel);
                 return parcel;
             }
-            catch (DataAccess.Entities.DAL_Exception ex)
+            catch (DataAccess.Entities.DALException ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+            }
+            catch (ValidationException ex)
+            {
+                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
@@ -58,13 +63,17 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                 return blParcel;
             }
-            catch (DataAccess.Entities.DAL_NotFound_Exception ex)
+            catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                throw BusinessLogicHelper.NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                throw BusinessLogicHelper.NotFoundExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
-            catch (DataAccess.Entities.DAL_Exception ex)
+            catch (DataAccess.Entities.DALException ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+            }
+            catch (ValidationException ex)
+            {
+                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
@@ -83,9 +92,13 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 _parcelRepository.Create(dalParcel);
                 return parcel;
             }
-            catch (DataAccess.Entities.DAL_Exception ex)
+            catch (DataAccess.Entities.DALException ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+            }
+            catch (ValidationException ex)
+            {
+                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
@@ -103,13 +116,17 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 dalParcel.State = DataAccess.Entities.Parcel.StateEnum.DeliveredEnum;
                 _parcelRepository.Update(dalParcel);
             }
-            catch (DataAccess.Entities.DAL_NotFound_Exception ex)
+            catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                throw BusinessLogicHelper.NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                throw BusinessLogicHelper.NotFoundExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
-            catch (DataAccess.Entities.DAL_Exception ex)
+            catch (DataAccess.Entities.DALException ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+            }
+            catch (ValidationException ex)
+            {
+                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
@@ -134,6 +151,10 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             */
+            catch (ValidationException ex)
+            {
+                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+            }
             catch (Exception ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);

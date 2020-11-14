@@ -15,19 +15,25 @@ namespace KochWermann.SKS.Package.BusinessLogic.Helpers
                 var ex = new ValidationException(validationResult.Errors);
                 logger.LogError(ex.ToString());
                 throw ex;
-            }            
+            }     
         }
 
-        public static BL_Exception ExceptionHandler(string method, Exception ex, ILogger logger)
+        public static BLException ExceptionHandler(string method, Exception ex, ILogger logger)
         {
             logger.LogError(ex.ToString());
-            return new BL_Exception(method, ex);
+            return new BLException(method, ex);
         }
 
-        public static BL_NotFound_Exception NotFound_ExceptionHandler(string method, Exception ex, ILogger logger)
+        public static BLNotFoundException NotFoundExceptionHandler(string method, Exception ex, ILogger logger)
         {
             logger.LogError(ex.ToString());
-            return new BL_NotFound_Exception(method, ex);
+            return new BLNotFoundException(method, ex);
+        }
+
+        public static BLValidationException ValidationExceptionHandler(string method, Exception ex, ILogger logger)
+        {
+            logger.LogError(ex.ToString());
+            return new BLValidationException(method, ex);
         }
     }
 }

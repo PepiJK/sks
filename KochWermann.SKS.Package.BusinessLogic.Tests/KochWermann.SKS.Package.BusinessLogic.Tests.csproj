@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\KochWermann.SKS.Package.BusinessLogic\KochWermann.SKS.Package.BusinessLogic.csproj"/>
     <ProjectReference Include="..\KochWermann.SKS.Package.ServiceAgents\KochWermann.SKS.Package.ServiceAgents.csproj"/>
+    <ProjectReference Include="..\KochWermann.SKS.Package.ServiceAgents.Interfaces\KochWermann.SKS.Package.ServiceAgents.Interfaces.csproj"/>
   </ItemGroup>
 
 </Project>

@@ -37,10 +37,10 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             ));
             mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(
                 _notFoundTrackingId
-            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("TrackingId Not Found", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLNotFoundException("TrackingId Not Found", new System.Exception()));
             mock.Setup(trackingLogic => trackingLogic.ReportParcelDelivery(
                 _invalidTrackingId
-            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid TrackingId", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLException("Invalid TrackingId", new System.Exception()));
             
             mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
                 _testTrackingId,
@@ -49,11 +49,11 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
                 _testTrackingId,
                 _notFoundCode
-            )).Throws(new BusinessLogic.Entities.BL_NotFound_Exception("Code Not Found", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLNotFoundException("Code Not Found", new System.Exception()));
             mock.Setup(trackingLogic => trackingLogic.ReportParcelHop(
                 _testTrackingId,
                 _invalidCode
-            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid Code", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLException("Invalid Code", new System.Exception()));
 
             var loggerMock = new Mock<ILogger<StaffApiController>>();
 

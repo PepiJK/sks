@@ -41,7 +41,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             )).Returns(new BusinessLogic.Entities.Parcel());
             mock.Setup(trackingLogic => trackingLogic.SubmitParcel(
                 It.Is<BusinessLogic.Entities.Parcel>(p => p.Recipient == null)
-            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid Parcel", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLException("Invalid Parcel", new System.Exception()));
             
             var loggerMock = new Mock<ILogger<SenderApiController>>();
 

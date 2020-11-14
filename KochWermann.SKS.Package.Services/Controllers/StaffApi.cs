@@ -67,17 +67,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _trackingLogic.ReportParcelDelivery(trackingId);
                 return Ok("Successfull delivery.");
             }
-            catch (BusinessLogic.Entities.BL_NotFound_Exception)
+            catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                return NotFound(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking Id.", _logger));
+                return NotFound(ControllerApiHelper.CreateErrorDTO("Parcel does not exist with this tracking ID.", _logger, ex));
             }
-            catch (BusinessLogic.Entities.BL_Exception ex)
+            catch (BusinessLogic.Entities.BLException ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
         }
 
@@ -110,17 +110,17 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _trackingLogic.ReportParcelHop(trackingId, code);
                 return Ok("Successfully reported hop");
             }
-            catch (BusinessLogic.Entities.BL_NotFound_Exception)
+            catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                return NotFound(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking Id.", _logger));
+                return NotFound(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking ID.", _logger, ex));
             }
-            catch (BusinessLogic.Entities.BL_Exception ex)
+            catch (BusinessLogic.Entities.BLException ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking ID.", _logger, ex));
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("Error: ", _logger, ex));
+                return BadRequest(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking ID.", _logger, ex));
             }
         }
     }

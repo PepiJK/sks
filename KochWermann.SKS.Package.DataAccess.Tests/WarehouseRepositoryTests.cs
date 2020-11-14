@@ -93,7 +93,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Delete()
         {
-            Assert.Throws<DataAccess.Entities.DAL_NotFound_Exception>(() => _warehouseRepository.Delete("CODE4321"));
+            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _warehouseRepository.Delete("CODE4321"));
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Get_Warehouse_By_Code()
         {
-            Assert.Throws<DataAccess.Entities.DAL_NotFound_Exception>(() => _warehouseRepository.GetWarehouseByCode("CODE4321"));
+            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _warehouseRepository.GetWarehouseByCode("CODE4321"));
         }
 
         [Test]
@@ -130,7 +130,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Get_Hop_By_Code()
         {
-            Assert.Throws<DataAccess.Entities.DAL_NotFound_Exception>(() => _warehouseRepository.GetHopByCode("CODE4321"));
+            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _warehouseRepository.GetHopByCode("CODE4321"));
         }
 
         [Test]

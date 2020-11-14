@@ -36,11 +36,11 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 var blRoot = _mapper.Map<Warehouse>(root);
                 return blRoot;
             }
-            catch (DataAccess.Entities.DAL_NotFound_Exception ex)
+            catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                throw BusinessLogicHelper.NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                throw BusinessLogicHelper.NotFoundExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
-            catch (DataAccess.Entities.DAL_Exception ex)
+            catch (DataAccess.Entities.DALException ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
@@ -61,9 +61,13 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 var dalWarehouse = _mapper.Map<DataAccess.Entities.Warehouse>(warehouse);
                 _warehouseRepository.Create(dalWarehouse);
             }
-            catch (DataAccess.Entities.DAL_Exception ex)
+            catch (DataAccess.Entities.DALException ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+            }
+            catch (ValidationException ex)
+            {
+                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {
@@ -83,13 +87,17 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                 return blWarehouse;
             }
-            catch (DataAccess.Entities.DAL_NotFound_Exception ex)
+            catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                throw BusinessLogicHelper.NotFound_ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                throw BusinessLogicHelper.NotFoundExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
-            catch (DataAccess.Entities.DAL_Exception ex)
+            catch (DataAccess.Entities.DALException ex)
             {
                 throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+            }
+            catch (ValidationException ex)
+            {
+                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (Exception ex)
             {

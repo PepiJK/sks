@@ -76,11 +76,11 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 var serviceTrackingInfo = _mapper.Map<DTOs.TrackingInformation>(blParcel);
                 return Ok(serviceTrackingInfo);
             }
-            catch (BusinessLogic.Entities.BL_NotFound_Exception)
+            catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                return NotFound(ControllerApiHelper.CreateErrorDTO("No Parcel exist with this tracking ID.", _logger));
+                return NotFound(ControllerApiHelper.CreateErrorDTO("No Parcel exist with this trackingId.", _logger, ex));
             }
-            catch (BusinessLogic.Entities.BL_Exception ex)
+            catch (BusinessLogic.Entities.BLException ex)
             {
                 return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }

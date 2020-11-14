@@ -10,7 +10,7 @@ using Moq;
 using KochWermann.SKS.Package.BusinessLogic.Mapper;
 using Microsoft.Extensions.Logging;
 
-using BL_Exception = KochWermann.SKS.Package.BusinessLogic.Entities.BL_Exception;
+using BLException = KochWermann.SKS.Package.BusinessLogic.Entities.BLException;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
@@ -71,10 +71,10 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             )).Returns(new DataAccess.Entities.Parcel());
             mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
                 _notFoundTrackingId
-            )).Throws(new DataAccess.Entities.DAL_NotFound_Exception("TrackingId Not Found", new Exception()));
+            )).Throws(new DataAccess.Entities.DALNotFoundException("TrackingId Not Found", new Exception()));
             mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
                 _invalidTrackingId
-            )).Throws(new DataAccess.Entities.DAL_Exception("Invalid TrackingId", new Exception()));
+            )).Throws(new DataAccess.Entities.DALException("Invalid TrackingId", new Exception()));
 
             mock.Setup(parcelRepository => parcelRepository.Create(
                 It.IsAny<DataAccess.Entities.Parcel>()
@@ -85,7 +85,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             ));
             mock.Setup(parcelRepository => parcelRepository.Update(
                 It.Is<DataAccess.Entities.Parcel>(p => p.TrackingId == _notFoundTrackingId)
-            )).Throws(new DataAccess.Entities.DAL_NotFound_Exception("Parcel Not Found", new Exception()));
+            )).Throws(new DataAccess.Entities.DALNotFoundException("Parcel Not Found", new Exception()));
             
             var loggerMock = new Mock<ILogger<TrackingLogic>>();
 
@@ -104,46 +104,46 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Equal_Sender_Recipient()
         {
             _validParcel.Recipient = _validParcel.Sender;
-            Assert.Throws<BL_Exception>(() => _trackingLogic.TransitionParcel(_validParcel, _validTrackingId));
+            Assert.Throws<BLValidationException>(() => _trackingLogic.TransitionParcel(_validParcel, _validTrackingId));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Invalid_PostalCode_Format()
         {
             _validParcel.Recipient.PostalCode = "12345";
-            Assert.Throws<BL_Exception>(() => _trackingLogic.TransitionParcel(_validParcel, _validTrackingId));
+            Assert.Throws<BLValidationException>(() => _trackingLogic.TransitionParcel(_validParcel, _validTrackingId));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Invalid_Street_Format()
         {
             _validParcel.Sender.Street = "street";
-            Assert.Throws<BL_Exception>(() => _trackingLogic.TransitionParcel(_validParcel,_validTrackingId));
+            Assert.Throws<BLValidationException>(() => _trackingLogic.TransitionParcel(_validParcel,_validTrackingId));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Invalid_TrackingId()
         {
-            Assert.Throws<BL_Exception>(() => _trackingLogic.TransitionParcel(_validParcel, _invalidTrackingId));
+            Assert.Throws<BLValidationException>(() => _trackingLogic.TransitionParcel(_validParcel, _invalidTrackingId));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Null_TrackingId()
         {
-            Assert.Throws<BL_Exception>(() => _trackingLogic.TransitionParcel(_validParcel, null));
+            Assert.Throws<BLException>(() => _trackingLogic.TransitionParcel(_validParcel, null));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Null_Parcel()
         {
-            Assert.Throws<BL_Exception>(() => _trackingLogic.TransitionParcel(null, _validTrackingId));
+            Assert.Throws<BLException>(() => _trackingLogic.TransitionParcel(null, _validTrackingId));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Transition_Parcel_Of_Invalid_Parcel_Weight()
         {
             _validParcel.Weight = 0;
-            Assert.Throws<BL_Exception>(() => _trackingLogic.TransitionParcel(_validParcel, _validTrackingId));
+            Assert.Throws<BLValidationException>(() => _trackingLogic.TransitionParcel(_validParcel, _validTrackingId));
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Not_Found_Exception_On_Track_Parcel()
         {
-            Assert.Throws<BL_NotFound_Exception>(() => _trackingLogic.TrackParcel(_notFoundTrackingId));
+            Assert.Throws<BLNotFoundException>(() => _trackingLogic.TrackParcel(_notFoundTrackingId));
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Not_Found_Exception_On_Report_Parcel_Delivery()
         {
-            Assert.Throws<BL_NotFound_Exception>(() => _trackingLogic.ReportParcelDelivery(_notFoundTrackingId));
+            Assert.Throws<BLNotFoundException>(() => _trackingLogic.ReportParcelDelivery(_notFoundTrackingId));
         }
 
         [Test]
@@ -188,13 +188,13 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Report_Parcel_Hop_Of_Invalid_Code()
         {
-            Assert.Throws<BL_Exception>(() => _trackingLogic.ReportParcelHop(_validTrackingId, _invalidCode));
+            Assert.Throws<BLValidationException>(() => _trackingLogic.ReportParcelHop(_validTrackingId, _invalidCode));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Report_Parcel_Hop_Of_Null_Code()
         {
-            Assert.Throws<BL_Exception>(() => _trackingLogic.ReportParcelHop(_validTrackingId, null));
+            Assert.Throws<BLException>(() => _trackingLogic.ReportParcelHop(_validTrackingId, null));
         }
     }
 }

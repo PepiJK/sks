@@ -45,7 +45,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             mock.Setup(trackingLogic => trackingLogic.TransitionParcel(
                 It.IsAny<BusinessLogic.Entities.Parcel>(),
                 _invalidTrackingId
-            )).Throws(new BusinessLogic.Entities.BL_Exception("Invalid TrackingId", new System.Exception()));
+            )).Throws(new BusinessLogic.Entities.BLException("Invalid TrackingId", new System.Exception()));
 
             var loggerMock = new Mock<ILogger<LogisticsPartnerApiController>>();
 
