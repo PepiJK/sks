@@ -33,8 +33,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
             try
             {
                 var root = _warehouseRepository.GetRootWarehouse();
-                var blRoot = _mapper.Map<Warehouse>(root);
-                return blRoot;
+                return _mapper.Map<Warehouse>(root);
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
@@ -83,9 +82,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 BusinessLogicHelper.Validate<string>(code, _codeValidator, _logger);
 
                 var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
-                var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(dalWarehouse);
+                return _mapper.Map<BusinessLogic.Entities.Warehouse>(dalWarehouse);
 
-                return blWarehouse;
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
