@@ -173,6 +173,11 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 BusinessLogicHelper.Validate<Parcel>(parcel, _parcelValidator, _logger);
                 BusinessLogicHelper.Validate<string>(trackingId, _trackingIdValidator, _logger);
 
+                if (_parcelRepository.ContainsTrackingID(trackingId))
+                {
+                    throw new Exception($"TrackingId: {trackingId} is used allready.");
+                }
+
                 parcel.TrackingId = trackingId;
                 SubmitParcel(parcel);
                 return parcel;
