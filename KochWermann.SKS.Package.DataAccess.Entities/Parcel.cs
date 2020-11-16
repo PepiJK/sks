@@ -71,5 +71,17 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         public StateEnum? State { get; set; }
 
         public List<HopArrival> HopArrivals { get; set;}
+
+        /// <summary>
+        /// Hops visited in the past.
+        /// </summary>
+        /// <value>Hops visited in the past.</value>
+        public List<HopArrival> VisitedHops { get; set; }
+
+        /// <summary>
+        /// Hops coming up in the future - their times are estimations.
+        /// </summary>
+        /// <value>Hops coming up in the future - their times are estimations.</value>
+        public List<HopArrival> FutureHops { get; set; }
     }
 }

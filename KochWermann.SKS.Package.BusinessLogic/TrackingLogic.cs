@@ -10,6 +10,7 @@ using KochWermann.SKS.Package.BusinessLogic.Helpers;
 using FluentValidation;
 using System.Linq;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
@@ -262,9 +263,17 @@ namespace KochWermann.SKS.Package.BusinessLogic
             {
                 BusinessLogicHelper.Validate<string>(trackingId, _trackingIdValidator, _logger);
 
-                var dalParcel = _parcelRepository.GetParcelByTrackingId(trackingId);
-                dalParcel.State = DataAccess.Entities.Parcel.StateEnum.DeliveredEnum;
-                _parcelRepository.Update(dalParcel);
+                var parcel = _parcelRepository.GetParcelByTrackingId(trackingId);
+                _logger.LogWarning("hops to come: ");
+                foreach (var futureHop in parcel.FutureHops)
+                {
+                    _logger.LogWarning($"\t{futureHop.Code} at {futureHop.DateTime.Value.ToShortTimeString()}");
+                    futureHop.DateTime = DateTime.Now;
+                    parcel.VisitedHops.Add(futureHop);
+                }
+                parcel.FutureHops.Clear();
+                parcel.State = DataAccess.Entities.Parcel.StateEnum.DeliveredEnum;
+                _parcelRepository.Update(parcel);
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
@@ -290,6 +299,50 @@ namespace KochWermann.SKS.Package.BusinessLogic
             {
                 BusinessLogicHelper.Validate<string>(trackingId, _trackingIdValidator, _logger);
                 BusinessLogicHelper.Validate<string>(code, _codeValidator, _logger);
+
+                var parcel = _parcelRepository.GetParcelByTrackingId(trackingId);
+                var hop = _warehouseRepository.GetHopByCode(code);
+
+                var visitedHops = new List<DataAccess.Entities.HopArrival>();
+
+                foreach (var futureHop in parcel.FutureHops)
+                {
+                    visitedHops.Add(futureHop);
+                    futureHop.DateTime = DateTime.Now;
+                    parcel.VisitedHops.Add(futureHop);
+                    if (futureHop.Code != hop.Code)
+                        _logger.LogWarning($"skip hop {futureHop.Code} : {futureHop.DateTime.Value.ToShortTimeString()}");
+                    else
+                        break;
+                }
+
+                foreach (var visitedHop in visitedHops)
+                {
+                    parcel.FutureHops.Remove(visitedHop);
+                }
+
+                if (hop.HopType == "TransferWarehouse")
+                {
+                    var transferWarehouse = (DataAccess.Entities.TransferWarehouse)hop;
+                    using (var client = new HttpClient())
+                    {
+                        var parcelJson = Newtonsoft.Json.JsonConvert.SerializeObject(parcel);
+                        var response = client.PostAsync(transferWarehouse.LogisticsPartnerUrl + "/parcel", new StringContent(parcelJson, System.Text.Encoding.UTF8, "application/json"));
+                        if (response.IsCompletedSuccessfully == false)
+                            throw new Exception($"Transition of parcel {parcel.Id} to TransferWarehouse/LogisticPartner {transferWarehouse.LogisticsPartner} failed: {response.Exception}");
+                    }
+                    parcel.State = DataAccess.Entities.Parcel.StateEnum.DeliveredEnum;
+                }
+                else if (hop.HopType == "Truck")
+                {
+                    parcel.State = DataAccess.Entities.Parcel.StateEnum.InTruckDeliveryEnum;
+                }
+                else if (hop.HopType == "Warehouse")
+                {
+                    parcel.State = DataAccess.Entities.Parcel.StateEnum.InTransportEnum;
+                }
+
+                _parcelRepository.Update(parcel);
             }
             /*
             catch (DataAccess.Entities.DAL_NotFound_Exception ex)

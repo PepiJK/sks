@@ -208,6 +208,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         {
             Assert.DoesNotThrow(() => _trackingLogic.ReportParcelHop(_validTrackingId, _validCode));
         }
+        
         [Test]
         public void Should_Throw_Exception_On_Report_Parcel_Hop_Of_Invalid_Code()
         {
