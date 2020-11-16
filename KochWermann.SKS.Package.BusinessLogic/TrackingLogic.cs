@@ -84,8 +84,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
             var senderLocation = _geoEncodingAgent.AddressEncoder($"{parcel.Sender.Street}, {parcel.Sender.PostalCode} {parcel.Sender.City}, {parcel.Sender.Country}");
             var receiverLocation = _geoEncodingAgent.AddressEncoder($"{parcel.Recipient.Street}, {parcel.Recipient.PostalCode} {parcel.Recipient.City}, {parcel.Recipient.Country}");
 
-            var senderTruck = (DataAccess.Entities.Truck)_warehouseRepository.GetHopByCoordinates((double)senderLocation.Lon, (double)senderLocation.Lat);
-            var receiverTruck = (DataAccess.Entities.Truck)_warehouseRepository.GetHopByCoordinates((double)receiverLocation.Lon, (double)receiverLocation.Lat);
+            var senderTruck = _warehouseRepository.GetHopByCoordinates((double)senderLocation.Lon, (double)senderLocation.Lat) as DataAccess.Entities.Truck;
+            var receiverTruck = _warehouseRepository.GetHopByCoordinates((double)receiverLocation.Lon, (double)receiverLocation.Lat) as DataAccess.Entities.Truck;
 
             // Developer mode:
             if (senderTruck == null || receiverTruck == null)

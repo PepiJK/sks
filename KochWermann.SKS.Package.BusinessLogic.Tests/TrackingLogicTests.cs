@@ -11,6 +11,7 @@ using KochWermann.SKS.Package.BusinessLogic.Mapper;
 using Microsoft.Extensions.Logging;
 
 using BLException = KochWermann.SKS.Package.BusinessLogic.Entities.BLException;
+using KochWermann.SKS.Package.ServiceAgents.Interfaces;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Tests
 {
@@ -65,31 +66,53 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             var mapper = mockMapper.CreateMapper();
 
             //mock parcel repository
-            var mock = new Mock<IParcelRepository>();
-            mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
+            var mockParcelRepo = new Mock<IParcelRepository>();
+            mockParcelRepo.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
                 _validTrackingId
             )).Returns(new DataAccess.Entities.Parcel());
-            mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
+            mockParcelRepo.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
                 _notFoundTrackingId
             )).Throws(new DataAccess.Entities.DALNotFoundException("TrackingId Not Found", new Exception()));
-            mock.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
+            mockParcelRepo.Setup(parcelRepository => parcelRepository.GetParcelByTrackingId(
                 _invalidTrackingId
             )).Throws(new DataAccess.Entities.DALException("Invalid TrackingId", new Exception()));
-
-            mock.Setup(parcelRepository => parcelRepository.Create(
+            mockParcelRepo.Setup(parcelRepository => parcelRepository.Create(
                 It.IsAny<DataAccess.Entities.Parcel>()
             )).Returns<DataAccess.Entities.Parcel>(p => p.Id);
-
-            mock.Setup(parcelRepository => parcelRepository.Update(
+            mockParcelRepo.Setup(parcelRepository => parcelRepository.Update(
                 It.IsAny<DataAccess.Entities.Parcel>()
             ));
-            mock.Setup(parcelRepository => parcelRepository.Update(
+            mockParcelRepo.Setup(parcelRepository => parcelRepository.Update(
                 It.Is<DataAccess.Entities.Parcel>(p => p.TrackingId == _notFoundTrackingId)
             )).Throws(new DataAccess.Entities.DALNotFoundException("Parcel Not Found", new Exception()));
+
+            var mockWarehouseRepo = new Mock<IWarehouseRepository>();
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetHopByCoordinates(
+                1, 1
+            )).Returns(new DataAccess.Entities.Hop{
+                LocationCoordinates = new NetTopologySuite.Geometries.Point(1,1)
+                });
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetAllTrucks()).Returns(new List<DataAccess.Entities.Truck>{new DataAccess.Entities.Truck{Code = "Code2", ProcessingDelayMins = 60}});
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetAllWarehouses()).Returns(new List<DataAccess.Entities.Warehouse>{
+                new DataAccess.Entities.Warehouse{
+                    Code = "Code1",
+                    NextHops = new List<DataAccess.Entities.WarehouseNextHops>{
+                        new DataAccess.Entities.WarehouseNextHops{
+                            TraveltimeMins = 60, Hop = new DataAccess.Entities.Hop{
+                                Code = "Code2"
+                            }
+                        }
+                    }
+                }
+            });
+
+            var mockEncodingAgent = new Mock<IGeoEncodingAgent>();
+            mockEncodingAgent.Setup(encodingAgent => encodingAgent.AddressEncoder(It.IsAny<string>())).Returns(new GeoCoordinate{Lat = 1, Lon = 1});
+
             
             var loggerMock = new Mock<ILogger<TrackingLogic>>();
 
-            _trackingLogic = new TrackingLogic(mapper, mock.Object, loggerMock.Object);
+            _trackingLogic = new TrackingLogic(mapper, mockParcelRepo.Object, loggerMock.Object, mockEncodingAgent.Object, mockWarehouseRepo.Object);
         }
 
         [Test]
