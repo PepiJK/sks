@@ -5,7 +5,6 @@ using System.Linq;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
 using KochWermann.SKS.Package.DataAccess.Entities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Data.SqlClient;
 
 namespace KochWermann.SKS.Package.DataAccess.Sql
 {
@@ -125,10 +124,16 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             return _context.Parcels.AsEnumerable();
         }
 
+        public bool ContainsTrackingID(string trackingId)
+        {
+            return _context.Parcels.Any(p => p.TrackingId == trackingId);
+        }
+
         private DALException ExceptionHandler(string message, Exception inner)
         {
             _logger.LogError(inner.ToString());
             return new DALException(message, inner);
         }
+
     }
 }

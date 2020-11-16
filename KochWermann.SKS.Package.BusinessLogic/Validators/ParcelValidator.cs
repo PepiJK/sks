@@ -22,12 +22,6 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
 
             this.RuleFor(p => p.TrackingId)
                 .Matches(@"[A-Z0-9]{9}");
-
-            this.RuleFor(p => p.VisitedHops)
-                .NotNull();
-
-            this.RuleFor(p => p.FutureHops)
-                .NotNull();
         }
     }
 }

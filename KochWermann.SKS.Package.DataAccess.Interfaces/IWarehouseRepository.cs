@@ -17,5 +17,6 @@ namespace KochWermann.SKS.Package.DataAccess.Interfaces
         IEnumerable<Truck> GetAllTrucks();
         IEnumerable<Warehouse> GetAllWarehouses();
         IEnumerable<WarehouseNextHops> GetAllWarehouseNextHops();
+        Hop GetHopByCoordinates(double longitude, double latitude);
     }
 }

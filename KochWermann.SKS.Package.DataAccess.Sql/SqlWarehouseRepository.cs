@@ -6,6 +6,8 @@ using KochWermann.SKS.Package.DataAccess.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using Microsoft.Data.SqlClient;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 
 namespace KochWermann.SKS.Package.DataAccess.Sql
 {
@@ -170,6 +172,26 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             _logger.LogError(inner.ToString());
             return new DALException(message, inner);
+        }
+
+        public Hop GetHopByCoordinates (double longitude, double latitude)
+        {
+            try
+            {
+                var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+                var coordinate = new Coordinate(longitude, latitude);
+                var point = geometryFactory.CreatePoint(coordinate);
+
+                return _context.Trucks.FirstOrDefault(x => x.RegionGeometry.Contains(point)) ?? (Hop)_context.TransferWarehouses.FirstOrDefault(x => x.RegionGeometry.Contains(point));
+            }
+            catch (SqlException ex)
+            {
+                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+            }
         }
     }
 }

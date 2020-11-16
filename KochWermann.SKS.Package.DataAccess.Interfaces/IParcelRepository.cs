@@ -13,5 +13,6 @@ namespace KochWermann.SKS.Package.DataAccess.Interfaces
         Parcel GetParcelById(int id);
         Parcel GetParcelByTrackingId(string trackingid);
         IEnumerable<Parcel> GetAllParcels ();
+        bool ContainsTrackingID(string trackingId);
     }
 }
