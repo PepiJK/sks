@@ -54,12 +54,12 @@ namespace KochWermann.SKS.Package.BusinessLogic
         {
             try
             {
-                _logger.LogInformation("Importing Warehouse");
+                _logger.LogInformation("Import Warehouses");
                 BusinessLogicHelper.Validate<Warehouse>(warehouse, _warehouseValidator, _logger);
                 warehouse.NextHops.ForEach(nextHop => BusinessLogicHelper.Validate<WarehouseNextHops>(nextHop, _nextHopValidator, _logger));
 
-                var dalWarehouse = _mapper.Map<DataAccess.Entities.Warehouse>(warehouse);
-                _warehouseRepository.Create(dalWarehouse);
+                _warehouseRepository.Clear();
+                _warehouseRepository.Create(_mapper.Map<DataAccess.Entities.Warehouse>(warehouse));
             }
             catch (DataAccess.Entities.DALException ex)
             {

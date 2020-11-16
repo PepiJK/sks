@@ -193,5 +193,24 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
             }
         }
+
+        public void Clear ()
+        {
+            try
+            {
+                _logger.LogInformation("Clearing the existing DB (the entire one)");
+
+                _context.Database.EnsureDeleted();
+                _context.Database.EnsureCreated();
+            }
+            catch (SqlException ex)
+            {
+                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+            }
+        }
     }
 }

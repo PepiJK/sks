@@ -8,6 +8,7 @@ namespace KochWermann.SKS.Package.DataAccess.Interfaces
         string Create(Hop hop);
         void Update(Hop hop);
         void Delete(string code);
+        void Clear();
 
         Hop GetHopByCode(string code);
         Warehouse GetRootWarehouse();
