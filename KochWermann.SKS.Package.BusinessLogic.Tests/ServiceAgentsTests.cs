@@ -58,8 +58,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void AddressEncoder_NotOK()
         {
-            var ex = Assert.Throws<ServiceAgentNoResultException>(() => _encoder.AddressEncoder(""));
-            StringAssert.Contains("No results found!", ex.Message);
+            Assert.Throws<ServiceAgentNoResultException>(() => _encoder.AddressEncoder(""));
         }
     }
 
