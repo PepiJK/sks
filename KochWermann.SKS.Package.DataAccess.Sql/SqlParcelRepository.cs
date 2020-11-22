@@ -31,7 +31,8 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error creating new parcel {ex}");
+                throw new DALException("Error creating new parcel", ex);
             }
         }
 
@@ -39,13 +40,13 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var p = GetParcelById(parcel.Id);
-                _context.Entry(p).CurrentValues.SetValues(parcel);
+                _context.Parcels.Update(parcel);
                 _context.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error updating parcel {ex}");
+                throw new DALException("Error updating parcel", ex);
             }
         }
 
@@ -53,46 +54,43 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var parcel = _context.Parcels.First(x => x.Id == id);
+                var parcel = GetParcelById(id);
+
                 _context.Parcels.Remove(parcel);
                 _context.SaveChanges();
             }
-            catch (InvalidOperationException ex)
+            catch (DALNotFoundException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Could not find exactly one parcel with id {id} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one parcel with id {id}", ex);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error deleting parcel {ex}");
+                throw new DALException("Error deleting parcel", ex);
             }
-        }
-
-        public IEnumerable<Parcel> GetParcelByRecipient(Recipient recipient)
-        {
-            var parcelList = _context.Parcels
-                .Include(parcel => parcel.Recipient)
-                .Include(parcel => parcel.Sender)
-                .Include(parcel => parcel.HopArrivals)
-                .Where(e => e.Recipient.Id == recipient.Id);
-
-            return parcelList;
         }
 
         public Parcel GetParcelById(int id)
         {
             try
             {
-                return _context.Parcels.First(x => x.Id == id);
+                return _context.Parcels
+                    .Include(parcel => parcel.Recipient)
+                    .Include(parcel => parcel.Sender)
+                    .Include(parcel => parcel.VisitedHops)
+                    .Include(parcel => parcel.FutureHops)
+                    .Single(p => p.Id == id);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Could not find exactly one parcel with id {id} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one parcel with id {id}", ex);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in GetParcelById {ex}");
+                throw new DALException("Error in GetParcelById", ex);
             }
         }
 
@@ -100,39 +98,49 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var parcel = _context.Parcels
+                return _context.Parcels
                     .Include(parcel => parcel.Recipient)
                     .Include(parcel => parcel.Sender)
-                    .Include(parcel => parcel.HopArrivals)
-                    .First(x => x.TrackingId == trackingid);
-
-                return parcel;
+                    .Include(parcel => parcel.VisitedHops)
+                    .Include(parcel => parcel.FutureHops)
+                    .Single(x => x.TrackingId == trackingid);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Could not find exactly one parcel with trackingId {trackingid} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one parcel with trackingId {trackingid}", ex);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in GetParcelByTrackingId {ex}");
+                throw new DALException("Error in GetParcelByTrackingId", ex);
             }
         }
 
         public IEnumerable<Parcel> GetAllParcels()
         {
-            return _context.Parcels.AsEnumerable();
+            try
+            {
+                return _context.Parcels;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetAllParcels {ex}");
+                throw new DALException("Error in GetAllParcels", ex);
+            }
         }
 
-        public bool ContainsTrackingID(string trackingId)
+        public bool ContainsTrackingId(string trackingId)
         {
-            return _context.Parcels.Any(p => p.TrackingId == trackingId);
-        }
-
-        private DALException ExceptionHandler(string message, Exception inner)
-        {
-            _logger.LogError(inner.ToString());
-            return new DALException(message, inner);
+            try
+            {
+                return _context.Parcels.Any(p => p.TrackingId == trackingId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in ContainsTrackingId {ex}");
+                throw new DALException("Error in ContainsTrackingId", ex);
+            }
         }
 
     }

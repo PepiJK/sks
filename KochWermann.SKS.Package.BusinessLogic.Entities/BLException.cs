@@ -7,7 +7,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Entities
     [ExcludeFromCodeCoverage]
     public class BLException : Exception
     {
-        public BLException (string message, Exception inner)
-            : base(message, inner) {}
+        public BLException (string message): base(message) {}
+        public BLException (string message, Exception inner): base(message, inner) {}
     }
 }

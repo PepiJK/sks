@@ -42,13 +42,14 @@ namespace KochWermann.SKS.Package.ServiceAgents
                 }
                 else
                 {
+                    _logger.LogError("Openstreetmap request error");
                     throw new ServiceAgentRequestException("Openstreetmap request error");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new ServiceAgentNoResultException("No results found!", ex);
+                _logger.LogError($"No results found {ex}");
+                throw new ServiceAgentNoResultException("No results found", ex);
             }
         }
     }

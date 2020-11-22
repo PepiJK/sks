@@ -63,8 +63,6 @@ namespace KochWermann.SKS.Package.BusinessLogic.Entities
         /// </summary>
         /// <value>State of the parcel.</value>
         public StateEnum? State { get; set; }
-
-        public List<HopArrival> HopArrivals { get; set;}
         
         /// <summary>
         /// Hops visited in the past.

@@ -1,6 +1,6 @@
 using System;
 using FluentValidation;
-using KochWermann.SKS.Package.BusinessLogic.Entities;
+using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Helpers
@@ -9,31 +9,24 @@ namespace KochWermann.SKS.Package.BusinessLogic.Helpers
     {
         public static void Validate<T>(T instanceToValidate, AbstractValidator<T> validator, ILogger logger)
         {
-            var validationResult = validator.Validate(instanceToValidate);
+            ValidationResult validationResult;
+
+            try
+            {
+                validationResult = validator.Validate(instanceToValidate);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Error in validation: {ex}");
+                throw new ValidationException($"Error in validation: {ex}");
+            }
+
             if (!validationResult.IsValid)
             {
                 var ex = new ValidationException(validationResult.Errors);
-                logger.LogError(ex.ToString());
+                logger.LogError($"ValidationResult is not valid: {ex}");
                 throw ex;
             }     
-        }
-
-        public static BLException ExceptionHandler(string method, Exception ex, ILogger logger)
-        {
-            logger.LogError(ex.ToString());
-            return new BLException(method, ex);
-        }
-
-        public static BLNotFoundException NotFoundExceptionHandler(string method, Exception ex, ILogger logger)
-        {
-            logger.LogError(ex.ToString());
-            return new BLNotFoundException(method, ex);
-        }
-
-        public static BLValidationException ValidationExceptionHandler(string method, Exception ex, ILogger logger)
-        {
-            logger.LogError(ex.ToString());
-            return new BLValidationException(method, ex);
         }
     }
 }

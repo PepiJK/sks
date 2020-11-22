@@ -37,15 +37,13 @@ namespace KochWermann.SKS.Package.BusinessLogic
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                throw BusinessLogicHelper.NotFoundExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
-            }
-            catch (DataAccess.Entities.DALException ex)
-            {
-                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                _logger.LogError($"Could not find root warehouse {ex}");
+                throw new BLNotFoundException("Could not find root warehouse", ex);
             }
             catch (Exception ex)
             {
-                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                _logger.LogError($"Error in ExportWarehouse {ex}");
+                throw new BLException("Error in ExportWarehouses", ex);
             }
         }
 
@@ -53,24 +51,21 @@ namespace KochWermann.SKS.Package.BusinessLogic
         {
             try
             {
-                _logger.LogInformation("Import Warehouses");
                 BusinessLogicHelper.Validate<Warehouse>(warehouse, _warehouseValidator, _logger);
                 warehouse.NextHops.ForEach(nextHop => BusinessLogicHelper.Validate<WarehouseNextHops>(nextHop, _nextHopValidator, _logger));
 
-                _warehouseRepository.Clear();
+                _warehouseRepository.ClearAllTables();
                 _warehouseRepository.Create(_mapper.Map<DataAccess.Entities.Warehouse>(warehouse));
-            }
-            catch (DataAccess.Entities.DALException ex)
-            {
-                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
             }
             catch (ValidationException ex)
             {
-                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                _logger.LogError($"Validation error in warehouse or its next hops {ex}");
+                throw new BLValidationException("Validation error in warehouse or its next hops", ex);            
             }
             catch (Exception ex)
             {
-                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                _logger.LogError($"Error in ImportWarehouses {ex}");
+                throw new BLException("Error in ImportWarehouses", ex);
             }
 
         }
@@ -83,26 +78,23 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                 var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
                 return _mapper.Map<BusinessLogic.Entities.Warehouse>(dalWarehouse);
-
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                throw BusinessLogicHelper.NotFoundExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
-            }
-            catch (DataAccess.Entities.DALException ex)
-            {
-                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                _logger.LogError($"Could not find warehouse with code {code} {ex}");
+                throw new BLNotFoundException($"Could not find warehouse with code {code}", ex);
             }
             catch (ValidationException ex)
             {
-                throw BusinessLogicHelper.ValidationExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                _logger.LogError($"Validation error in code {code} {ex}");
+                throw new BLValidationException($"Validation error in code {code}", ex); 
             }
             catch (Exception ex)
             {
-                throw BusinessLogicHelper.ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex, _logger);
+                _logger.LogError($"Error in GetWarehouse {ex}");
+                throw new BLException("Error in GetWarehouse", ex);
             }
         }
-
 
     }
 }

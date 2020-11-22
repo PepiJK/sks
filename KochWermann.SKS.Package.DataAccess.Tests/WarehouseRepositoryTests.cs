@@ -30,14 +30,18 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
                         new WarehouseNextHops{
                             Hop = new TransferWarehouse{
                                 Code = "TRAN1234",
-                                HopType = "TransferWarehouse"
+                                HopType = "TransferWarehouse",
+                                RegionGeometry = new NetTopologySuite.Geometries.Point(2, 2),
+                                LocationCoordinates = new NetTopologySuite.Geometries.Point(2, 2),
                             }
                         }
                     }
                 },
                 new Truck{
                     Code = "TRUC1234",
-                    HopType = "Truck"
+                    HopType = "Truck",
+                    LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1),
+                    RegionGeometry = new NetTopologySuite.Geometries.Point(1, 1)
                 }
             };
 
@@ -66,6 +70,10 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
             mockContext.Setup(p => p.WarehouseNextHops).Returns(DbContextMock.GetQueryableMockDbSet<WarehouseNextHops>(_warehouseNextHops));
             mockContext.Setup(p => p.Trucks).Returns(DbContextMock.GetQueryableMockDbSet<Truck>(_trucks));
             mockContext.Setup(p => p.TransferWarehouses).Returns(DbContextMock.GetQueryableMockDbSet<TransferWarehouse>(_transferWarehouses));
+            mockContext.Setup(p => p.HopArrivals).Returns(DbContextMock.GetQueryableMockDbSet<HopArrival>(new List<HopArrival>()));
+            mockContext.Setup(p => p.Parcels).Returns(DbContextMock.GetQueryableMockDbSet<Parcel>(new List<Parcel>()));
+            mockContext.Setup(p => p.Recipients).Returns(DbContextMock.GetQueryableMockDbSet<Recipient>(new List<Recipient>()));
+
             mockContext.Setup(p => p.SaveChanges()).Returns(1);
 
             _warehouseRepository = new SqlWarehouseRepository(mockContext.Object, loggerMock.Object);
@@ -93,7 +101,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Delete()
         {
-            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _warehouseRepository.Delete("CODE4321"));
+            Assert.Throws<DALNotFoundException>(() => _warehouseRepository.Delete("CODE4321"));
         }
 
         [Test]
@@ -107,7 +115,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Get_Warehouse_By_Code()
         {
-            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _warehouseRepository.GetWarehouseByCode("CODE4321"));
+            Assert.Throws<DALNotFoundException>(() => _warehouseRepository.GetWarehouseByCode("CODE4321"));
         }
 
         [Test]
@@ -130,23 +138,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Get_Hop_By_Code()
         {
-            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _warehouseRepository.GetHopByCode("CODE4321"));
-        }
-
-        [Test]
-        public void Should_Get_TransferWarehouse_By_Code()
-        {
-            var transferWarehouse = _warehouseRepository.GetTransferWarehouseByCode("TRAN1234");
-
-            Assert.AreEqual(_transferWarehouses[0], transferWarehouse);
-        }
-
-        [Test]
-        public void Should_Get_All_Hops()
-        {
-            var hops = _warehouseRepository.GetAllHops();
-
-            Assert.AreEqual(_hops, hops.ToList());
+            Assert.Throws<DALNotFoundException>(() => _warehouseRepository.GetHopByCode("CODE4321"));
         }
 
         [Test]
@@ -158,19 +150,41 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
-        public void Should_Get_All_WarehouseNextHops()
-        {
-            var warehouseNextHops = _warehouseRepository.GetAllWarehouseNextHops();
-
-            Assert.AreEqual(_warehouseNextHops, warehouseNextHops.ToList());
-        }
-
-        [Test]
         public void Should_Get_All_Warehouses()
         {
             var warehouses = _warehouseRepository.GetAllWarehouses();
 
             Assert.AreEqual(_warehouses, warehouses.ToList());
+        }
+
+        [Test]
+        public void Should_Get_Truck_By_Coordinates()
+        {
+            var hop = _warehouseRepository.GetHopByCoordinates(1, 1);
+
+            Assert.AreEqual(_trucks[0], hop as Truck);
+        }
+
+        [Test]
+        public void Should_Get_TransferWarehouse_By_Coordinates()
+        {
+            var hop = _warehouseRepository.GetHopByCoordinates(2,2);
+
+            Assert.AreEqual(_transferWarehouses[0], hop as TransferWarehouse);
+        }
+
+        [Test]
+        public void Should_Not_Get_Hop_By_Coordinates()
+        {
+            var hop = _warehouseRepository.GetHopByCoordinates(3, 1);
+
+            Assert.AreEqual(null, hop);
+        }
+
+        [Test]
+        public void Should_Clear_All_Tables()
+        {
+            Assert.DoesNotThrow(() => _warehouseRepository.ClearAllTables());
         }
     }
 }

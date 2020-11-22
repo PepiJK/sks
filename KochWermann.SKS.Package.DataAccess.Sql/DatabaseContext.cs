@@ -21,6 +21,15 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             builder.Entity<Truck>().HasBaseType<Hop>();
             builder.Entity<Warehouse>().HasBaseType<Hop>();
             builder.Entity<TransferWarehouse>().HasBaseType<Hop>();
+
+            builder.Entity<HopArrival>()
+                .HasOne<Parcel>(h => h.VisitedParcel)
+                .WithMany(p => p.VisitedHops)
+                .HasForeignKey(h => h.VisitedParcelId);
+             builder.Entity<HopArrival>()
+                .HasOne<Parcel>(h => h.FutureParcel)
+                .WithMany(p => p.FutureHops)
+                .HasForeignKey(h => h.FutureParcelId);
         }
 
         public virtual DbSet<Parcel> Parcels { get; set; }

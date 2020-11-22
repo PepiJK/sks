@@ -126,7 +126,10 @@ namespace KochWermann.SKS.Package.Services
                 c.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
                 c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
             });
-            
+
+            services.AddHttpClient("parcelhop", c => {
+                c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
+            });
         }
 
         /// <summary>

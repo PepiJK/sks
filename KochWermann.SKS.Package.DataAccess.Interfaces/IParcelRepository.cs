@@ -9,10 +9,9 @@ namespace KochWermann.SKS.Package.DataAccess.Interfaces
         void Update(Parcel parcel);
         void Delete(int id);
 
-        IEnumerable<Parcel> GetParcelByRecipient(Recipient recipient);
         Parcel GetParcelById(int id);
         Parcel GetParcelByTrackingId(string trackingid);
         IEnumerable<Parcel> GetAllParcels ();
-        bool ContainsTrackingID(string trackingId);
+        bool ContainsTrackingId(string trackingId);
     }
 }

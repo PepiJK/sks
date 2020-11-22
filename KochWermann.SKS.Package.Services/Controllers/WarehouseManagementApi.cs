@@ -16,7 +16,6 @@ using KochWermann.SKS.Package.Services.Attributes;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using Microsoft.Extensions.Logging;
-using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -63,25 +62,20 @@ namespace KochWermann.SKS.Package.Services.Controllers
             {
                 _logger.LogTrace("ExportWarehouses");
 
-                var root = _warehouseLogic.ExportWarehouses();
-                if (root == null)
-                    return NotFound(ControllerApiHelper.CreateErrorDTO("No hierarchy loaded yet.", _logger));
-
                 var blWarehouse = _warehouseLogic.ExportWarehouses();
                 var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
+
                 return Ok(serviceWarehouse);
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                return NotFound(ControllerApiHelper.CreateErrorDTO("No hierarchy loaded", _logger, ex));
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("An error occurred loading.", _logger, ex));
+                _logger.LogError($"No hierarchy loaded yet {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = "No hierarchy loaded yet"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("An error occurred loading.", _logger, ex));
+                _logger.LogError($"The operation failed due to an error {ex}");
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
 
@@ -106,23 +100,25 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _logger.LogTrace("GetWarehouse");
 
                 if (string.IsNullOrWhiteSpace(code))
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Code empty or null", _logger));
+                {
+                    _logger.LogError("Code is null or white space");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "Code is null or white space"});
+                }
 
                 var blWarehouse = _warehouseLogic.GetWarehouse(code);
                 var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
+
                 return Ok(serviceWarehouse);
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                return NotFound(ControllerApiHelper.CreateErrorDTO("Warehouse id not found", _logger, ex));
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("An error occurred loading.", _logger, ex));
+                _logger.LogError($"No Warehouse exist with this code {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = "No Warehouse exist with this code"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("An error occurred loading.", _logger, ex));
+                _logger.LogError($"The operation failed due to an error {ex}");
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
 
@@ -144,19 +140,20 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 _logger.LogTrace("ImportWarehouses");
 
                 if (body == null)
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("body is null", _logger));
+                {
+                    _logger.LogError("Body is null");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "Body is null"});
+                }
 
                 var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(body);
                 _warehouseLogic.ImportWarehouses(blWarehouse);
+
                 return Ok();
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
+                _logger.LogError($"The operation failed due to an error {ex}");
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
 

@@ -36,8 +36,11 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
         /// <value>The date/time the parcel arrived at the hop.</value>
         public DateTime? DateTime { get; set; }
 
-        public Parcel Parcel { get; set; }
+        public int? VisitedParcelId { get; set; }
+        public Parcel VisitedParcel { get; set; }
 
+        public int? FutureParcelId { get; set; }
+        public Parcel FutureParcel { get; set; }
         public Hop Hop { get; set; }
     }
 }

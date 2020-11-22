@@ -14,7 +14,6 @@ using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
-using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -56,22 +55,24 @@ namespace KochWermann.SKS.Package.Services.Controllers
         {
             try
             {
-                _logger.LogTrace($"SubmitParcel");
+                _logger.LogTrace("SubmitParcel");
+
                 if (body == null)
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("body is null", _logger));
+                {
+                    _logger.LogError("Body is null");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "Body is null"});
+                }
 
                 var blParcel = _mapper.Map<BusinessLogic.Entities.Parcel>(body);
                 var blSubmitedParcel = _trackingLogic.SubmitParcel(blParcel);
                 var serviceNewParcelInfo = _mapper.Map<DTOs.NewParcelInfo>(blSubmitedParcel);
+
                 return Ok(serviceNewParcelInfo);
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
+                _logger.LogError($"The operation failed due to an error {ex}");
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
     }

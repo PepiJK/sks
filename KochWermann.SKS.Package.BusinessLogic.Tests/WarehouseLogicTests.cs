@@ -45,9 +45,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
 
             //mock warehouse repository
             var mock = new Mock<IWarehouseRepository>();
-            mock.Setup(warehouseRepository => warehouseRepository.GetRootWarehouse()).Returns(new DataAccess.Entities.Warehouse{
-                LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1)
-            });
+            mock.Setup(warehouseRepository => warehouseRepository.GetRootWarehouse()).Returns(mapper.Map<DataAccess.Entities.Warehouse>(_validWarehouse));
             mock.Setup(warehouseRepository => warehouseRepository.Create(
                 It.IsAny<DataAccess.Entities.Hop>()
             )).Returns<DataAccess.Entities.Hop>(h => h.Code);
@@ -71,6 +69,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             var res = _warehouseLogic.ExportWarehouses();
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<Warehouse>(res);
+            Assert.AreEqual("Root", res.LocationName);
         }
 
         [Test]
@@ -82,7 +81,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Import_Warehouses_Of_Null_Warehouse()
         {
-            Assert.Throws<BLException>(() => _warehouseLogic.ImportWarehouses(null));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.ImportWarehouses(null));
         }
 
         [Test]
@@ -130,7 +129,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Null_Code()
         {
-            Assert.Throws<BLException>(() => _warehouseLogic.GetWarehouse(null));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.GetWarehouse(null));
         }
 
         [Test]

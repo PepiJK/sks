@@ -21,11 +21,11 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         {
             _parcels = new List<Parcel>{new Parcel{
                 Id = 1,
-                HopArrivals = new List<HopArrival>{new HopArrival{
+                FutureHops = new List<HopArrival>{new HopArrival{
                     Id = 1,
                     Code = "Code1",
                     Description = "Visited hops blabla",
-                    DateTime = DateTime.Today
+                    DateTime = DateTime.Now.AddDays(1)
                 }},
                 Recipient = new Recipient{
                     Id = 1,
@@ -79,7 +79,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Delete()
         {
-            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _parcelRepository.Delete(2));
+            Assert.Throws<DALNotFoundException>(() => _parcelRepository.Delete(2));
         }
 
         [Test]
@@ -93,33 +93,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Get_Parcel_By_Id()
         {
-            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _parcelRepository.GetParcelById(2));
-        }
-
-        [Test]
-        public void Should_Get_Parcel_By_Recipient()
-        {
-            var recipient = new Recipient
-            {
-                Id = 1,
-                Country = "Österreich",
-                PostalCode = "A-1120",
-                Street = "Hauptstraße 12/12/12",
-                City = "Wien",
-                Name = "Josef Koch"
-            };
-
-            var parcels = _parcelRepository.GetParcelByRecipient(recipient);
-
-            Assert.AreEqual(1, parcels.Count());
-        }
-
-        [Test]
-        public void Should_Not_Get_Parcel_By_Recipient()
-        {
-            var parcels = _parcelRepository.GetParcelByRecipient(new Recipient());
-
-            Assert.AreEqual(0, parcels.Count());
+            Assert.Throws<DALNotFoundException>(() => _parcelRepository.GetParcelById(2));
         }
 
         [Test]
@@ -133,7 +107,7 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         [Test]
         public void Should_Throw_Not_Found_On_Get_Parcel_By_TrackingId()
         {
-            Assert.Throws<DataAccess.Entities.DALNotFoundException>(() => _parcelRepository.GetParcelByTrackingId(""));
+            Assert.Throws<DALNotFoundException>(() => _parcelRepository.GetParcelByTrackingId(""));
         }
 
         [Test]
@@ -142,6 +116,14 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
             var parcels = _parcelRepository.GetAllParcels();
 
             Assert.AreEqual(_parcels, parcels.ToList());
+        }
+
+        [Test]
+        public void Should_ContainTrackingId()
+        {
+            var exists = _parcelRepository.ContainsTrackingId("PYJRB4HZ6");
+
+            Assert.AreEqual(true, exists);
         }
     }
 }

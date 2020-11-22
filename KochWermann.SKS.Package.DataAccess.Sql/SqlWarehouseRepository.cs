@@ -38,7 +38,8 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error creating new hop {ex}");
+                throw new DALException("Error creating new hop", ex);
             }
         }
 
@@ -46,18 +47,20 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var hop = _context.Hops.First(h => h.Code == code);
+                var hop = GetHopByCode(code);
+
                 _context.Hops.Remove(hop);
                 _context.SaveChanges();
             }
-            catch (InvalidOperationException ex)
+            catch (DALNotFoundException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Could not find exactly one warehouse with code {code} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one warehouse with code {code}", ex);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error deleting hop {ex}");
+                throw new DALException("Error deleting hop", ex);
             }
         }
 
@@ -65,13 +68,13 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                var h = GetHopByCode(hop.Code);
-                _context.Entry(h).CurrentValues.SetValues(h);
+                _context.Hops.Update(hop);
                 _context.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error updating hop {ex}");
+                throw new DALException("Error updating hop", ex);
             }
         }
 
@@ -79,16 +82,17 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                return _context.Warehouses.First(x => x.Code == code);
+                return _context.Warehouses.Single(x => x.Code == code);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Could not find exactly one warehouse with code {code} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one warehouse with code {code}", ex);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in GetWarehouseByCode {ex}");
+                throw new DALException("Error in GetWarehouseByCode", ex);
             }
         }
 
@@ -100,16 +104,20 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 _context.WarehouseNextHops.Load();
                 _context.Trucks.Load();
                 _context.TransferWarehouses.Load();
-                return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops).First(w => w.IsRootWarehouse);
+
+                return _context.Hops.OfType<Warehouse>()
+                    .Include(wh => wh.NextHops)
+                    .Single(w => w.IsRootWarehouse);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Could not find exactly one root warehouse {ex}");
+                throw new DALNotFoundException($"Could not find exactly one root warehouse", ex);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in GetRootWarehouse {ex}");
+                throw new DALException("Error in GetRootWarehouse", ex);
             }
         }
 
@@ -117,39 +125,31 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                return _context.Hops.First(x => x.Code == code);
+                return _context.Hops.Single(x => x.Code == code);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Could not find exactly one warehouse with code {code} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one warehouse with code {code}", ex);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in GetHopByCode {ex}");
+                throw new DALException("Error in GetHopByCode", ex);
             }
-        }
-
-        public TransferWarehouse GetTransferWarehouseByCode(string code)
-        {
-            var transferWarehouse = _context.TransferWarehouses.First(h => h.Code == code);
-
-            return transferWarehouse;
-        }
-
-        public IEnumerable<Hop> GetAllHops()
-        {
-            return _context.Hops;
         }
 
         public IEnumerable<Truck> GetAllTrucks()
         {
-            return _context.Hops.Where(x => x.HopType == "Truck").Cast<Truck>();
-        }
-
-        public IEnumerable<WarehouseNextHops> GetAllWarehouseNextHops()
-        {
-            return _context.WarehouseNextHops;
+            try
+            {
+                return _context.Trucks;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetAllTrucks {ex}");
+                throw new DALException("Error in GetAllTrucks", ex);
+            }
         }
 
         public IEnumerable<Warehouse> GetAllWarehouses()
@@ -160,18 +160,14 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 _context.WarehouseNextHops.Load();
                 _context.Trucks.Load();
                 _context.TransferWarehouses.Load();
-                return _context.Warehouses.Include(wh => wh.NextHops);
+
+                return _context.Hops.OfType<Warehouse>().Include(wh => wh.NextHops);
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in GetAllWarehouses {ex}");
+                throw new DALException("Error in GetAllWarehouses", ex);
             }
-        }
-
-        private DALException ExceptionHandler(string message, Exception inner)
-        {
-            _logger.LogError(inner.ToString());
-            return new DALException(message, inner);
         }
 
         public Hop GetHopByCoordinates (double longitude, double latitude)
@@ -179,37 +175,36 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             try
             {
                 var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-                var coordinate = new Coordinate(longitude, latitude);
+                var coordinate = new Coordinate(latitude, longitude);
                 var point = geometryFactory.CreatePoint(coordinate);
 
                 return _context.Trucks.FirstOrDefault(x => x.RegionGeometry.Contains(point)) ?? (Hop)_context.TransferWarehouses.FirstOrDefault(x => x.RegionGeometry.Contains(point));
             }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
-            }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in GetHopByCoordinates {ex}");
+                throw new DALException("Error in GetHopByCoordinates", ex);
             }
         }
 
-        public void Clear ()
+        public void ClearAllTables()
         {
             try
             {
                 _logger.LogInformation("Clearing the existing DB (the entire one)");
 
-                _context.Database.EnsureDeleted();
-                _context.Database.EnsureCreated();
-            }
-            catch (SqlException ex)
-            {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _context.HopArrivals.RemoveRange(_context.HopArrivals);
+                _context.WarehouseNextHops.RemoveRange(_context.WarehouseNextHops);
+                _context.Hops.RemoveRange(_context.Hops);
+                _context.Parcels.RemoveRange(_context.Parcels);
+                _context.Recipients.RemoveRange(_context.Recipients);
+
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw ExceptionHandler($"{ex.GetType()} Exception in {System.Reflection.MethodBase.GetCurrentMethod().Name}", ex);
+                _logger.LogError($"Error in ClearAllTables {ex}");
+                throw new DALException("Error in ClearAllTables", ex);
             }
         }
     }

@@ -49,21 +49,8 @@ namespace KochWermann.SKS.Package.BusinessLogic.Mapper
             this.CreateMap<BlEntities.WarehouseNextHops, DALEntities.WarehouseNextHops>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
             this.CreateMap<BlEntities.HopArrival, DALEntities.HopArrival>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
             this.CreateMap<BlEntities.Recipient, DALEntities.Recipient>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
-
-            this.CreateMap<BlEntities.Parcel, DALEntities.Parcel>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.HopArrivals, opt => opt.MapFrom(src => CombineLists<BlEntities.HopArrival>(src.VisitedHops, src.FutureHops)));
-
-            this.CreateMap<DALEntities.Parcel, BlEntities.Parcel>()
-                .ForMember(dest => dest.VisitedHops, opt => opt.MapFrom(src => src.HopArrivals.Where(h => h.DateTime <= DateTime.Now)))
-                .ForMember(dest => dest.FutureHops, opt => opt.MapFrom(src => src.HopArrivals.Where(h => h.DateTime > DateTime.Now)));
+            this.CreateMap<BlEntities.Parcel, DALEntities.Parcel>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
         }
 
-        private List<T> CombineLists<T>(List<T> firstList, List<T> secondList)
-        {
-            if (firstList == null) return secondList;
-            firstList.AddRange(secondList);
-            return firstList;
-        }
     }
 }

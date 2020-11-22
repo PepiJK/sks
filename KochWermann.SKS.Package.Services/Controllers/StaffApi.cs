@@ -16,7 +16,6 @@ using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
-using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -60,24 +59,27 @@ namespace KochWermann.SKS.Package.Services.Controllers
         {            
             try
             {
-                _logger.LogTrace($"ReportParcelDelivery: trackingId: {trackingId}.");
+                _logger.LogTrace($"ReportParcelDelivery: trackingId: {trackingId}");
+
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid TrackingId", _logger));
+                {
+                    _logger.LogError("TrackingId is null or white space");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "TrackingId is null or white space"});
+                }
 
                 _trackingLogic.ReportParcelDelivery(trackingId);
-                return Ok("Successfull delivery.");
+
+                return Ok("Successfull delivery");
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                return NotFound(ControllerApiHelper.CreateErrorDTO("Parcel does not exist with this tracking ID.", _logger, ex));
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
+                _logger.LogError($"No Parcel exist with this trackingId {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = "No Parcel exist with this trackingId"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
+                _logger.LogError($"The operation failed due to an error {ex}");
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
 
@@ -100,27 +102,33 @@ namespace KochWermann.SKS.Package.Services.Controllers
         {
             try
             {
-                _logger.LogTrace($"ReportParcelHop: trackingId: {trackingId} and code: {code}.");
+                _logger.LogTrace($"ReportParcelHop: trackingId: {trackingId} and code: {code}");
+
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid TrackingId", _logger));
+                {
+                    _logger.LogError("TrackingId is null or white space");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "TrackingId is null or white space"});
+                }
 
                 if (string.IsNullOrWhiteSpace(code))
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid Code", _logger));
+                {
+                    _logger.LogError("Code is null or white space");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "Code is null or white space"});
+                }
 
                 _trackingLogic.ReportParcelHop(trackingId, code);
+
                 return Ok("Successfully reported hop");
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                return NotFound(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking ID.", _logger, ex));
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking ID.", _logger, ex));
+                _logger.LogError($"No Parcel exist with this trackingId {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = "No Parcel exist with this trackingId"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("No parcel exists with this tracking ID.", _logger, ex));
+                _logger.LogError($"The operation failed due to an error {ex}");
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
     }

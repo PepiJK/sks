@@ -16,7 +16,6 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using System;
-using KochWermann.SKS.Package.Services.Helpers;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -59,30 +58,33 @@ namespace KochWermann.SKS.Package.Services.Controllers
         {            
             try
             {
-                _logger.LogTrace($"TransitionParcel: trackingId: {trackingId}.");
+                _logger.LogTrace($"TransitionParcel: trackingId: {trackingId}");
+
                 if (body == null)
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Parcel should not be null", _logger));
+                {
+                    _logger.LogError("Parcel is null");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "Parcel is null"});
+                }
 
                 if (string.IsNullOrWhiteSpace(trackingId))
-                    return BadRequest(ControllerApiHelper.CreateErrorDTO("Invalid TrackingId", _logger));
+                {
+                    _logger.LogError("TrackingId is null or white space");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "TrackingId is null or white space"});
+                }
 
                 var blParcel = _mapper.Map<BusinessLogic.Entities.Parcel>(body);
                 var blTransitionedParcel = _trackingLogic.TransitionParcel(blParcel, trackingId);
                 var serviceNewParcelInfo = _mapper.Map<DTOs.NewParcelInfo>(blTransitionedParcel);
-                return Ok(serviceNewParcelInfo);
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error.", _logger, ex));
 
+                return Ok(serviceNewParcelInfo);
             }
             catch (Exception ex)
             {
-                return BadRequest(ControllerApiHelper.CreateErrorDTO("The operation failed due to an error", _logger, ex));
+                _logger.LogError($"The operation failed due to an error {ex}");
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
 
-        
     }
 }
 

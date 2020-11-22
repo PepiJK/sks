@@ -8,16 +8,13 @@ namespace KochWermann.SKS.Package.DataAccess.Interfaces
         string Create(Hop hop);
         void Update(Hop hop);
         void Delete(string code);
-        void Clear();
+        void ClearAllTables();
 
         Hop GetHopByCode(string code);
         Warehouse GetRootWarehouse();
-        TransferWarehouse GetTransferWarehouseByCode(string code);
         Warehouse GetWarehouseByCode(string code);
-        IEnumerable<Hop> GetAllHops();
         IEnumerable<Truck> GetAllTrucks();
         IEnumerable<Warehouse> GetAllWarehouses();
-        IEnumerable<WarehouseNextHops> GetAllWarehouseNextHops();
         Hop GetHopByCoordinates(double longitude, double latitude);
     }
 }
