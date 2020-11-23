@@ -140,7 +140,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                 var parcel = _parcelRepository.GetParcelByTrackingId(trackingId);
 
-                if (parcel.FutureHops?.Count > 0 ) _logger.LogWarning("hops to come: ");
+                if (parcel.FutureHops?.Count > 0) _logger.LogWarning("hops to come: ");
                 foreach (var futureHop in parcel.FutureHops)
                 {
                     _logger.LogWarning($"\t{futureHop.Code} at {futureHop.DateTime.Value.ToShortTimeString()}");
@@ -207,7 +207,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                     var client = _clientFactory.CreateClient("parcelhop");
                     var response = client.SendAsync(request).Result;
-                    
+
                     if (!response.IsSuccessStatusCode)
                     {
                         throw new BLException($"Transition of parcel {parcel.Id} to TransferWarehouse/LogisticPartner {transferWarehouse.LogisticsPartner} failed");
@@ -293,15 +293,17 @@ namespace KochWermann.SKS.Package.BusinessLogic
             var receiverLocation = _geoEncodingAgent.AddressEncoder($"{parcel.Recipient.Street}, {parcel.Recipient.PostalCode} {parcel.Recipient.City}, {parcel.Recipient.Country}");
 
             // was ist wenns ein transferwarehouse is???
-            var senderTruck = _warehouseRepository.GetHopByCoordinates((double)senderLocation.Lon, (double)senderLocation.Lat) as DataAccess.Entities.Truck;
-            var receiverTruck = _warehouseRepository.GetHopByCoordinates((double)receiverLocation.Lon, (double)receiverLocation.Lat) as DataAccess.Entities.Truck;
+            DataAccess.Entities.Hop senderTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)senderLocation.Lon, (double)senderLocation.Lat);// as DataAccess.Entities.Truck;
+            DataAccess.Entities.Hop receiverTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)receiverLocation.Lon, (double)receiverLocation.Lat);// as DataAccess.Entities.Truck;
 
-            // Developer mode:
-            if (senderTruck == null || receiverTruck == null)
+            // Developer mode aka Hack:
+            if (senderTruckOrTransferWarehouse.Code == null || receiverTruckOrTransferWarehouse.Code == null)
             {
                 var allTrucks = _warehouseRepository.GetAllTrucks();
-                senderTruck ??= allTrucks.FirstOrDefault();
-                receiverTruck ??= allTrucks.LastOrDefault();
+                senderTruckOrTransferWarehouse.Code ??= allTrucks.FirstOrDefault().Code;
+                senderTruckOrTransferWarehouse.ProcessingDelayMins ??= allTrucks.FirstOrDefault().ProcessingDelayMins;
+                receiverTruckOrTransferWarehouse.Code ??= allTrucks.LastOrDefault().Code;
+                receiverTruckOrTransferWarehouse.ProcessingDelayMins ??= allTrucks.LastOrDefault().ProcessingDelayMins;
             }
 
             // maybe for release mode (depends on data given)
@@ -320,14 +322,14 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 hopDictionary.Add(warehouse.Code, warehouse);
             }
 
-            var senderWarehouse = allWarehouses.Single(h => h.NextHops.Any(nh => nh.Hop.Code == senderTruck.Code));
-            var receiverWarehouse = allWarehouses.Single(h => h.NextHops.Any(nh => nh.Hop.Code == receiverTruck.Code));
+            var senderWarehouse = allWarehouses.Single(h => h.NextHops.Any(nh => nh.Hop.Code == senderTruckOrTransferWarehouse.Code));
+            var receiverWarehouse = allWarehouses.Single(h => h.NextHops.Any(nh => nh.Hop.Code == receiverTruckOrTransferWarehouse.Code));
 
             parcel.FutureHops = new List<HopArrival>();
-            DateTime dateTime = DateTime.Now.AddMinutes((double)senderTruck.ProcessingDelayMins);
+            DateTime dateTime = DateTime.Now.AddMinutes((double)senderTruckOrTransferWarehouse.ProcessingDelayMins);
             parcel.FutureHops.Add(new HopArrival()
             {
-                Code = senderTruck.Code,
+                Code = senderTruckOrTransferWarehouse.Code,
                 DateTime = dateTime
             });
 
@@ -366,10 +368,10 @@ namespace KochWermann.SKS.Package.BusinessLogic
                     });
                 }
             }
-            dateTime = dateTime.AddMinutes((double)receiverTruck.ProcessingDelayMins);
+            dateTime = dateTime.AddMinutes((double)receiverTruckOrTransferWarehouse.ProcessingDelayMins);
             parcel.FutureHops.Add(new HopArrival()
             {
-                Code = receiverTruck.Code,
+                Code = receiverTruckOrTransferWarehouse.Code,
                 DateTime = dateTime
             });
 

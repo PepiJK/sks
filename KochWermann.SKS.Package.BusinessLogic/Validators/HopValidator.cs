@@ -14,8 +14,8 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
             this.RuleFor(p => p.Description)
                 .Matches(@"[A-Za-zÄäÖöÜüß \/0-9-]+");
 
-            this.RuleFor(p => p.LocationCoordinates)
-                .NotNull();
+            this.RuleFor(p => p.ProcessingDelayMins)
+                .GreaterThan(0);
         }
     }
 }

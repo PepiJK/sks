@@ -7,14 +7,13 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
     {
         public WarehouseValidator()
         {
-            this.RuleFor(p => p.Description)
-                .Matches(@"[A-Za-zÄäÖöÜüß \/0-9-]+");
-            
-            this.RuleFor(p => p.Code)
-                .Matches(@"[A-Z0-9]{6,}");
+            Include(new HopValidator());
 
             this.RuleFor(p => p.NextHops)
                 .NotNull();
+
+            RuleForEach(p => p.NextHops)
+                .SetValidator(new NextHopValidator());
         }
     }
 }
