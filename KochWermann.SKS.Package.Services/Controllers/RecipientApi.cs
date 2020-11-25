@@ -56,7 +56,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(DTOs.TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No Parcel exist with this trackingId.")]
-
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId)
         {                    
             try

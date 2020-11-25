@@ -54,7 +54,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerOperation("ReportParcelDelivery")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "Parcel does not exist with this tracking ID.")]
-
         public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         {            
             try
@@ -97,7 +96,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerOperation("ReportParcelHop")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No parcel exists with this tracking ID.")]
-
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
         {
             try
@@ -122,8 +120,8 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                _logger.LogError($"No Parcel exist with this trackingId {ex}");
-                return NotFound(new DTOs.Error{ErrorMessage = "No Parcel exist with this trackingId"});
+                _logger.LogError($"No Parcel exist with this trackingId or code {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = "No Parcel exist with this trackingId or code"});
             }
             catch (Exception ex)
             {

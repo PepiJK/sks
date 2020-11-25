@@ -55,7 +55,6 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(DTOs.Warehouse), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "An error occurred loading.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No hierarchy loaded")]
-
         public virtual IActionResult ExportWarehouses()
         {
             try

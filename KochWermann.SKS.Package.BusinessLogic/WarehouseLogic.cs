@@ -67,7 +67,6 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 _logger.LogError($"Error in ImportWarehouses {ex}");
                 throw new BLException("Error in ImportWarehouses", ex);
             }
-
         }
 
         public Warehouse GetWarehouse(string code)

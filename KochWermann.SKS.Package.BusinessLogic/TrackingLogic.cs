@@ -180,6 +180,11 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 var parcel = _parcelRepository.GetParcelByTrackingId(trackingId);
                 var hop = _warehouseRepository.GetHopByCode(code);
 
+                if (!parcel.FutureHops.Exists(p => p.Code == code))
+                {
+                    throw new BLException("Reported hop code is not part of the future hops of this parcel");
+                }
+
                 var visitedHops = new List<DataAccess.Entities.HopArrival>();
 
                 foreach (var futureHop in parcel.FutureHops)
@@ -203,7 +208,12 @@ namespace KochWermann.SKS.Package.BusinessLogic
                     var transferWarehouse = (DataAccess.Entities.TransferWarehouse)hop;
 
                     var request = new HttpRequestMessage(HttpMethod.Post, $"{transferWarehouse.LogisticsPartnerUrl}/parcel/{parcel.TrackingId}");
-                    request.Content = new StringContent(JsonConvert.SerializeObject(parcel), Encoding.UTF8, "application/json");
+                    var serilizedParcel = JsonConvert.SerializeObject(parcel, Formatting.None, new JsonSerializerSettings { 
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        }
+                    );
+
+                    request.Content = new StringContent(serilizedParcel, Encoding.UTF8, "application/json");
 
                     var client = _clientFactory.CreateClient("parcelhop");
                     var response = client.SendAsync(request).Result;
@@ -292,9 +302,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
             var senderLocation = _geoEncodingAgent.AddressEncoder($"{parcel.Sender.Street}, {parcel.Sender.PostalCode} {parcel.Sender.City}, {parcel.Sender.Country}");
             var receiverLocation = _geoEncodingAgent.AddressEncoder($"{parcel.Recipient.Street}, {parcel.Recipient.PostalCode} {parcel.Recipient.City}, {parcel.Recipient.Country}");
 
-            // was ist wenns ein transferwarehouse is???
-            DataAccess.Entities.Hop senderTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)senderLocation.Lon, (double)senderLocation.Lat);// as DataAccess.Entities.Truck;
-            DataAccess.Entities.Hop receiverTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)receiverLocation.Lon, (double)receiverLocation.Lat);// as DataAccess.Entities.Truck;
+            DataAccess.Entities.Hop senderTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)senderLocation.Lon, (double)senderLocation.Lat);
+            DataAccess.Entities.Hop receiverTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)receiverLocation.Lon, (double)receiverLocation.Lat);
 
             // Developer mode aka Hack:
             if (senderTruckOrTransferWarehouse.Code == null || receiverTruckOrTransferWarehouse.Code == null)
@@ -330,7 +339,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
             parcel.FutureHops.Add(new HopArrival()
             {
                 Code = senderTruckOrTransferWarehouse.Code,
-                DateTime = dateTime
+                DateTime = dateTime,
+                Description = senderTruckOrTransferWarehouse.Description
             });
 
             if (senderWarehouse.Code != receiverWarehouse.Code)
@@ -364,7 +374,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
                     parcel.FutureHops.Add(new HopArrival()
                     {
                         Code = hop.Code,
-                        DateTime = dateTime
+                        DateTime = dateTime,
+                        Description = hop.Description
                     });
                 }
             }
@@ -372,7 +383,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
             parcel.FutureHops.Add(new HopArrival()
             {
                 Code = receiverTruckOrTransferWarehouse.Code,
-                DateTime = dateTime
+                DateTime = dateTime,
+                Description = receiverTruckOrTransferWarehouse.Description
             });
 
             return parcel.FutureHops;

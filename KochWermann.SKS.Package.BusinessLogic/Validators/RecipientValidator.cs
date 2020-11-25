@@ -7,14 +7,13 @@ namespace KochWermann.SKS.Package.BusinessLogic.Validators
     {
         public RecipientValidator()
         {
-            this.RuleFor(p => p.Country)
-                .Must(p => p.Equals("Österreich") || p.Equals("Austria"));
-
             this.RuleFor(p => p.PostalCode)
-                .Matches(@"A-[0-9]{4}");
+                .Matches(@"A-[0-9]{4}")
+                .When(p => p.Country.Equals("Österreich") || p.Country.Equals("Austria"));
 
             this.RuleFor(p => p.Street)
-                .Matches(@"[A-Za-zÄäÖöÜüß]{3,} [0-9\/A-Za-zÄäÖöÜüß]{1,}");
+                .Matches(@"[A-Za-zÄäÖöÜüß]{3,} [0-9\/A-Za-zÄäÖöÜüß]{1,}")
+                .When(p => p.Country.Equals("Österreich") || p.Country.Equals("Austria"));
 
             this.RuleFor (p=> p.City)
                 .Matches(@"[A-ZÄÖÜ]{1}[A-Za-zÄäÖöÜüß -]{1,}");

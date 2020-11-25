@@ -92,7 +92,6 @@ namespace KochWermann.SKS.Package.Services
                     options.InputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter>();
                     options.OutputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter>();
                 })
-                //.AddFluentValidation(mvcConfiguration => mvcConfiguration.RegisterValidatorsFromAssemblyContaining<BusinessLogic.Validators.ParcelValidator>()) //FluentValidation
                 .AddNewtonsoftJson(opts =>
                 {
                     opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

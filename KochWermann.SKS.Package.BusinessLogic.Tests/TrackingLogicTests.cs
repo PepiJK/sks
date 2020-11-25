@@ -44,7 +44,15 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                     DateTime = DateTime.Now.AddDays(-1)
                 }},
                 FutureHops = new List<HopArrival>{new HopArrival{
-                    Code = "Code2",
+                    Code = _validTruckCode,
+                    Description = "Future hops blabla",
+                    DateTime = DateTime.Now.AddDays(1)
+                },new HopArrival{
+                    Code = _validWarehouseCode,
+                    Description = "Future hops blabla",
+                    DateTime = DateTime.Now.AddDays(1)
+                },new HopArrival{
+                    Code = _validTransferWarehouseCode,
                     Description = "Future hops blabla",
                     DateTime = DateTime.Now.AddDays(1)
                 }},
@@ -65,6 +73,62 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 State = Parcel.StateEnum.InTransportEnum,
                 TrackingId = _validTrackingId,
                 Weight = 6.9f
+            };
+
+            var rootWarehouse = new DataAccess.Entities.Warehouse {
+                Code = "Code1",
+                IsRootWarehouse = true,
+                HopType = "Warehouse",
+                Level = 0,
+                ProcessingDelayMins = 186,
+                NextHops = new List<DataAccess.Entities.WarehouseNextHops>{
+                    new DataAccess.Entities.WarehouseNextHops{
+                        TraveltimeMins = 60,
+                        Hop = new DataAccess.Entities.Warehouse{
+                            Code = "Code2",
+                            HopType = "Warehouse",
+                            Level = 1,
+                            ProcessingDelayMins = 100,
+                            NextHops = new List<DataAccess.Entities.WarehouseNextHops>{
+                                new DataAccess.Entities.WarehouseNextHops{
+                                    TraveltimeMins = 60,
+                                    Hop = new DataAccess.Entities.Truck{
+                                        Code = "Code3",
+                                        HopType = "Truck",
+                                        ProcessingDelayMins = 50
+                                    }
+                                }    
+                            }
+                        }
+                    },
+                    new DataAccess.Entities.WarehouseNextHops{
+                        TraveltimeMins = 80,
+                        Hop = new DataAccess.Entities.Warehouse{
+                            Code = "Code4",
+                            HopType = "Warehouse",
+                            Level = 1,
+                            ProcessingDelayMins = 120,
+                            NextHops = new List<DataAccess.Entities.WarehouseNextHops>{
+                                new DataAccess.Entities.WarehouseNextHops{
+                                    TraveltimeMins = 70,
+                                    Hop = new DataAccess.Entities.Truck{
+                                        Code = "Code5",
+                                        HopType = "Truck",
+                                        ProcessingDelayMins = 40
+                                    }
+                                }    
+                            }
+                        }
+                    }
+                }
+            };
+
+            var warehouses = new List<DataAccess.Entities.Warehouse>{
+                rootWarehouse, (DataAccess.Entities.Warehouse)rootWarehouse.NextHops[0].Hop, (DataAccess.Entities.Warehouse)rootWarehouse.NextHops[1].Hop
+            };
+            var trucks = new List<DataAccess.Entities.Truck>{
+                (DataAccess.Entities.Truck)((DataAccess.Entities.Warehouse)rootWarehouse.NextHops[0].Hop).NextHops[0].Hop,
+                (DataAccess.Entities.Truck)((DataAccess.Entities.Warehouse)rootWarehouse.NextHops[1].Hop).NextHops[0].Hop
             };
 
             //auto mapper configuration
@@ -102,25 +166,11 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             )).Throws(new DataAccess.Entities.DALNotFoundException("Parcel Not Found"));
 
             var mockWarehouseRepo = new Mock<IWarehouseRepository>();
-            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetHopByCoordinates(
-                1, 1
-            )).Returns(new DataAccess.Entities.Hop{
-                LocationCoordinates = new NetTopologySuite.Geometries.Point(1,1)
-            });
-            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetAllTrucks()).Returns(new List<DataAccess.Entities.Truck>{new DataAccess.Entities.Truck{Code = "Code2", ProcessingDelayMins = 60}});
-            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetAllWarehouses()).Returns(new List<DataAccess.Entities.Warehouse>{
-                new DataAccess.Entities.Warehouse{
-                    Code = "Code1",
-                    NextHops = new List<DataAccess.Entities.WarehouseNextHops>{
-                        new DataAccess.Entities.WarehouseNextHops{
-                            TraveltimeMins = 60,
-                            Hop = new DataAccess.Entities.Hop{
-                                Code = "Code2"
-                            }
-                        }
-                    }
-                }
-            });
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetAllTrucks()).Returns(trucks);
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetAllWarehouses()).Returns(warehouses);
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetRootWarehouse()).Returns(rootWarehouse);
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetHopByCoordinates(1, 1)).Returns((rootWarehouse.NextHops[0].Hop as DataAccess.Entities.Warehouse).NextHops[0].Hop);
+            mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetHopByCoordinates(2, 2)).Returns((rootWarehouse.NextHops[1].Hop as DataAccess.Entities.Warehouse).NextHops[0].Hop);
             mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetHopByCode(_validTransferWarehouseCode))
                 .Returns(new DataAccess.Entities.TransferWarehouse{
                     HopType = "TransferWarehouse",
@@ -132,7 +182,10 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 .Returns(new DataAccess.Entities.Truck{HopType = "Truck"});
 
             var mockEncodingAgent = new Mock<IGeoEncodingAgent>();
-            mockEncodingAgent.Setup(encodingAgent => encodingAgent.AddressEncoder(It.IsAny<string>())).Returns(new GeoCoordinate{Lat = 1, Lon = 1});
+            mockEncodingAgent.Setup(encodingAgent => encodingAgent.AddressEncoder($"{_validParcel.Sender.Street}, {_validParcel.Sender.PostalCode} {_validParcel.Sender.City}, {_validParcel.Sender.Country}"))
+                .Returns(new GeoCoordinate{Lat = 1, Lon = 1});
+            mockEncodingAgent.Setup(encodingAgent => encodingAgent.AddressEncoder($"{_validParcel.Recipient.Street}, {_validParcel.Recipient.PostalCode} {_validParcel.Recipient.City}, {_validParcel.Recipient.Country}"))
+                .Returns(new GeoCoordinate{Lat = 2, Lon = 2});
             
             var loggerMock = new Mock<ILogger<TrackingLogic>>();
 
@@ -205,9 +258,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
 
         [Test]
         public void Should_Submit_Parcel()
-        {
-            // TODO: need more detailed test
-            
+        {            
             _validParcel.FutureHops = null;
             _validParcel.VisitedHops = null;
             _validParcel.TrackingId = null;
@@ -220,6 +271,11 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             Assert.IsNull(res.VisitedHops);
             Assert.IsNotNull(res.FutureHops);
             Assert.AreEqual(Parcel.StateEnum.PickupEnum, res.State);
+            Assert.AreEqual("Code3", res.FutureHops[0].Code);
+            Assert.AreEqual("Code2", res.FutureHops[1].Code);
+            Assert.AreEqual("Code1", res.FutureHops[2].Code);
+            Assert.AreEqual("Code4", res.FutureHops[3].Code);
+            Assert.AreEqual("Code5", res.FutureHops[4].Code);
         }
 
         [Test]

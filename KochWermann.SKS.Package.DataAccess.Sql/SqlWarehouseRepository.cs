@@ -178,7 +178,10 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 var coordinate = new Coordinate(latitude, longitude);
                 var point = geometryFactory.CreatePoint(coordinate);
 
-                return _context.Trucks.FirstOrDefault(x => x.RegionGeometry.Contains(point)) ?? (Hop)_context.TransferWarehouses.FirstOrDefault(x => x.RegionGeometry.Contains(point));
+                var trucks = _context.Trucks.FirstOrDefault(x => x.RegionGeometry.Contains(point));
+                var transferWarehouses = _context.TransferWarehouses.FirstOrDefault(x => x.RegionGeometry.Contains(point));
+
+                return trucks ?? (Hop)transferWarehouses;
             }
             catch (Exception ex)
             {
