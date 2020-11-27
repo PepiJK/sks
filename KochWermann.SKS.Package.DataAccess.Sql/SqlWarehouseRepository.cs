@@ -181,7 +181,8 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 var trucks = _context.Trucks.FirstOrDefault(x => x.RegionGeometry.Contains(point));
                 var transferWarehouses = _context.TransferWarehouses.FirstOrDefault(x => x.RegionGeometry.Contains(point));
 
-                return trucks ?? (Hop)transferWarehouses;
+                if (trucks != null) return trucks;
+                return transferWarehouses;
             }
             catch (Exception ex)
             {

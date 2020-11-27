@@ -78,21 +78,21 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
         }
 
-        /// <summary>
+         /// <summary>
         /// Get a certain warehouse or truck by code
         /// </summary>
         /// <param name="code"></param>
         /// <response code="200">Successful response</response>
         /// <response code="400">An error occurred loading.</response>
-        /// <response code="404">Warehouse id not found</response>
+        /// <response code="404">No hop with the specified id could be found.</response>
         [HttpGet]
         [Route("/warehouse/{code}")]
         [ValidateModelState]
         [SwaggerOperation("GetWarehouse")]
-        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.Warehouse), description: "Successful response")]
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.Hop), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "An error occurred loading.")]
-        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "Warehouse id not found")]
-        public virtual IActionResult GetWarehouse([FromRoute][Required] string code)
+        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No hop with the specified id could be found.")]
+        public virtual IActionResult GetWarehouse([FromRoute][Required]string code)
         {
             try
             {
@@ -104,15 +104,15 @@ namespace KochWermann.SKS.Package.Services.Controllers
                     return BadRequest(new DTOs.Error{ErrorMessage = "Code is null or white space"});
                 }
 
-                var blWarehouse = _warehouseLogic.GetWarehouse(code);
-                var serviceWarehouse = _mapper.Map<DTOs.Warehouse>(blWarehouse);
+                var blHop = _warehouseLogic.GetHop(code);
+                var serviceHop = _mapper.Map<DTOs.Hop>(blHop);
 
-                return Ok(serviceWarehouse);
+                return Ok(serviceHop);
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                _logger.LogError($"No Warehouse exist with this code {ex}");
-                return NotFound(new DTOs.Error{ErrorMessage = "No Warehouse exist with this code"});
+                _logger.LogError($"No hop with the specified id could be found {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = "No hop with the specified id could be found"});
             }
             catch (Exception ex)
             {
@@ -131,6 +131,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/warehouse")]
         [ValidateModelState]
         [SwaggerOperation("ImportWarehouses")]
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Successfully loaded.")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ImportWarehouses([FromBody] DTOs.Warehouse body)
         {
@@ -147,7 +148,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 var blWarehouse = _mapper.Map<BusinessLogic.Entities.Warehouse>(body);
                 _warehouseLogic.ImportWarehouses(blWarehouse);
 
-                return Ok();
+                return Ok("Successfully loaded");
             }
             catch (Exception ex)
             {

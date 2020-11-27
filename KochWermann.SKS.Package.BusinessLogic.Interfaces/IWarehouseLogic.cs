@@ -17,6 +17,6 @@ namespace KochWermann.SKS.Package.BusinessLogic.Interfaces
         /// <summary>
         /// Get a certain warehouse or truck by code.
         /// </summary>
-        Warehouse GetWarehouse(string code);
+        Hop GetHop(string code);
     }
 }

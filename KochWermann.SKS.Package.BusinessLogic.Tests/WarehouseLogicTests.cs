@@ -54,6 +54,14 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             )).Returns(new DataAccess.Entities.Warehouse{
                 LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1)
             });
+            mock.Setup(warehouseRepository => warehouseRepository.GetHopByCode(
+                _validCode
+            )).Returns(new DataAccess.Entities.Warehouse{
+                LocationCoordinates = new NetTopologySuite.Geometries.Point(1, 1)
+            });
+            mock.Setup(warehouseRepository => warehouseRepository.GetHopByCode(
+                _notFoundCode
+            )).Throws(new DataAccess.Entities.DALNotFoundException("Code Not Found", new Exception()));
             mock.Setup(warehouseRepository => warehouseRepository.GetWarehouseByCode(
                 _notFoundCode
             )).Throws(new DataAccess.Entities.DALNotFoundException("Code Not Found", new Exception()));
@@ -113,9 +121,9 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         }
 
         [Test]
-        public void Should_Get_Warehouse()
+        public void Should_Get_Hop_As_Warehouse()
         {
-            var res = _warehouseLogic.GetWarehouse(_validCode);
+            var res = _warehouseLogic.GetHop(_validCode);
             Assert.IsNotNull(res);
             Assert.IsInstanceOf<Warehouse>(res);
         }
@@ -123,19 +131,19 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Invalid_Code()
         {
-            Assert.Throws<BLValidationException>(() => _warehouseLogic.GetWarehouse(_invalidCode));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.GetHop(_invalidCode));
         }
 
         [Test]
         public void Should_Throw_Exception_On_Get_Warehouses_Of_Null_Code()
         {
-            Assert.Throws<BLValidationException>(() => _warehouseLogic.GetWarehouse(null));
+            Assert.Throws<BLValidationException>(() => _warehouseLogic.GetHop(null));
         }
 
         [Test]
         public void Should_Throw_Not_Found_Exception_On_Get_Warehouses_Of_Not_Found_Code()
         {
-            Assert.Throws<BLNotFoundException>(() => _warehouseLogic.GetWarehouse(_notFoundCode));
+            Assert.Throws<BLNotFoundException>(() => _warehouseLogic.GetHop(_notFoundCode));
         }
     }
 }

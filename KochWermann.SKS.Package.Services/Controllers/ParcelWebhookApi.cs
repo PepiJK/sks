@@ -38,6 +38,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("ListParcelWebhooks")]
         [SwaggerResponse(statusCode: 200, type: typeof(DTOs.WebhookResponses), description: "List of webooks for the &#x60;trackingId&#x60;")]
+        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No parcel found with that tracking ID.")]
         public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         { 
             if (!string.IsNullOrWhiteSpace(trackingId))
@@ -58,6 +59,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("SubscribeParcelWebhook")]
         [SwaggerResponse(statusCode: 200, type: typeof(DTOs.WebhookResponse), description: "Successful response")]
+        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No parcel found with that tracking ID.")]
         public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromQuery][Required()]string url)
         { 
             if (!string.IsNullOrWhiteSpace(trackingId) && !string.IsNullOrWhiteSpace(url))
@@ -76,6 +78,8 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/webhooks/{id}")]
         [ValidateModelState]
         [SwaggerOperation("UnsubscribeParcelWebhook")]
+        [SwaggerResponse(statusCode: 200, type: typeof(DTOs.WebhookResponse), description: "Successful response")]
+        [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "Subscription does not exist.")]
         public virtual IActionResult UnsubscribeParcelWebhook([FromRoute][Required]long? id)
         { 
             if (id != null && id > 0)

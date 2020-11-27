@@ -91,6 +91,12 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
+        public void Should_Update()
+        {
+            Assert.DoesNotThrow(() => _warehouseRepository.Update(_hops[0]));
+        }
+
+        [Test]
         public void Should_Delete()
         {
             _warehouseRepository.Delete("CODE1234");

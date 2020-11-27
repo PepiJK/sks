@@ -69,14 +69,14 @@ namespace KochWermann.SKS.Package.BusinessLogic
             }
         }
 
-        public Warehouse GetWarehouse(string code)
+        public Hop GetHop(string code)
         {
             try
             {
                 BusinessLogicHelper.Validate<string>(code, _codeValidator, _logger);
 
-                var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
-                return _mapper.Map<BusinessLogic.Entities.Warehouse>(dalWarehouse);
+                var dalHop = _warehouseRepository.GetHopByCode(code);
+                return _mapper.Map<BusinessLogic.Entities.Hop>(dalHop);
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {

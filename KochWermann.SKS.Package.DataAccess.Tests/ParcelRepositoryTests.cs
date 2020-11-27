@@ -69,6 +69,12 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
+        public void Should_Update()
+        {
+            Assert.DoesNotThrow(() => _parcelRepository.Update(_parcels[0]));
+        }
+
+        [Test]
         public void Should_Delete()
         {
             _parcelRepository.Delete(1);

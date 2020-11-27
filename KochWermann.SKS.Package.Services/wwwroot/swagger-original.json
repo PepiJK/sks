@@ -6,7 +6,7 @@
       "name" : "SKS",
       "url" : "http://www.technikum-wien.at/"
     },
-    "version" : "1.20.1"
+    "version" : "1.20.2"
   },
   "servers" : [ {
     "url" : "/"
@@ -157,6 +157,9 @@
                 }
               }
             }
+          },
+          "409" : {
+            "description" : "A parcel with the specified trackingID is already in the system."
           }
         }
       }
@@ -333,7 +336,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/warehouse"
+                  "$ref" : "#/components/schemas/hop"
                 }
               }
             }
@@ -349,7 +352,7 @@
             }
           },
           "404" : {
-            "description" : "Warehouse id not found"
+            "description" : "No hop with the specified id could be found."
           }
         }
       }
@@ -415,17 +418,7 @@
           "200" : {
             "description" : "Successful response",
             "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/webhookResponse"
-                }
-              },
               "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/webhookResponse"
-                }
-              },
-              "text/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/webhookResponse"
                 }
@@ -587,6 +580,17 @@
             "$ref" : "#/components/schemas/geoCoordinate"
           }
         },
+        "example" : {
+          "code" : "code",
+          "locationName" : "locationName",
+          "processingDelayMins" : 0,
+          "hopType" : "hopType",
+          "description" : "description",
+          "locationCoordinates" : {
+            "lon" : 1.4658129805029452,
+            "lat" : 6.027456183070403
+          }
+        },
         "discriminator" : {
           "propertyName" : "hopType"
         }
@@ -620,7 +624,7 @@
           "properties" : {
             "regionGeoJson" : {
               "type" : "string",
-              "description" : "GeoJSON of the are covered by the logistics partner."
+              "description" : "GeoJSON (https://geojson.org/) of the area covered by the logistics partner."
             },
             "logisticsPartner" : {
               "type" : "string",
@@ -642,7 +646,7 @@
           "properties" : {
             "regionGeoJson" : {
               "type" : "string",
-              "description" : "GeoJSON of the are covered by the truck."
+              "description" : "GeoJSON (https://geojson.org/) of the area covered by the truck."
             },
             "numberPlate" : {
               "type" : "string",
@@ -752,6 +756,10 @@
             "description" : "Longitude of the coordinate.",
             "format" : "double"
           }
+        },
+        "example" : {
+          "lon" : 1.4658129805029452,
+          "lat" : 6.027456183070403
         }
       },
       "webhookResponse" : {

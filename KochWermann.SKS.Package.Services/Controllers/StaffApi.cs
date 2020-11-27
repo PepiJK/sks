@@ -52,6 +52,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}/reportDelivery/")]
         [ValidateModelState]
         [SwaggerOperation("ReportParcelDelivery")]
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Successfully reported hop.")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "Parcel does not exist with this tracking ID.")]
         public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
@@ -94,6 +95,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [Route("/parcel/{trackingId}/reportHop/{code}")]
         [ValidateModelState]
         [SwaggerOperation("ReportParcelHop")]
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Successfully reported hop.")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No parcel exists with this tracking ID.")]
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)

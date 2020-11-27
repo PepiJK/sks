@@ -50,13 +50,13 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
             
             mock.Setup(trackingLogic => trackingLogic.ExportWarehouses()).Returns(new BusinessLogic.Entities.Warehouse());     
             
-            mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
+            mock.Setup(trackingLogic => trackingLogic.GetHop(
                 _testCode
             )).Returns(new BusinessLogic.Entities.Warehouse());
-            mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
+            mock.Setup(trackingLogic => trackingLogic.GetHop(
                 _notFoundCode
             )).Throws(new BusinessLogic.Entities.BLNotFoundException("Code Not Found", new System.Exception()));
-            mock.Setup(trackingLogic => trackingLogic.GetWarehouse(
+            mock.Setup(trackingLogic => trackingLogic.GetHop(
                 _invalidCode
             )).Throws(new BusinessLogic.Entities.BLException("Code Is Invalid", new System.Exception()));
             
@@ -120,7 +120,7 @@ namespace KochWermann.SKS.Package.Services.Tests.ControllerTests
         {
             var res = _warehouseManagementApiController.ImportWarehouses(_testWarehouse);
             Assert.IsNotNull(res);
-            Assert.IsInstanceOf<OkResult>(res);
+            Assert.IsInstanceOf<OkObjectResult>(res);
         }
 
         [Test]
