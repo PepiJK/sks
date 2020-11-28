@@ -180,11 +180,9 @@ namespace KochWermann.SKS.Package.DataAccess.Tests
         }
 
         [Test]
-        public void Should_Not_Get_Hop_By_Coordinates()
+        public void Should_Throw_On_Not_Found_Coordinates()
         {
-            var hop = _warehouseRepository.GetHopByCoordinates(3, 1);
-
-            Assert.AreEqual(null, hop);
+            Assert.Throws<DALNotFoundException>(() => _warehouseRepository.GetHopByCoordinates(3, 1));
         }
 
         [Test]

@@ -120,6 +120,11 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                 return parcel;
             }
+            catch (DataAccess.Entities.DALNotFoundException ex)
+            {
+                _logger.LogError($"Could not find any truck or transfer warehouse near the sender's or the receiver's location {ex}");
+                throw new BLNotFoundException($"Could not find any truck or transfer warehouse near the sender's or the receiver's location", ex);
+            }
             catch (ValidationException ex)
             {
                 _logger.LogError($"Validation error in parcel {ex}");
@@ -182,25 +187,32 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                 if (!parcel.FutureHops.Exists(p => p.Code == code))
                 {
-                    throw new BLException("Reported hop code is not part of the future hops of this parcel");
+                    _logger.LogWarning("Reported hop code is not part of the future hops of this parcel");
+                    parcel.VisitedHops.Add(new DataAccess.Entities.HopArrival{
+                        Code = hop.Code,
+                        DateTime = DateTime.Now,
+                        Description = hop.Description
+                    });
                 }
-
-                var visitedHops = new List<DataAccess.Entities.HopArrival>();
-
-                foreach (var futureHop in parcel.FutureHops)
+                else
                 {
-                    visitedHops.Add(futureHop);
-                    futureHop.DateTime = DateTime.Now;
-                    parcel.VisitedHops.Add(futureHop);
-                    if (futureHop.Code != hop.Code)
-                        _logger.LogWarning($"skip hop {futureHop.Code} : {futureHop.DateTime.Value.ToShortTimeString()}");
-                    else
-                        break;
-                }
+                    var visitedHops = new List<DataAccess.Entities.HopArrival>();
 
-                foreach (var visitedHop in visitedHops)
-                {
-                    parcel.FutureHops.Remove(visitedHop);
+                    foreach (var futureHop in parcel.FutureHops)
+                    {
+                        visitedHops.Add(futureHop);
+                        futureHop.DateTime = DateTime.Now;
+                        parcel.VisitedHops.Add(futureHop);
+                        if (futureHop.Code != hop.Code)
+                            _logger.LogWarning($"skip hop {futureHop.Code} : {futureHop.DateTime.Value.ToShortTimeString()}");
+                        else
+                            break;
+                    }
+
+                    foreach (var visitedHop in visitedHops)
+                    {
+                        parcel.FutureHops.Remove(visitedHop);
+                    }
                 }
 
                 if (hop.HopType == "TransferWarehouse")
@@ -209,9 +221,8 @@ namespace KochWermann.SKS.Package.BusinessLogic
 
                     var request = new HttpRequestMessage(HttpMethod.Post, $"{transferWarehouse.LogisticsPartnerUrl}/parcel/{parcel.TrackingId}");
                     var serilizedParcel = JsonConvert.SerializeObject(parcel, Formatting.None, new JsonSerializerSettings { 
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        }
-                    );
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    });
 
                     request.Content = new StringContent(serilizedParcel, Encoding.UTF8, "application/json");
 
@@ -305,23 +316,6 @@ namespace KochWermann.SKS.Package.BusinessLogic
             DataAccess.Entities.Hop senderTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)senderLocation.Lon, (double)senderLocation.Lat);
             DataAccess.Entities.Hop receiverTruckOrTransferWarehouse = _warehouseRepository.GetHopByCoordinates((double)receiverLocation.Lon, (double)receiverLocation.Lat);
 
-            // Developer mode aka Hack:
-            if (senderTruckOrTransferWarehouse.Code == null || receiverTruckOrTransferWarehouse.Code == null)
-            {
-                var allTrucks = _warehouseRepository.GetAllTrucks();
-                senderTruckOrTransferWarehouse.Code ??= allTrucks.FirstOrDefault().Code;
-                senderTruckOrTransferWarehouse.ProcessingDelayMins ??= allTrucks.FirstOrDefault().ProcessingDelayMins;
-                receiverTruckOrTransferWarehouse.Code ??= allTrucks.LastOrDefault().Code;
-                receiverTruckOrTransferWarehouse.ProcessingDelayMins ??= allTrucks.LastOrDefault().ProcessingDelayMins;
-            }
-
-            // maybe for release mode (depends on data given)
-            // if (senderTruck == null || receiverTruck == null)
-            // {
-            //     _logger.LogError("This area has no truck");
-            //     throw new Exception("This area has no truck");
-            // }
-
             var hopDictionary = new Dictionary<string, DataAccess.Entities.Warehouse>();
             var allWarehouses = _warehouseRepository.GetAllWarehouses();
             var rootWarehouse = _warehouseRepository.GetRootWarehouse();
@@ -343,7 +337,17 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 Description = senderTruckOrTransferWarehouse.Description
             });
 
-            if (senderWarehouse.Code != receiverWarehouse.Code)
+            if (senderWarehouse.Code == receiverWarehouse.Code)
+            {
+                dateTime = DateTime.Now.AddMinutes((double)senderWarehouse.ProcessingDelayMins);
+                parcel.FutureHops.Add(new HopArrival()
+                {
+                    Code = senderWarehouse.Code,
+                    DateTime = dateTime,
+                    Description = senderWarehouse.Description
+                });
+            }
+            else
             {
                 var hopsSender = GetNextHops(hopDictionary, rootWarehouse.Code, senderWarehouse.Code);
                 hopsSender.Reverse();
@@ -379,6 +383,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
                     });
                 }
             }
+
             dateTime = dateTime.AddMinutes((double)receiverTruckOrTransferWarehouse.ProcessingDelayMins);
             parcel.FutureHops.Add(new HopArrival()
             {
