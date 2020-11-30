@@ -21,6 +21,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
         private readonly IMapper _mapper;
         private readonly IParcelRepository _parcelRepository;
         private readonly IWarehouseRepository _warehouseRepository;
+        private readonly IWebhookRepository _webhookRepository;
         private readonly ILogger _logger;
         private readonly IGeoEncodingAgent _geoEncodingAgent;
         private readonly IHttpClientFactory _clientFactory;
@@ -28,20 +29,25 @@ namespace KochWermann.SKS.Package.BusinessLogic
         private readonly TrackingIdValidator _trackingIdValidator = new TrackingIdValidator();
         private readonly CodeValidator _codeValidator = new CodeValidator();
         private readonly Random _random = new Random();
+        private readonly IWebhookAgent _webhook;
 
         public TrackingLogic(IMapper mapper,
                              IParcelRepository parcelRepository,
+                             IWebhookRepository webhookRepository,
                              ILogger<TrackingLogic> logger,
                              IGeoEncodingAgent geoEncodingAgent,
                              IWarehouseRepository warehouseRepository,
-                             IHttpClientFactory clientFactory)
+                             IHttpClientFactory clientFactory,
+                             IWebhookAgent webhook)
         {
             _parcelRepository = parcelRepository;
             _warehouseRepository = warehouseRepository;
+            _webhookRepository = webhookRepository;
             _mapper = mapper;
             _logger = logger;
             _geoEncodingAgent = geoEncodingAgent;
             _clientFactory = clientFactory;
+            _webhook = webhook;
             _logger.LogTrace("TrackingLogic created");
         }
 
@@ -152,6 +158,10 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 parcel.State = DataAccess.Entities.Parcel.StateEnum.DeliveredEnum;
 
                 _parcelRepository.Update(parcel);
+
+                var hooks = _webhookRepository.GetByTrackingId(trackingId);
+                _webhook.Notify(_mapper.Map<IEnumerable<WebhookResponse>>(hooks), _mapper.Map<WebhookMessage>(parcel));
+                _webhookRepository.Delete(hooks); 
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {

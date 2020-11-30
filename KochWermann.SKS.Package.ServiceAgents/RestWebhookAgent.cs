@@ -30,9 +30,9 @@ namespace KochWermann.SKS.Package.ServiceAgents
                     client.PostAsJsonAsync(sub.Url, message);
                 }
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                _logger.LogError(exc.ToString());
+                _logger.LogError(ex.ToString());
                 throw;
             }
         }

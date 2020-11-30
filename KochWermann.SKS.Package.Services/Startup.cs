@@ -72,6 +72,9 @@ namespace KochWermann.SKS.Package.Services
 
             //ServiceAgents
             services.AddTransient<IGeoEncodingAgent, OpenStreetMapEncodingAgent>();
+            
+            //Webhook
+            services.AddScoped<IWebhookAgent, RestWebhookAgent>();
 
             // Automapper
             services.AddAutoMapper(typeof(DalMapperProfile), typeof(BlMapperProfile));
