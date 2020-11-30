@@ -181,8 +181,18 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
                 var trucks = _context.Trucks.FirstOrDefault(x => x.RegionGeometry.Contains(point));
                 var transferWarehouses = _context.TransferWarehouses.FirstOrDefault(x => x.RegionGeometry.Contains(point));
 
+                if (trucks == null && transferWarehouses == null)
+                {
+                    throw new NullReferenceException();
+                }
+
                 if (trucks != null) return trucks;
                 return transferWarehouses;
+            }
+            catch (NullReferenceException ex)
+            {
+                _logger.LogError($"Could not find exactly one truck or transfer warehouse with longitude {longitude} and latitude {latitude} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one truck or transfer warehouse with longitude {longitude} and latitude {latitude}", ex);
             }
             catch (Exception ex)
             {
