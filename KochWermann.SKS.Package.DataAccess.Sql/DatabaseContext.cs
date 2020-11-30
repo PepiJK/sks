@@ -40,5 +40,6 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         public virtual DbSet<TransferWarehouse> TransferWarehouses { get; set; }
         public virtual DbSet<Recipient> Recipients { get; set; }
         public virtual DbSet<HopArrival> HopArrivals { get; set; }
+        public DbSet<WebhookResponse> Webhooks { get; set; }
     }
 }
