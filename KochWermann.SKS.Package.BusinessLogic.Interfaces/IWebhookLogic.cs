@@ -8,12 +8,12 @@ namespace KochWermann.SKS.Package.BusinessLogic.Interfaces
         /// <summary>
         /// Get all registered subscriptions for the parcel webhook.
         /// </summary>
-        IEnumerable<WebhookResponse> ListParcelWebhooks(string strackingId);
+        IEnumerable<WebhookResponse> ListParcelWebhooks(string trackingId);
 
         /// <summary>
         /// Subscribe to a webhook notification for the specific parcel.
         /// </summary>
-        WebhookResponse SubscribeParcelWebhook(string strackingId, string url);
+        WebhookResponse SubscribeParcelWebhook(string trackingId, string url);
 
         /// <summary>
         /// Remove an exisiting webhook subscription.
