@@ -1,38 +1,38 @@
 using System;
-using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace KochWermann.SKS.Package.BusinessLogic.Entities
+namespace KochWermann.SKS.Package.DataAccess.Entities
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    [ExcludeFromCodeCoverage]
-    [DataContract]
-    public partial class WebhookResponse
-    { 
+    public class WebhookResponse
+    {
+        [ExcludeFromCodeCoverage]
         /// <summary>
-        /// Gets or Sets Id
+        /// ID of the Webhook.
         /// </summary>
-        [DataMember(Name="id")]
-        public long? Id { get; set; }
+        /// <value>ID of parcel.</value>
+        [Required]
+        [Key]
+        public long Id { get; set; }
 
         /// <summary>
         /// Gets or Sets TrackingId
         /// </summary>
-        [DataMember(Name="trackingId")]
+        [Required]
         public string TrackingId { get; set; }
 
         /// <summary>
         /// Gets or Sets Url
         /// </summary>
-        [DataMember(Name="url")]
+        [Required]
         public string Url { get; set; }
 
         /// <summary>
         /// Gets or Sets CreatedAt
         /// </summary>
-        [DataMember(Name="created_at")]
         public DateTime? CreatedAt { get; set; }
     }
 }

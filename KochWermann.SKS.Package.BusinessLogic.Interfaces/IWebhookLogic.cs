@@ -1,4 +1,5 @@
 using KochWermann.SKS.Package.BusinessLogic.Entities;
+using System.Collections.Generic;
 
 namespace KochWermann.SKS.Package.BusinessLogic.Interfaces
 {
@@ -7,7 +8,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Interfaces
         /// <summary>
         /// Get all registered subscriptions for the parcel webhook.
         /// </summary>
-        WebhookResponse ListParcelWebhooks(string strackingId);
+        IEnumerable<WebhookResponse> ListParcelWebhooks(string strackingId);
 
         /// <summary>
         /// Subscribe to a webhook notification for the specific parcel.

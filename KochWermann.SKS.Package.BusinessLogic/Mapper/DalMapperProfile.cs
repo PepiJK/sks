@@ -50,6 +50,16 @@ namespace KochWermann.SKS.Package.BusinessLogic.Mapper
             this.CreateMap<BlEntities.HopArrival, DALEntities.HopArrival>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
             this.CreateMap<BlEntities.Recipient, DALEntities.Recipient>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
             this.CreateMap<BlEntities.Parcel, DALEntities.Parcel>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
+
+            this.CreateMap<DALEntities.Parcel, BlEntities.WebhookMessage>()
+                .ForMember(dest => dest.TrackingId, opt => opt.MapFrom(src => src.TrackingId))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State))
+                .ForMember(dest => dest.VisitedHops, opt => opt.MapFrom(src => src.VisitedHops))
+                .ForMember(dest => dest.FutureHops, opt => opt.MapFrom(src => src.FutureHops))
+                .ForAllOtherMembers(dest => dest.Ignore());
+
+            this.CreateMap<BlEntities.WebhookResponse, DALEntities.WebhookResponse>()
+            .ReverseMap();
         }
 
     }

@@ -46,6 +46,9 @@ namespace KochWermann.SKS.Package.Services.Mapper
             this.CreateMap<BlEntities.Parcel, ServiceEntities.Parcel>();
             this.CreateMap<BlEntities.Parcel, ServiceEntities.TrackingInformation>();
             this.CreateMap<BlEntities.Parcel, ServiceEntities.NewParcelInfo>();
+
+            this.CreateMap<ServiceEntities.WebhookResponse, BlEntities.WebhookResponse>().ReverseMap();
+            this.CreateMap<ServiceEntities.WebhookMessage, BlEntities.WebhookMessage>().ReverseMap();
         }
     }
 }

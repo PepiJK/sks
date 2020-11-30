@@ -63,6 +63,7 @@ namespace KochWermann.SKS.Package.Services
             // DAL injection
             services.AddTransient<IParcelRepository, SqlParcelRepository>();
             services.AddTransient<IWarehouseRepository, SqlWarehouseRepository>();
+            services.AddTransient<IWebhookRepository, SqlWebhookRepository>();
 
             // BusinessLogic injection
             services.AddTransient<ITrackingLogic, TrackingLogic>();
