@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace KochWermann.SKS.Package.Services.Controllers
 {
@@ -59,31 +60,33 @@ namespace KochWermann.SKS.Package.Services.Controllers
             try
             {
                 _logger.LogTrace($"ListParcelWebhooks with trackingId: {trackingId}.");
+
                 if (string.IsNullOrWhiteSpace(trackingId))
                 {
-                    _logger.LogError($"Invalid TrackingId:{trackingId}");
-                    return NotFound(new DTOs.Error { ErrorMessage = $"Invalid TrackingId:{trackingId}" });
+                    _logger.LogError("TrackingId is null or white space");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "TrackingId is null or white space"});
                 }
 
-                var hooks = _webhookLogic.ListParcelWebhooks(trackingId);
+                var BlWebhookReses = _webhookLogic.ListParcelWebhooks(trackingId);
+
+                /*
                 var responses = new WebhookResponses();
                 responses.AddRange(hooks.Select(h => _mapper.Map<WebhookResponse>(h)));
-                return Ok(responses);
+                */
+
+                var ServiceWebhookReses = _mapper.Map<IEnumerable<DTOs.WebhookResponse>>(BlWebhookReses);
+
+                return Ok(ServiceWebhookReses);
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                _logger.LogError($"No parcel found with tracking ID: {trackingId} {ex}");
-                return NotFound(new DTOs.Error { ErrorMessage = $"No parcel found with tracking ID: {trackingId}" });
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                _logger.LogError($"The operation failed due to an error {ex}");
-                return BadRequest(new DTOs.Error { ErrorMessage = "The operation failed due to an error" });
+                _logger.LogError($"No ParcelWebhooks exist with this trackingId {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = "No ParcelWebhooks exist with this trackingId"});
             }
             catch (Exception ex)
             {
                 _logger.LogError($"The operation failed due to an error {ex}");
-                return BadRequest(new DTOs.Error { ErrorMessage = "The operation failed due to an error" });
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
 
@@ -105,31 +108,27 @@ namespace KochWermann.SKS.Package.Services.Controllers
             try
             {
                 _logger.LogTrace($"SubscribeParcelWebhook with trackingId: {trackingId} and url: {url}.");
-                if (string.IsNullOrWhiteSpace(trackingId))
+
+                if (string.IsNullOrWhiteSpace(trackingId) || string.IsNullOrWhiteSpace(url))
                 {
-                    _logger.LogError($"Invalid TrackingId:{trackingId}");
-                    return NotFound(new DTOs.Error { ErrorMessage = $"Invalid TrackingId:{trackingId}" });
+                    _logger.LogError("TrackingId or Url is null or white space");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "TrackingId or Url is null or white space"});
                 }
 
-                var result = Uri.TryCreate(url, UriKind.Absolute, out var uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                var BlWebhookRes = _webhookLogic.SubscribeParcelWebhook(trackingId, url);
+                var ServiceWebhookRes = _mapper.Map<DTOs.WebhookResponse>(BlWebhookRes);
 
-                var webhook = _webhookLogic.SubscribeParcelWebhook(trackingId, url);
-                return Ok(webhook);
+                return Ok(ServiceWebhookRes);
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                _logger.LogError($"No parcel found with tracking ID: {trackingId} {ex}");
-                return NotFound(new DTOs.Error { ErrorMessage = $"No parcel found with tracking ID: {trackingId}" });
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                _logger.LogError($"The operation failed due to an error {ex}");
-                return BadRequest(new DTOs.Error { ErrorMessage = "The operation failed due to an error" });
+                _logger.LogError($"Could not find newly created webhook or parcel with trackingId {trackingId} {ex}");
+                return NotFound(new DTOs.Error{ErrorMessage = $"Could not find newly created webhook or parcel with trackingId {trackingId}"});
             }
             catch (Exception ex)
             {
                 _logger.LogError($"The operation failed due to an error {ex}");
-                return BadRequest(new DTOs.Error { ErrorMessage = "The operation failed due to an error" });
+                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
             }
         }
 
@@ -150,25 +149,21 @@ namespace KochWermann.SKS.Package.Services.Controllers
             try
             {
                 _logger.LogTrace($"UnsubscribeParcelWebhook with id: {id}.");
-                if (null == id)
+
+                if (id == null)
                 {
-                    _logger.LogError($"Invalid Id:{id}");
-                    return NotFound(new DTOs.Error { ErrorMessage = $"Invalid Id:{id}" });
+                    _logger.LogError("Id is null");
+                    return BadRequest(new DTOs.Error{ErrorMessage = "Id is null"});
                 }
 
                 _webhookLogic.UnsubscribeParcelWebhook(id.Value);
 
                 return Ok("successfully unsubscribed.");
             }
-            catch (BusinessLogic.Entities.BLNotFoundException)
+            catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                _logger.LogError("Subscription does not exist.");
-                return NotFound(new DTOs.Error { ErrorMessage = "Subscription does not exist."});
-            }
-            catch (BusinessLogic.Entities.BLException ex)
-            {
-                _logger.LogError($"The operation failed due to an error {ex}");
-                return BadRequest(new DTOs.Error { ErrorMessage = "The operation failed due to an error" });
+                _logger.LogError($"Subscription does not exist {ex}");
+                return NotFound(new DTOs.Error { ErrorMessage = "Subscription does not exist"});
             }
             catch (Exception ex)
             {

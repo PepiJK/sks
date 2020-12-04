@@ -131,6 +131,13 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
                 (DataAccess.Entities.Truck)((DataAccess.Entities.Warehouse)rootWarehouse.NextHops[1].Hop).NextHops[0].Hop
             };
 
+            var webhookResponses = new List<DataAccess.Entities.WebhookResponse>{new DataAccess.Entities.WebhookResponse {
+                TrackingId = _validTrackingId,
+                CreatedAt = DateTime.Now,
+                Id = 1,
+                Url = "https://test.com"
+            }};
+
             //auto mapper configuration
             var mockMapper = new MapperConfiguration(cfg =>
             {
@@ -181,11 +188,18 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
             mockWarehouseRepo.Setup(warehouseRepo => warehouseRepo.GetHopByCode(_validTruckCode))
                 .Returns(new DataAccess.Entities.Truck{HopType = "Truck"});
 
+            var mockWebhookRepo = new Mock<IWebhookRepository>();
+            mockWebhookRepo.Setup(webhookRepo => webhookRepo.GetByTrackingId(_validTrackingId)).Returns(webhookResponses);
+            mockWebhookRepo.Setup(webhookRepo => webhookRepo.Delete(webhookResponses));
+           
             var mockEncodingAgent = new Mock<IGeoEncodingAgent>();
             mockEncodingAgent.Setup(encodingAgent => encodingAgent.AddressEncoder($"{_validParcel.Sender.Street}, {_validParcel.Sender.PostalCode} {_validParcel.Sender.City}, {_validParcel.Sender.Country}"))
                 .Returns(new GeoCoordinate{Lat = 1, Lon = 1});
             mockEncodingAgent.Setup(encodingAgent => encodingAgent.AddressEncoder($"{_validParcel.Recipient.Street}, {_validParcel.Recipient.PostalCode} {_validParcel.Recipient.City}, {_validParcel.Recipient.Country}"))
                 .Returns(new GeoCoordinate{Lat = 2, Lon = 2});
+
+            var mockWebhookAgent = new Mock<IWebhookAgent>();
+            mockWebhookAgent.Setup(webhookAgent => webhookAgent.Notify(It.IsAny<IEnumerable<WebhookResponse>>(), It.IsAny<WebhookMessage>()));
             
             var loggerMock = new Mock<ILogger<TrackingLogic>>();
 
@@ -200,7 +214,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
 
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
 
-            _trackingLogic = new TrackingLogic(mapper, mockParcelRepo.Object, loggerMock.Object, mockEncodingAgent.Object, mockWarehouseRepo.Object, mockFactory.Object);
+            _trackingLogic = new TrackingLogic(mapper, mockParcelRepo.Object, mockWebhookRepo.Object, loggerMock.Object, mockEncodingAgent.Object, mockWarehouseRepo.Object, mockFactory.Object, mockWebhookAgent.Object);
         }
 
         [Test]

@@ -254,8 +254,15 @@ namespace KochWermann.SKS.Package.BusinessLogic
                 {
                     parcel.State = DataAccess.Entities.Parcel.StateEnum.InTransportEnum;
                 }
+                else 
+                {
+                    throw new BLException("Not a valid hop type");
+                }
 
                 _parcelRepository.Update(parcel);
+
+                var hooks = _webhookRepository.GetByTrackingId(trackingId);
+                _webhook.Notify(_mapper.Map<IEnumerable<WebhookResponse>>(hooks), _mapper.Map<WebhookMessage>(parcel));
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {

@@ -26,12 +26,8 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             {
                 _context.Webhooks.Add(response);
                 _context.SaveChanges();
+                
                 return response.Id;
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError($"Error in Create WebhookResponse {ex}");
-                throw new DALException("Error in Create WebhookResponse", ex);
             }
             catch (Exception ex)
             {
@@ -44,13 +40,15 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
         {
             try
             {
-                _context.Remove(_context.Webhooks.Single(x => x.Id == id));
+                var webhook = GetById(id);
+
+                _context.Webhooks.Remove(webhook);
                 _context.SaveChanges();
             }
-            catch (InvalidOperationException ex)
+            catch (DALNotFoundException ex)
             {
-                _logger.LogError($"Error in Delete Webhook {ex}");
-                throw new DALException("Error in Delete Webhook", ex);
+                _logger.LogError($"Could not find exactly one webhook with id {id} {ex}");
+                throw new DALException($"Could not find exactly one parcel with id {id}", ex);
             }
             catch (Exception ex)
             {
@@ -61,8 +59,16 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
 
         public void Delete(IEnumerable<WebhookResponse> hooks)
         {
-            _context.RemoveRange(_context.Webhooks.Where(p => hooks.Any(x => x.Id == p.Id)));
-            _context.SaveChanges();
+            try
+            {
+                _context.Webhooks.RemoveRange(hooks);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in Delete Webhooks {ex}");
+                throw new DALException("Error in Delete Webhooks", ex);
+            }
         }
 
         public WebhookResponse GetById(long id)
@@ -73,19 +79,27 @@ namespace KochWermann.SKS.Package.DataAccess.Sql
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new DALNotFoundException("Error in Getting WebhookResponse", ex);
+                _logger.LogError($"Could not find exactly one webhook with id {id} {ex}");
+                throw new DALNotFoundException($"Could not find exactly one webhook with id {id}", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error in Getting WebhookResponse {ex}");
-                throw new DALException("Error in Getting WebhookResponse", ex);
+                _logger.LogError($"Error in GetById WebhookResponse {ex}");
+                throw new DALException("Error in GetById WebhookResponse", ex);
             }
         }
 
         public IEnumerable<WebhookResponse> GetByTrackingId(string trackingId)
         {
-            return _context.Webhooks.Where(hook => hook.TrackingId == trackingId);
+            try
+            {
+                return _context.Webhooks.Where(hook => hook.TrackingId == trackingId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetByTrackingId WebhookResponse {ex}");
+                throw new DALException("Error in GetByTrackingId WebhookResponse", ex);
+            }
         }
     }
 }

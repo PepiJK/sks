@@ -16,6 +16,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
     public class ServiceAgentsTests
     {
         private IGeoEncodingAgent _encoder;
+        private IWebhookAgent _webhook;
         private readonly string _address = "Maschlgasse 90, 1220 Wien, Österreich";
         private readonly string _baseUrl = "https://someurl.com/search?email=if18b182@technikum-wien.at&format=geojson";
 
@@ -58,7 +59,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Tests
         [Test]
         public void AddressEncoder_NotOK()
         {
-            Assert.Throws<ServiceAgentNoResultException>(() => _encoder.AddressEncoder(""));
+            Assert.Throws<ServiceAgentException>(() => _encoder.AddressEncoder(""));
         }
     }
 

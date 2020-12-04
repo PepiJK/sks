@@ -7,7 +7,7 @@ namespace KochWermann.SKS.Package.BusinessLogic.Helpers
 {
     public static class BusinessLogicHelper
     {
-        public static void Validate<T>(T instanceToValidate, AbstractValidator<T> validator, ILogger logger)
+        public static void Validate<T>(T instanceToValidate, AbstractValidator<T> validator, ILogger logger) 
         {
             ValidationResult validationResult;
 

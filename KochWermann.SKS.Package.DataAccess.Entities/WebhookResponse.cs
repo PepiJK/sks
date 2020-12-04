@@ -7,13 +7,13 @@ namespace KochWermann.SKS.Package.DataAccess.Entities
     /// <summary>
     ///
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class WebhookResponse
     {
-        [ExcludeFromCodeCoverage]
         /// <summary>
         /// ID of the Webhook.
         /// </summary>
-        /// <value>ID of parcel.</value>
+        /// <value>ID of the Webhook.</value>
         [Required]
         [Key]
         public long Id { get; set; }

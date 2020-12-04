@@ -29,7 +29,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+    arguments: '--configuration $(buildConfiguration) --filter FullyQualifiedName\!~IntegrationTests /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
     publishTestResults: true
 
 - task: reportgenerator@4

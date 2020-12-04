@@ -7,6 +7,7 @@ using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic.Validators;
 using KochWermann.SKS.Package.DataAccess.Interfaces;
 using Microsoft.Extensions.Logging;
+using FluentValidation;
 
 namespace KochWermann.SKS.Package.BusinessLogic
 {
@@ -17,6 +18,7 @@ namespace KochWermann.SKS.Package.BusinessLogic
         private readonly IWebhookRepository _webhookRepository;
         private readonly IParcelRepository _parcelRepository;
         private readonly TrackingIdValidator _trackingIdValidator = new TrackingIdValidator();
+        private readonly UrlValidator _urlValidator = new UrlValidator();
 
         public WebhookLogic(IWebhookRepository webhookRepository, IParcelRepository parcelRepository, IMapper mapper, ILogger<WebhookLogic> logger)
         {
@@ -32,26 +34,24 @@ namespace KochWermann.SKS.Package.BusinessLogic
             {
                 BusinessLogicHelper.Validate<string>(trackingId, _trackingIdValidator, _logger);
 
-                _parcelRepository.GetParcelByTrackingId(trackingId);
-
                 var hooks = _webhookRepository.GetByTrackingId(trackingId);
 
                 return _mapper.Map<IEnumerable<WebhookResponse>>(hooks);
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                _logger.LogError(ex.ToString());
+                _logger.LogError($"Could not find trackinId {trackingId} {ex}");
                 throw new BLNotFoundException($"Could not find trackinId {trackingId}", ex);
             }
-            catch (DataAccess.Entities.DALException ex)
+            catch (ValidationException ex)
             {
-                _logger.LogError($"Error: {ex}");
-                throw new BLException("Error: ", ex);
+                _logger.LogError($"Validation error in trackingId {ex}");
+                throw new BLValidationException("Validation error in trackingId", ex);            
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error {ex}");
-                throw new BLException("Error: ", ex);
+                _logger.LogError($"Error in ListParcelWebhooks {ex}");
+                throw new BLException("Error in ListParcelWebhooks", ex);
             }
         }
 
@@ -60,8 +60,12 @@ namespace KochWermann.SKS.Package.BusinessLogic
             try
             {
                 BusinessLogicHelper.Validate<string>(trackingId, _trackingIdValidator, _logger);
+                BusinessLogicHelper.Validate<string>(url, _urlValidator, _logger);
 
-                _parcelRepository.GetParcelByTrackingId(trackingId);
+                if (!_parcelRepository.ContainsTrackingId(trackingId))
+                {
+                    throw new DataAccess.Entities.DALNotFoundException($"No parcel with trackingId {trackingId} exists");
+                }
 
                 var webhook = new DataAccess.Entities.WebhookResponse()
                 {
@@ -69,24 +73,26 @@ namespace KochWermann.SKS.Package.BusinessLogic
                     CreatedAt = DateTime.Now,
                     Url = url
                 };
+
                 var id = _webhookRepository.Create(webhook);
                 var hook = _webhookRepository.GetById(id);
+
                 return _mapper.Map<WebhookResponse>(hook);
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new BLNotFoundException($"Error: ", ex);
+                _logger.LogError($"Could not find newly created webhook or parcel with trackingId {trackingId} {ex}");
+                throw new BLNotFoundException($"Could not find newly created webhook or parcel with trackingId {trackingId}", ex);
             }
-            catch (DataAccess.Entities.DALException ex)
+            catch (ValidationException ex)
             {
-                _logger.LogError($"Error: {ex}");
-                throw new BLException("Error: ", ex);
+                _logger.LogError($"Validation error in trackingId {ex}");
+                throw new BLValidationException("Validation error in trackingId", ex);            
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error: {ex}");
-                throw new BLException("Error: ", ex);
+                _logger.LogError($"Error in SubscribeParcelWebhook {ex}");
+                throw new BLException("Error in SubscribeParcelWebhook", ex);
             }
         }
 
@@ -98,18 +104,13 @@ namespace KochWermann.SKS.Package.BusinessLogic
             }
             catch (DataAccess.Entities.DALNotFoundException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new BLNotFoundException($"Error: ", ex);
-            }
-            catch (DataAccess.Entities.DALException ex)
-            {
-                _logger.LogError($"Error: {ex}");
-                throw new BLException("Error: ", ex);
+                _logger.LogError($"Could not find exactly one webhook with id {id} {ex}");
+                throw new BLNotFoundException($"Could not find exactly one webhook with id {id}", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error: {ex}");
-                throw new BLException("Error: ", ex);
+                _logger.LogError($"Error in UnsubscribeParcelWebhook {ex}");
+                throw new BLException("Error in UnsubscribeParcelWebhook", ex);
             }
         }
     }

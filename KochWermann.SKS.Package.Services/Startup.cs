@@ -133,6 +133,10 @@ namespace KochWermann.SKS.Package.Services
             services.AddHttpClient("parcelhop", c => {
                 c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
             });
+
+            services.AddHttpClient("webhooks", c => {
+                c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
+            });
         }
 
         /// <summary>
