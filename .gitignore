@@ -4,6 +4,7 @@
 .idea
 MyCoverage
 coverage.json
+coverage.cobertura.xml
 
 ### VisualStudioCode ###
 .vscode/*

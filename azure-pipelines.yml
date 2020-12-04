@@ -40,9 +40,9 @@ steps:
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish Code Coverage Results'
   inputs:
-    codeCoverageTool: Cobertura
+    codeCoverageTool: cobertura
     summaryFileLocation: '$(Build.SourcesDirectory)/CoverageResults/Cobertura.xml'
-    failIfCoverageEmpty: true
+    failIfCoverageEmpty: false
 
 - task: DotNetCoreCLI@2
   inputs:
