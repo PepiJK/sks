@@ -47,7 +47,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)'
-    contents: '**/$(BuildConfiguration)/**/KochWermann.SKS.Package.IntegrationTests/bin/**/*'
+    contents: '**/$(BuildConfiguration)/**/KochWermann.SKS.Package.IntegrationTests/bin/**/?(*.json|*.dll|*.pdb)'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
