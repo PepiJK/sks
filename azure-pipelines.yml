@@ -46,7 +46,7 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '**/KochWermann.SKS.Package.IntegrationTests.dll'
+    targetPath: '$(Build.SourcesDirectory)/**/KochWermann.SKS.Package.IntegrationTests.dll'
     artifactName: IntegrationTests
 
 - task: DotNetCoreCLI@2
