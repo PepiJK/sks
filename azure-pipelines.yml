@@ -47,13 +47,8 @@ steps:
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)'
-    contents: '**/$(BuildConfiguration)/**/?(*.exe|*.dll|*.pdb)'
+    contents: '**/$(BuildConfiguration)/**/?(KochWermann.SKS.Package.IntegrationTests.dll)'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
-    
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: drop
 
 - task: DotNetCoreCLI@2
   inputs:
