@@ -44,10 +44,16 @@ steps:
     summaryFileLocation: '$(Build.SourcesDirectory)/CoverageResults/Cobertura.xml'
     failIfCoverageEmpty: true
 
-- task: PublishPipelineArtifact@1
+- task: CopyFiles@2
   inputs:
-    targetPath: '$(Build.SourcesDirectory)/**/KochWermann.SKS.Package.IntegrationTests'
-    artifactName: IntegrationTests
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: '**/$(BuildConfiguration)/**/?(*.exe|*.dll|*.pdb)'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+    
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: drop
 
 - task: DotNetCoreCLI@2
   inputs:
