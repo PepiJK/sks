@@ -10,6 +10,7 @@ using NUnit.Framework;
 namespace KochWermann.SKS.Package.IntegrationTests
 {
     // to run use following command: dotnet test --filter FullyQualifiedName\~IntegrationTests -s KochWermann.SKS.Package.IntegrationTests/local.runsettings
+    [TestFixture, Category("IntegrationTests")]
     public class IntegrationTests
     {
         private readonly HttpClient _client = new HttpClient();

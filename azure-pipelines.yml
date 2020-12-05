@@ -29,7 +29,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    arguments: '--configuration $(buildConfiguration) --filter FullyQualifiedName\!~IntegrationTests /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+    arguments: '--configuration $(buildConfiguration) --filter TestCategory!=IntegrationTests /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
     publishTestResults: true
 
 - task: reportgenerator@4
@@ -42,7 +42,7 @@ steps:
   inputs:
     codeCoverageTool: cobertura
     summaryFileLocation: '$(Build.SourcesDirectory)/CoverageResults/Cobertura.xml'
-    failIfCoverageEmpty: false
+    failIfCoverageEmpty: true
 
 - task: DotNetCoreCLI@2
   inputs:
