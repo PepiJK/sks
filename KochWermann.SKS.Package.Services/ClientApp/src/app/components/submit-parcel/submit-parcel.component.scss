@@ -1,23 +1,32 @@
-.kw-postal-code-field {
-  width: 100px;
-}
-
 mat-form-field {
   margin-right: 2rem;
 }
 
 .kw-sender-wrapper {
   margin-top: 3rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
-.kw-receiver-wrapper {
+.kw-recipient-wrapper {
   margin-bottom: 3rem;
 }
 
 .kw-weight-wrapper {
   margin-bottom: 1rem;
 }
+
+.kw-new-id-wrapper {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.kw-submit-icon {
+  font-size: 5rem;
+  margin-right: 1rem;
+}
+
 
 
 

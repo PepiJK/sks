@@ -19,15 +19,15 @@ export class ParcelApiService {
   }
 
   getTrackingInformation(trackingId: string): Observable<TrackingInformation> {
-    return this.http.get<TrackingInformation>(`${this.apiUrl}/${trackingId}`);
+    return this.http.get<TrackingInformation>(`${this.apiUrl}/parcel/${trackingId}`);
   }
 
   reportDelivery(trackingId: string): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/${trackingId}/reportDelivery`, null);
+    return this.http.post(`${this.apiUrl}/parcel/${trackingId}/reportDelivery`, null, {responseType: 'text'});
   }
 
   reportHop(trackingId: string, hopCode: string): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/${trackingId}/reportHop/${hopCode}`, null);
+    return this.http.post(`${this.apiUrl}/parcel/${trackingId}/reportHop/${hopCode}`, null, {responseType: 'text'});
   }
 
 }

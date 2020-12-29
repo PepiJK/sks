@@ -1,16 +1,58 @@
-<h2>Report Hop/Delivery</h2>
+<h2>Report Hop</h2>
 
-<form>
+<form #hopForm="ngForm" class="kw-hop-form" (ngSubmit)="onSubmitHop()">
   <div class="kw-form-wrapper">
-    <mat-form-field>
+    <mat-form-field hideRequiredMarker>
       <mat-label>Tracking Id</mat-label>
-      <input matInput>
+      <input matInput minlength="9" required [(ngModel)]="hopTrackingId" name="hopTrackingId">
+      <mat-error *ngIf="hopForm.controls['hopTrackingId']?.hasError('required')">
+        Tracking Id is <strong>required</strong>
+      </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field hideRequiredMarker>
       <mat-label>Hop Code</mat-label>
-      <input matInput>
+      <input matInput required [(ngModel)]="hopCode" name="hopCode">
+      <mat-error *ngIf="hopForm.controls['hopCode']?.hasError('required')">
+        Hop Code is <strong>required</strong>
+      </mat-error>
     </mat-form-field>
 
-    <button mat-flat-button color="primary">Submit</button>
+    <button type="submit" mat-flat-button color="primary" [disabled]="!hopForm.form.valid || isLoading">Submit</button>
   </div>
 </form>
+
+<h2>Report Delivery</h2>
+
+<form #deliveryForm="ngForm" (ngSubmit)="onSubmitDelivery()">
+  <div class="kw-form-wrapper">
+    <mat-form-field hideRequiredMarker>
+      <mat-label>Tracking Id</mat-label>
+      <input matInput minlength="9" required [(ngModel)]="deliveryTrackingId" name="deliveryTrackingId">
+      <mat-error *ngIf="deliveryForm.controls['deliveryTrackingId']?.hasError('required')">
+        Tracking Id is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-flat-button color="primary" [disabled]="!deliveryForm.form.valid || isLoading">Submit</button>
+  </div>
+</form>
+
+<div *ngIf="isLoading" class="kw-report-wrapper">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading && successMessage" class="kw-report-wrapper">
+  <i class="material-icons kw-report-icon kw-color-primary">check</i>
+  <div>
+    <span class="kw-color-primary">Success</span>
+    <h1>{{successMessage}}</h1>
+  </div>
+</div>
+
+<div *ngIf="!isLoading && errorMessage" class="kw-report-wrapper">
+  <i class="material-icons kw-report-icon kw-color-warn">error</i>
+  <div>
+    <span class="kw-color-warn">Error</span>
+    <h1>{{errorMessage}}</h1>
+  </div>
+</div>

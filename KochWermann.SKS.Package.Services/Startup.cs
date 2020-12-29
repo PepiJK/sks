@@ -20,7 +20,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using KochWermann.SKS.Package.Services.Filters;
 using AutoMapper;
-using FluentValidation.AspNetCore;
 using KochWermann.SKS.Package.BusinessLogic.Interfaces;
 using KochWermann.SKS.Package.BusinessLogic;
 using System.Diagnostics.CodeAnalysis;
@@ -72,7 +71,7 @@ namespace KochWermann.SKS.Package.Services
 
             //ServiceAgents
             services.AddTransient<IGeoEncodingAgent, OpenStreetMapEncodingAgent>();
-            
+
             //Webhook
             services.AddScoped<IWebhookAgent, RestWebhookAgent>();
 
@@ -80,8 +79,10 @@ namespace KochWermann.SKS.Package.Services
             services.AddAutoMapper(typeof(DalMapperProfile), typeof(BlMapperProfile));
 
             // Setup Database Connection
-            services.AddDbContext<DatabaseContext>(options => {
-                options.UseSqlServer(_configuration.GetConnectionString("Database"), x => {
+            services.AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseSqlServer(_configuration.GetConnectionString("Database"), x =>
+                {
                     x.UseNetTopologySuite();
                     x.MigrationsAssembly("KochWermann.SKS.Package.Services");
                     x.EnableRetryOnFailure(20, new TimeSpan(0, 0, 30), null);
@@ -103,9 +104,16 @@ namespace KochWermann.SKS.Package.Services
                 })
                 .AddXmlSerializerFormatters();
 
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
 
-            services.AddSwaggerGen(c => {
-                c.SwaggerDoc("1.20.1", new OpenApiInfo {
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("1.20.1", new OpenApiInfo
+                {
                     Version = "1.20.1",
                     Title = "Parcel Logistics Service",
                     Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
@@ -130,11 +138,13 @@ namespace KochWermann.SKS.Package.Services
                 c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
             });
 
-            services.AddHttpClient("parcelhop", c => {
+            services.AddHttpClient("parcelhop", c =>
+            {
                 c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
             });
 
-            services.AddHttpClient("webhooks", c => {
+            services.AddHttpClient("webhooks", c =>
+            {
                 c.DefaultRequestHeaders.Add("User-Agent", "SKS-Koch-Wermann");
             });
         }
@@ -155,6 +165,13 @@ namespace KochWermann.SKS.Package.Services
             //TODO: Uncomment this if you need wwwroot folder
             // app.UseStaticFiles();
 
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
+
             app.UseAuthorization();
 
             app.UseSwagger();
@@ -173,6 +190,20 @@ namespace KochWermann.SKS.Package.Services
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
             });
 
             if (env.IsDevelopment())

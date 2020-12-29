@@ -1,12 +1,86 @@
 <h2>Track Parcel</h2>
 
-<form>
+<form #trackForm="ngForm" (ngSubmit)="onSubmit()">
   <div class="kw-form-wrapper">
-    <mat-form-field>
+    <mat-form-field hideRequiredMarker>
       <mat-label>Tracking Id</mat-label>
-      <input matInput>
+      <input matInput required minlength="9" [(ngModel)]="trackingId" name="trackingId">
+      <mat-error *ngIf="trackForm.controls['trackingId']?.hasError('required')">
+        Tracking Id is <strong>required</strong>
+      </mat-error>
     </mat-form-field>
 
-    <button mat-flat-button color="primary">Submit</button>
+    <button type="submit" mat-flat-button color="primary" [disabled]="!trackForm.form.valid || isLoading">Submit</button>
   </div>
 </form>
+
+<div *ngIf="isLoading" class="kw-tracking-wrapper">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading && trackingInfo" class="kw-tracking-wrapper">
+  <div class="kw-tracking-inner">
+    <span class="kw-color-primary">State</span>
+    <h2 class="kw-m-0">{{trackingInfo.state}}</h2>
+  </div>
+  <div class="kw-tracking-inner">
+    <h2>Visited Hops</h2>
+    <span class="kw-italic" *ngIf="!trackingInfo.visitedHops.length">No visited hops</span>
+
+    <table mat-table [dataSource]="trackingInfo.visitedHops" *ngIf="trackingInfo.visitedHops.length" class="kw-w100">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{trackingInfo.visitedHops.indexOf(element) + 1}} </td>
+      </ng-container>
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef> Code </th>
+        <td mat-cell *matCellDef="let element"> {{element.code}} </td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+      </ng-container>
+      <ng-container matColumnDef="dateTime">
+        <th mat-header-cell *matHeaderCellDef> Date Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.dateTime | date: 'short'}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <div class="kw-tracking-inner">
+    <h2>Future Hops</h2>
+    <span class="kw-italic" *ngIf="!trackingInfo.futureHops.length">No future hops</span>
+
+    <table mat-table [dataSource]="trackingInfo.futureHops" *ngIf="trackingInfo.futureHops.length" class="kw-w100">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{trackingInfo.futureHops.indexOf(element) + 1}} </td>
+      </ng-container>
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef> Code </th>
+        <td mat-cell *matCellDef="let element"> {{element.code}} </td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+      </ng-container>
+      <ng-container matColumnDef="dateTime">
+        <th mat-header-cell *matHeaderCellDef> Date Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.dateTime | date:'short'}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
+
+<div *ngIf="!isLoading && errorMessage" class="kw-tracking-error-wrapper">
+  <i class="material-icons kw-tacking-error-icon kw-color-warn">error</i>
+  <div>
+    <span class="kw-color-warn">Error</span>
+    <h1>{{errorMessage}}</h1>
+  </div>
+</div>

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ParcelApiService } from './parcel-api.service';
+import { ParcelApiService } from './parcelApi.service';
 
-describe('ApiService', () => {
+describe('ParcelApiService', () => {
   let service: ParcelApiService;
 
   beforeEach(() => {

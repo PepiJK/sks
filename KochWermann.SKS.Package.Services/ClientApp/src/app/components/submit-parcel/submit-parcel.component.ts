@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Parcel} from '../../models/parcel';
+import {ParcelApiService} from '../../services/parcelApi.service';
 
 @Component({
   selector: 'app-submit-parcel',
@@ -6,10 +8,29 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./submit-parcel.component.scss']
 })
 export class SubmitParcelComponent implements OnInit {
+  newParcel: Parcel = new Parcel();
+  newTrackingId: string;
+  errorMessage: string;
+  isLoading = false;
 
-  constructor() { }
+  constructor(private parcelApiService: ParcelApiService) {
+  }
 
   ngOnInit(): void {
+  }
+
+  onSubmit(): void {
+    this.isLoading = true;
+    this.newTrackingId = undefined;
+    this.errorMessage = undefined;
+
+    this.parcelApiService.postParcel(this.newParcel).subscribe((res) => {
+      this.newTrackingId = res.trackingId;
+      this.isLoading = false;
+    }, (error) => {
+      this.errorMessage = error.error.errorMessage;
+      this.isLoading = false;
+    });
   }
 
 }

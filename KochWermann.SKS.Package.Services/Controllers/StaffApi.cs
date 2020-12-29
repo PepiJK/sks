@@ -24,12 +24,12 @@ namespace KochWermann.SKS.Package.Services.Controllers
     /// </summary>
     [ApiController]
     public class StaffApiController : ControllerBase
-    { 
+    {
         private readonly IMapper _mapper;
         private readonly ITrackingLogic _trackingLogic;
         private readonly ILogger<StaffApiController> _logger;
 
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,8 +55,8 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Successfully reported hop.")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "Parcel does not exist with this tracking ID.")]
-        public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
-        {            
+        public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId)
+        {
             try
             {
                 _logger.LogTrace($"ReportParcelDelivery: trackingId: {trackingId}");
@@ -64,7 +64,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 if (string.IsNullOrWhiteSpace(trackingId))
                 {
                     _logger.LogError("TrackingId is null or white space");
-                    return BadRequest(new DTOs.Error{ErrorMessage = "TrackingId is null or white space"});
+                    return BadRequest(new DTOs.Error { ErrorMessage = "TrackingId is null or white space" });
                 }
 
                 _trackingLogic.ReportParcelDelivery(trackingId);
@@ -74,12 +74,12 @@ namespace KochWermann.SKS.Package.Services.Controllers
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
                 _logger.LogError($"No Parcel exist with this trackingId {ex}");
-                return NotFound(new DTOs.Error{ErrorMessage = "No Parcel exist with this trackingId"});
+                return NotFound(new DTOs.Error { ErrorMessage = "No Parcel exist with this trackingId" });
             }
             catch (Exception ex)
             {
                 _logger.LogError($"The operation failed due to an error {ex}");
-                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
+                return BadRequest(new DTOs.Error { ErrorMessage = "The operation failed due to an error" });
             }
         }
 
@@ -98,7 +98,7 @@ namespace KochWermann.SKS.Package.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Successfully reported hop.")]
         [SwaggerResponse(statusCode: 400, type: typeof(DTOs.Error), description: "The operation failed due to an error.")]
         [SwaggerResponse(statusCode: 404, type: typeof(DTOs.Error), description: "No parcel exists with this tracking ID.")]
-        public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
+        public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")] string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")] string code)
         {
             try
             {
@@ -107,13 +107,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
                 if (string.IsNullOrWhiteSpace(trackingId))
                 {
                     _logger.LogError("TrackingId is null or white space");
-                    return BadRequest(new DTOs.Error{ErrorMessage = "TrackingId is null or white space"});
+                    return BadRequest(new DTOs.Error { ErrorMessage = "TrackingId is null or white space" });
                 }
 
                 if (string.IsNullOrWhiteSpace(code))
                 {
                     _logger.LogError("Code is null or white space");
-                    return BadRequest(new DTOs.Error{ErrorMessage = "Code is null or white space"});
+                    return BadRequest(new DTOs.Error { ErrorMessage = "Code is null or white space" });
                 }
 
                 _trackingLogic.ReportParcelHop(trackingId, code);
@@ -122,13 +122,13 @@ namespace KochWermann.SKS.Package.Services.Controllers
             }
             catch (BusinessLogic.Entities.BLNotFoundException ex)
             {
-                _logger.LogError($"No Parcel exist with this trackingId or code {ex}");
-                return NotFound(new DTOs.Error{ErrorMessage = "No Parcel exist with this trackingId or code"});
+                _logger.LogError($"TrackingId or code could not be found {ex}");
+                return NotFound(new DTOs.Error { ErrorMessage = "TrackingId or code could not be found" });
             }
             catch (Exception ex)
             {
                 _logger.LogError($"The operation failed due to an error {ex}");
-                return BadRequest(new DTOs.Error{ErrorMessage = "The operation failed due to an error"});
+                return BadRequest(new DTOs.Error { ErrorMessage = "The operation failed due to an error" });
             }
         }
     }
